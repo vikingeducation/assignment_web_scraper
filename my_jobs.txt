@@ -1,1 +1,0 @@
-Job title,Company name,Link to posting on Dice,Location,Posting date,Company ID,Job ID

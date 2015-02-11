@@ -1,0 +1,1 @@
+Job = Struct.new(:job_title, :company_name, :job_link, :location, :posting_date, :company_id, :job_id)
