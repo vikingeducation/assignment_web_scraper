@@ -21,6 +21,8 @@ class DiceScraper
     create_jobs
   end
 
+  private
+
   def set_query(query)
     @search_form.q = query
   end
@@ -30,16 +32,15 @@ class DiceScraper
   end
 
   def create_jobs
-    i = 0
     @job_elements.each do |element|
-      job = create_job_from_link element
-      puts i
-      puts job
-      i += 1
+      job = create_job_from element
+      CSV.open('jobs.csv','a') do |csv|
+        csv << [job.title, job.company, job.link, job.location, job.posting_date, job.company_id, job.job_id]
+      end
     end
   end
 
-  def create_job_from_link(job_element)
+  def create_job_from(job_element)
     name = job_element.search("a[@class='dice-btn-link']").text
     company = job_element.search(".employer").text.strip
     link = job_element.search("h3/a").attribute("href").value
@@ -57,7 +58,9 @@ class DiceScraper
   end
 
   def days_ago_calculator(relative)
-    return 0 if relative =~ /hour/
+    if relative =~ /moments ago/ || relative =~ /hour/
+      return 0
+    end
     /^(\d+)\s/.match(relative)[1].to_i if relative =~ /day/
   end
 end
