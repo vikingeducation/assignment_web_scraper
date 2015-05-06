@@ -33,7 +33,7 @@ class ScrapeBot
 
 	def search(search_term)
 		page = @agent.get('http://dice.com/') do |page|
-			search_results = get_search_results(page)			# Get search results page
+			search_results = get_search_results(page, search_term)			# Get search results page
 			job_links = get_job_links(search_results) 		# Get the job links
 			final = get_job_links_info(job_links)					# Scrape the info from each item in job_links
 			return final
@@ -48,9 +48,9 @@ class ScrapeBot
 	end
 
 	# Returns the first page of all search results
-	def get_search_results(page)
+	def get_search_results(page, search_term)
 		search_results = page.form_with(:action => '/jobs') do |search|
-			search.q = 'Ruby' 
+			search.q = search_term
 		end.submit
 		search_results
 	end

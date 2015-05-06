@@ -10,7 +10,6 @@ class CSVSaver
 
 	def save(results)
 		CSV.open('csv_file.csv', 'a') do |csv|
-      # each one of these comes out in its own row.
       results.each do |result|
       	buffer = []
       	args = [:job_title, :company_name, :link, :location, :date, :company_id, :job_id]
