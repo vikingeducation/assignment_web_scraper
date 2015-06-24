@@ -21,8 +21,11 @@ search_form.l = "Boston, MA"
 
 page = agent.submit(search_form)
 
+# sort by date
+page = page.link_with(:id => "sort-by-date-link").click
 
-result_content = page.search("div.serp-result-content")
+
+result_content = page.search("#search-results-control .serp-result-content")
 
 
 result_content.each_entry do |result|
@@ -33,7 +36,6 @@ result_content.each_entry do |result|
 
   posted = result.at_css("li.posted").text
   parse_time = posted.match(/(\d.*?)\s(.*?)s?\s/i)
-  p parse_time
 
   if parse_time.nil?
     hours_since_post = 0
