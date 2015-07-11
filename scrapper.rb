@@ -38,27 +38,31 @@ class Scrapper
   end
 
   def build_info(arr)
+     all_positions = []
       arr.each do |position|
-        position_name=position.at_css('h3 a').text.strip
-        company=position.at_css('li a').text.strip
-        link=position.at_css('h3 a').at_css('h3 a').attribute('href').value
-        location=position.at_css('li.location').text
-        date=position.at_css('li.posted').text
-        company_id=position.at_css('ul li a').attribute('href').value
-        job_id=position.at_css('h3 a').at_css('h3 a').attribute('href').value
+        position_name = position.at_css('h3 a').text.strip
+        company = position.at_css('li a').text.strip
+        link = position.at_css('h3 a').attribute('href').value
+        location = position.at_css('li.location').text
+        date = position.at_css('li.posted').text
+        company_id = position.at_css('ul li a').attribute('href').value 
+        job_id = position.at_css('h3 a').attribute('href').value
+
+         all_positions << [position_name,company,link,location, date,company_id,job_id]
+          
       end
       #pass back an arr
+      write_csv(all_positions)
   end
-#   def write_csv (page)
 
-#     CSV.open('csv_file.csv', 'a') do |csv|
-#     # each one of these comes out in its own row.
-    
-#     csv << ['Harry', 'Potter', 'Wizard', '7/31/1980', 'Male', 'England']
-#     csv << ['Bugs', 'Bunny', 'Cartoon', '7/27/1940', 'Male', 'The Woods']
-# end
-  # end
-
+  def write_csv (jobs)
+       
+    CSV.open('csv_file.csv', 'a') do |row|
+      jobs.each do |job|
+          row << job
+      end
+    end
+  end
 end
 
 Scrapper.new.scrap
