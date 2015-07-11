@@ -1,6 +1,7 @@
 =begin
 1. Search form parameters:
 	- Job title / keywords: class: form-control input-lg id: search-field-keyword
+
 	- Zipcode, City or State: class: form-control  id: search-field-location
 	- Find Tech Jobs
 2. Pagination of results
@@ -11,10 +12,19 @@ a. Preform a search query and returns first results
 
 =end
 
+#  struct job-title, company name, 
+# link to posting on dice, 
+# location, posting date, comp ID, Job ID
+
+#make array of structs
+#make sleeper function
 
 require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
+
+JobPosting = Struct.new(:title, :co_name, :post_link,
+							:location, :post_date, :co_ID, :job_ID)
 
 def goog_searcher
 	a = Mechanize.new
@@ -33,6 +43,8 @@ end
 
 def dice
 	b = Mechanize.new
+
+	b.history_added = Proc.new { sleep 0.5 }
 
 	b.get("http://www.dice.com/") do |page|
 		#submit the search fields and get result
