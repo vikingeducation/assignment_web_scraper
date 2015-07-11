@@ -14,25 +14,24 @@ def calculate_date(time)
   time_value = arr[0].to_i
 
   # arr[1] is the period (seconds, minutes, hours, days, weeks, months, or years)
-  # delete 's' to accomodate for plurality
-  period = arr[1].delete("s")
+  period = arr[1]
 
   period_in_seconds = 0
 
   case period
-  when "second"
+  when period.include?("second")
     period_in_seconds = period
-  when "minute"
+  when period.include?("minute")
     period_in_seconds = period * 60
-  when "hour"
+  when period.include?("hour")
     period_in_seconds = period * 60 * 60
-  when "day"
-    period_in_seconds = period * 60 * 60 * 24
-  when "week"
+  when period.include?("day")
+    period_in_seconds = period_in_secondsd * 60 * 60 * 24
+  when period.include?("week")
     period_in_seconds = period * 60 * 60 * 24 * 7
-  when "month"
+  when period.include?("month")
     period_in_seconds = period * 60 * 60 * 24 * 7 * 30
-  when "year"
+  when period.include?("year")
     period_in_seconds = period * 60 * 60 * 24 * 7 * 30 * 12
   end
 
@@ -42,7 +41,7 @@ def calculate_date(time)
   # Get difference between current time and post time
   post_time = current_time - (time_value * period_in_seconds)
 
-  
+
 end
 
 agent = Mechanize.new
