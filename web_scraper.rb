@@ -17,7 +17,7 @@ class DiceScraper
 
   def scrape_n_save
     mech_obj = scraping_dice
-    job_list = process_mechanize_obj(mech_obj)
+    job_list = post_generator(mech_obj)
     data = scrape_job_post(job_list)
     save_data(data)
   end
@@ -35,8 +35,8 @@ class DiceScraper
     results_page
   end
 
-  def process_mechanize_obj(mech_obj)
-    job_list = mech_obj.parser #nokogiri obj
+  def post_generator(mech_obj)
+    job_list = mech_obj.search("div[@class=serp-result-content]") #nokogiri obj
   end
 
   def scrape_job_post(job_list)
@@ -49,6 +49,7 @@ class DiceScraper
       location = job.css("li.location").text
       date_posted = date_conversion(job.css("li.posted").text)
       job_arr << [id, employer, title, link, location, date_posted].flatten!
+    #binding.pry
     end
     job_arr #all job posts on one page
   end
@@ -66,7 +67,7 @@ class DiceScraper
   end
 
   def date_conversion(date_str, time_of_scraping = Time.new(2015, 7, 11, 17, 8, 2, "-04:00"))
-    date_str.split!(" ")
+    date_str.split(" ")
     words_to_date(time_of_scraping) unless time_of_scraping.is_a?(Time)
     date = date_str[0].to_i * words_to_date(date_str[1])
   end
