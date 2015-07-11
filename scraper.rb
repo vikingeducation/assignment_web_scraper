@@ -12,7 +12,7 @@ require 'pry'
 
 class Scraper
 
-  attr_reader :page
+  attr_reader :page, :links
 
   def initialize
 
@@ -42,47 +42,42 @@ class Scraper
 
     get_jobs_number
 
-    2.times do |i|
+    get_jobs_number.times do |i|
 
       titles << title_scraper(i)
       companies << company_scraper(i)
       links << link_scraper(i)
-      sleep(1)
-      company_id << id_scraper(i)[0]
-      position_id << id_scraper(i)[1]
+      company_id << id_scraper(links[i])[0]
+      position_id << id_scraper(links[i])[1]
 
     end
 
     locations = location_scraper
     date = date_scraper
 
-    p titles
-    p companies
-    # p links
-    p locations
-    p date
-    p company_id
-    p position_id
+    info = [titles, companies, links, locations, date, company_id, position_id].transpose
+
+    output_to_csv(info)
+
+  
 
   end
 
   def title_scraper(i)
-    temp_title = ""
     temp_title =  @page.css("a#position#{i}").text
     temp_title.gsub!(/[\t\r\n]/, "")
     temp_title = temp_title[0..temp_title.length/2 - 1]
   end
 
   def company_scraper(i)
-    temp_company = ""
     temp_company = @page.css("a#company#{i}").text
     temp_company.gsub!(/[\t\r\n]/, "")
     temp_company = temp_company[0..temp_company.length/2 - 1]
   end
 
   def link_scraper(i)
-    temp_link = ""
     temp_link = @page.css("a#position#{i}")[0].attributes["href"].value
+    temp_link
   end
 
   def location_scraper
@@ -119,11 +114,15 @@ class Scraper
 
   end
 
-  def id_scraper(i)
 
-    temp_page = @agent.page.link_with(:id => "position#{i}").click.parser
+  def id_scraper(link)
+    regex = /[^\/]*\/[^\/]*\?/
 
-    temp_page.css("div.company-header-info div.row").map {|text| text.text.strip}[1..2]
+    temp = link.match(regex).to_s
+    temp.slice!("?")
+    temp.split("/")
+
+  
 
   end
 
@@ -133,13 +132,13 @@ class Scraper
 
   end
 
-  def output_to_csv
+  def output_to_csv(info)
 
-    # CSV.open('csv_file.csv', 'a') do |csv|
-    #     each one of these comes out in its own row.
-    #     csv << titles
-    #     csv << companies
-    # end
+    CSV.open('csv_file.csv', 'a') do |csv|
+        info.each do |i|
+          csv << i
+        end
+    end
 
   end
 
@@ -147,4 +146,5 @@ end
 
 s = Scraper.new
 s.main
+
 
