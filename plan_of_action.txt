@@ -28,3 +28,5 @@ company segment: dcs-DirectHire <-adds on after location
 title: djt-Ruby+on+Rails+Developer <-after company segment
 company: dc-Delta+International+INC <-b/w location and title
 job type: jtype-Full+Time <- b/w
+
+questions: object -> csv file? or string?
