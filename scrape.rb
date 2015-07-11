@@ -2,7 +2,27 @@ require 'mechanize'
 require 'csv'
 require 'pry'
 
-class Scraper
+module CSVWritable
+
+  def append_to_file(info)
+    CSV.open("results.csv", "a") do |file|
+      info.each do |entry|
+        file << [entry[:title],
+                 entry[:cname],
+                 entry[:link],
+                 entry[:loc],
+                 entry[:date].strftime("%B %d, %Y"),
+                 entry[:cid],
+                 entry[:jid]]
+      end
+    end
+  end
+
+end
+
+class DiceScraper
+
+  include CSVWritable
 
   def initialize
     @agent = Mechanize.new
@@ -12,11 +32,11 @@ class Scraper
     @page_num = 1
   end
 
-  def search_dice(query, location, duration=1000)
+  def search_jobs(query, location, duration=1000)
     @duration = duration
     @url = formatted_url(query, location)
     parse_page(nav_url)
-    append_to_file
+    append_to_file(@info_array)
   end
 
 
@@ -32,22 +52,18 @@ class Scraper
 
   def parse_page(url)
     page = @agent.get(url)
+
+    # Search the page for any results
     listings = page.search(".serp-result-content")
 
     inside_duration = true
     @page_num = 1
+    # While there are results on the page (and they aren't too old)
     while (page.search(".serp-result-content").search('.dice-btn-link').any? && inside_duration)
       p "Getting url #{nav_url}"
       listings.each do |listing|
 
-        info = {}
-        info[:title] = listing.search('.dice-btn-link')[0].inner_text.strip
-        info[:link] = listing.search('.dice-btn-link')[0]["href"]
-        info[:jid] = get_jid(info[:link])
-        info[:cname] = listing.search('.dice-btn-link')[1].inner_text.strip
-        info[:cid] = get_cid(listing.search('.dice-btn-link')[1]["href"])
-        info[:loc] = listing.search('.location')[0].inner_text.strip
-        info[:date] = get_post_date(listing.search('.posted')[0].inner_text.strip)
+        info = generate_info(listing)
         if (DateTime.now - @duration) > info[:date]
           inside_duration = false
           break
@@ -55,16 +71,22 @@ class Scraper
         @info_array << info
       end
       @page_num += 1
-      
+
       page = @agent.get(nav_url)
       listings = page.search(".serp-result-content")
     end
   end
 
-  def print_values(symbol)
-    @info_array.each do |entry|
-      p entry[symbol.to_sym]
-    end
+  def generate_info(listing)
+    info = {}
+    info[:title] = listing.search('.dice-btn-link')[0].inner_text.strip
+    info[:link] = listing.search('.dice-btn-link')[0]["href"]
+    info[:jid] = get_jid(info[:link])
+    info[:cname] = listing.search('.dice-btn-link')[1].inner_text.strip
+    info[:cid] = get_cid(listing.search('.dice-btn-link')[1]["href"])
+    info[:loc] = listing.search('.location')[0].inner_text.strip
+    info[:date] = get_post_date(listing.search('.posted')[0].inner_text.strip)
+    return info
   end
 
   def get_cid(url)
@@ -87,24 +109,10 @@ class Scraper
 
     return (DateTime.now - (multiplier * duration)).to_datetime
   end
-
-  def append_to_file
-    CSV.open("results.csv", "a") do |file|
-      @info_array.each do |entry|
-        file << [entry[:title], 
-                 entry[:cname],
-                 entry[:link], 
-                 entry[:loc],
-                 entry[:date].strftime("%B %d, %Y"),
-                 entry[:cid],
-                 entry[:jid]]
-      end
-    end
-  end
 end
 
-s = Scraper.new
-s.search_dice('python', 'san francisco, ca', 7)
+ds = DiceScraper.new
+ds.search_jobs('python', 'san francisco, ca', 7)
 
 # page = agent.get('https://www.dice.com/jobs?q=ruby&l=60565')
 
