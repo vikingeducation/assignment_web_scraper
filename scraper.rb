@@ -26,24 +26,34 @@ class Scraper
     # Nokogiri::HTML(open("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time")) 
 
     agent = Mechanize.new
-    agent.get("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time").parser
+    @page = agent.get("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time").parser
 
   end
 
   def other
 
-   p  @results.search("div[@class='serp-result-content']")
+  #  # p  @results.search("div[@class='serp-result-content']")
 
-   job_elements = results.search("div[@class='serp-result-content']")
+  #  job_elements = @results.search("div[@class='serp-result-content']")
 
-    job_elements.each do |job|
-      job_link = job.at_css("h3 a").attributes["href"].value
-      job_title = job.at_css("h3").text.strip
-      company_name = job.at_css("li[@class = employer]").text
-      location = job.at_css("li[@class = location]").text
-      # time = calculate_date(job.at_css("li[@class = posted]").text)
+  #  job_link = []
+  #  job_title = []
+  #  company_name = []
+  #  location = []
+
+  #   job_elements.each do |job|
+  #     job_link << job.at_css("h3 a").attributes["href"].value
+  #     job_title << job.at_css("h3").text.strip
+  #     company_name << job.at_css("li[@class = employer]").text
+  #     location << job.at_css("li[@class = location]").text
+  #     # time = calculate_date(job.at_css("li[@class = posted]").text)
       
-    end
+  #   end
+
+  #   p job_title.count
+  #   p job_link.count
+  #   p company_name.count
+  #   p location.count
 
 
 
@@ -54,14 +64,25 @@ class Scraper
     titles = []
     companies = []
     links = []
+    locations = []
 
-    50.times do |i|
+    get_jobs_number
 
-    titles << title_scraper(i)
-    companies << company_scraper(i)
-    links << link_scraper(i)
+    get_jobs_number.times do |i|
+
+      titles << title_scraper(i)
+      companies << company_scraper(i)
+      links << link_scraper(i)
 
     end
+
+    locations = location_scraper
+
+    p titles
+    p companies
+    # p links
+    p locations
+
 
   end
 
@@ -81,16 +102,26 @@ class Scraper
 
   def link_scraper(i)
     temp_link = ""
-    temp_link = @page.css('a#position#{i}')[0].attributes["href"].value
+    temp_link = @page.css("a#position#{i}")[0].attributes["href"].value
   end
 
   def location_scraper
-    temp_title = []
-    temp_title =  @page.css("ul.list-inline.details li.location") #.each do |ul|
-    #   puts ul.children[-1].text
-    # end
-    puts temp_title.count
-    # puts temp_titlepr
+    temp_location = []
+    @page.css("ul.list-inline.details li.location").each do |ul|
+      temp_location << ul.children[-1].text
+    end
+    temp_location[0..temp_location.length/2 - 1]
+   
+  end
+
+  def date_scraper
+
+  end
+
+  def get_jobs_number
+
+     p @page.at_css("div h4 span").text.to_i
+
   end
 
   def output_to_csv
@@ -106,5 +137,5 @@ class Scraper
 end
 
 s = Scraper.new
-s.other
+s.get_jobs_number
 
