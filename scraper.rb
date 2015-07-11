@@ -6,6 +6,7 @@ require 'rubygems'
 require 'mechanize'
 require 'csv' 
 require 'pry'
+# require 'date'
 
 
 
@@ -25,37 +26,8 @@ class Scraper
 
     # Nokogiri::HTML(open("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time")) 
 
-    agent = Mechanize.new
-    @page = agent.get("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time").parser
-
-  end
-
-  def other
-
-  #  # p  @results.search("div[@class='serp-result-content']")
-
-  #  job_elements = @results.search("div[@class='serp-result-content']")
-
-  #  job_link = []
-  #  job_title = []
-  #  company_name = []
-  #  location = []
-
-  #   job_elements.each do |job|
-  #     job_link << job.at_css("h3 a").attributes["href"].value
-  #     job_title << job.at_css("h3").text.strip
-  #     company_name << job.at_css("li[@class = employer]").text
-  #     location << job.at_css("li[@class = location]").text
-  #     # time = calculate_date(job.at_css("li[@class = posted]").text)
-      
-  #   end
-
-  #   p job_title.count
-  #   p job_link.count
-  #   p company_name.count
-  #   p location.count
-
-
+    @agent = Mechanize.new
+    @page = @agent.get("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time").parser
 
   end
 
@@ -65,24 +37,32 @@ class Scraper
     companies = []
     links = []
     locations = []
+    company_id = []
+    position_id = []
 
     get_jobs_number
 
-    get_jobs_number.times do |i|
+    2.times do |i|
 
       titles << title_scraper(i)
       companies << company_scraper(i)
       links << link_scraper(i)
+      sleep(1)
+      company_id << id_scraper(i)[0]
+      position_id << id_scraper(i)[1]
 
     end
 
     locations = location_scraper
+    date = date_scraper
 
     p titles
     p companies
     # p links
     p locations
-
+    p date
+    p company_id
+    p position_id
 
   end
 
@@ -116,11 +96,40 @@ class Scraper
 
   def date_scraper
 
+    temp_date = []
+    @page.css("ul.list-inline.details li.posted").each do |li|
+      temp_date << li.text
+    end
+    
+    temp_date[0..temp_date.length/2 - 1].map {|date| date_calculator(date)}
+
+  end
+
+  def date_calculator(date)
+
+    current_date = Date.today
+
+    if date.include?("days")
+      (current_date - date.to_i).strftime("%b %-d, %y")
+    elsif date.include?("weeks")
+      (current_date - date.to_i * 7).strftime("%b %-d, %y")
+    else
+      current_date.strftime("%b %-d, %y")
+    end
+
+  end
+
+  def id_scraper(i)
+
+    temp_page = @agent.page.link_with(:id => "position#{i}").click.parser
+
+    temp_page.css("div.company-header-info div.row").map {|text| text.text.strip}[1..2]
+
   end
 
   def get_jobs_number
 
-     p @page.at_css("div h4 span").text.to_i
+     @page.at_css("div h4 span").text.to_i
 
   end
 
@@ -137,5 +146,5 @@ class Scraper
 end
 
 s = Scraper.new
-s.get_jobs_number
+s.main
 
