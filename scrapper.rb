@@ -6,16 +6,17 @@ require 'Nokogiri'
 require 'csv' 
 
 class Scrapper
+  attr_reader :page
 
   def initialize
     # Instantiate a new Mechanize
-    @agent = Mechanize.new 
+    @agent = Mechanize.new
   end
 
   def scrap
     # Grab and parse our page in one step
     # like we did with Nokogiri and open-uri
-    page = @agent.get('http://www.dice.com/')
+    @page = @agent.get('http://www.dice.com/')
 
     # Grab the form by ID or action
     keyword_form = page.form_with(:id => "search-form")
@@ -25,16 +26,21 @@ class Scrapper
     keyword_form.q = 'ruby developer'
 
     # Actually submit the form
-    page = @agent.submit(keyword_form)
+    @page = @agent.submit(keyword_form)
 
+    search_by_date
+
+    # results = page.search(".//div[@class='serp-result-content']")
+    #   # pp test.first.text
+    # info=build_info(results)
+    #     # write_csv(info)
     
 
-    results = page.search(".//div[@class='serp-result-content']")
-      # pp test.first.text
-    info=build_info(results)
-        # write_csv(info)
-      
+  end
 
+  def search_by_date
+    p @page.search(".//a[@div='sort-by-date-link']")
+    puts "testing"
   end
 
   def build_info(arr)
