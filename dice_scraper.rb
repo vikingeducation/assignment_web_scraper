@@ -7,13 +7,11 @@ require "pry"
 
 class DiceScraper
 
-  def initialize(year = 2015, month = 1, day = 1)
+  def initialize(year = 2015, month = 01, day = 01)
 
     @start_date = Time.new(year, month, day)
 
-    job_postings = initialize_page
-
-    scrape(job_postings)
+    scrape
 
   end
 
@@ -31,34 +29,37 @@ class DiceScraper
 
     period_in_seconds = 0
 
-    case period
-    when period.include?("second")
-      period_in_seconds = period
-    when period.include?("minute")
-      period_in_seconds = period * 60
-    when period.include?("hour")
-      period_in_seconds = period * 60 * 60
-    when period.include?("day")
-      period_in_seconds = period_in_secondsd * 60 * 60 * 24
-    when period.include?("week")
-      period_in_seconds = period * 60 * 60 * 24 * 7
-    when period.include?("month")
-      period_in_seconds = period * 60 * 60 * 24 * 7 * 30
-    when period.include?("year")
-      period_in_seconds = period * 60 * 60 * 24 * 7 * 30 * 12
+    if period.include?("second")
+      period_in_seconds = time_value
+    elsif period.include?("minute")
+      period_in_seconds = time_value * 60
+    elsif period.include?("hour")
+      period_in_seconds = time_value * 60 * 60
+    elsif period.include?("day")
+      period_in_seconds = time_value * 60 * 60 * 24
+    elsif period.include?("week")
+      period_in_seconds = time_value * 60 * 60 * 24 * 7
+    elsif period.include?("month")
+      period_in_seconds = time_value * 60 * 60 * 24 * 7 * 30
+    elsif period.include?("year")
+      period_in_seconds = time_value * 60 * 60 * 24 * 7 * 30 * 12
     end
 
     # Get current time
     current_time = Time.now
 
     # Get difference between current time and post time
-    @post_time = current_time - (time_value * period_in_seconds)
+    @post_time = current_time - period_in_seconds
 
     "#{@post_time.month}/#{@post_time.day}/#{@post_time.year}"
 
   end
 
-  def scrape(job_elements)
+  def scrape
+
+    page_count = 1
+
+    @post_time = Time.now
 
     #binding.pry
     add_header = File.exist?('job_list.csv')
@@ -67,21 +68,35 @@ class DiceScraper
       csv << ["Title", "Company Name", "Link", "Location",
       "Post Date", "Dice ID", "Job ID"] unless add_header
 
-      job_elements.each do |job_post|
+      until @start_date > @post_time
 
-        job_details = get_job_details(job_post)
+        p generate_url(page_count)
 
-        csv << job_details if  @post_time > @start_date
+        job_postings = initialize_page(generate_url(page_count))
+
+        job_postings.each do |job_post|
+
+          job_details = get_job_details(job_post)
+
+          csv << job_details if @post_time > @start_date
+
+        end
+
+        break if @start_date > @post_time
+
+        page_count += 1
 
       end
 
     end
 
-
   end
 
-  def initialize_page(url = "https://www.dice.com/jobs/q-ruby-sort-date-startPage-1-limit-120-jobs.html")
+  def generate_url(page_num = 1)
+    url = "https://www.dice.com/jobs/q-ruby-sort-date-startPage-#{page_num}-limit-120-jobs.html"
+  end
 
+  def initialize_page(url)
     agent = Mechanize.new
     agent.history_added = Proc.new { sleep 0.5 }
     # page = agent.get('http://www.dice.com')
@@ -110,10 +125,9 @@ class DiceScraper
       formatted_time, job_company_id, post_id
     ]
 
-
   end
 end
 
-scraper = DiceScraper.new(2015, 6, 11)
+scraper = DiceScraper.new(2015, 07, 01)
 
 
