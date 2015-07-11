@@ -38,28 +38,61 @@ class Scrapper
   end
 
   def build_info(arr)
+     all_positions = []
       arr.each do |position|
+
         position_name=position.at_css('h3 a').text.strip
         company=position.at_css('li a').text.strip
         link=position.at_css('h3 a').attribute('href').value
         location=position.at_css('li.location').text
-        date=position.at_css('li.posted').text
+        #receives string like 45 minutes age or 2 days ago
+        date=data_calc(position.at_css('li.posted').text) 
         company_id=position.at_css('ul li a').attribute('href').value.match(/([^\/]*)$/)[0]
-        job_id=position.at_css('h3 a').attribute('href').value
+        job_id=position.at_css('h3 a').attribute('href').value.match(/([^\/]*)\?/)[0][0..-2]
+
+        all_positions << [position_name,company,link,location, date,company_id,job_id]
+          
       end
       #pass back an arr
+      write_csv(all_positions)
   end
-#   def write_csv (page)
 
-#     CSV.open('csv_file.csv', 'a') do |csv|
-#     # each one of these comes out in its own row.
-    
-#     csv << ['Harry', 'Potter', 'Wizard', '7/31/1980', 'Male', 'England']
-#     csv << ['Bugs', 'Bunny', 'Cartoon', '7/27/1940', 'Male', 'The Woods']
-# end
-  # end
+  def write_csv (jobs)
+       
+    CSV.open('csv_file.csv', 'a') do |row|
+      jobs.each do |job|
+          row << job
+      end
+    end
+  end
+end
+
+def data_calc(str)
+  #minute/minutes hour/hours day/days week/weeks
+  
+  digit=str.split(' ')[0].to_i
+  order=str.split(' ')[1]
+
+  order=order[0..-2] if order[-1] == "s"
+  
+  case order.downcase
+    when "second"
+      Time.at(Time.now.to_i-digit).strftime("%Y-%m-%d")
+    when "minute"
+      Time.at(Time.now.to_i-digit*60).strftime("%Y-%m-%d")
+    when "hour"
+      Time.at(Time.now.to_i-digit*60*60).strftime("%Y-%m-%d")
+    when "day"
+      Time.at(Time.now.to_i-digit*60*60*24).strftime("%Y-%m-%d")
+    when "week"
+      Time.at(Time.now.to_i-digit*60*60*24*7).strftime("%Y-%m-%d")
+  end
 
 end
 
+# puts data_calc("45 minutes ago")
+# puts data_calc("1 day ago")
+# puts data_calc("2 weeks ago")
+# puts data_calc("5 hours ago")
 Scrapper.new.scrap
 
