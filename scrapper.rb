@@ -41,11 +41,11 @@ class Scrapper
       arr.each do |position|
         position_name=position.at_css('h3 a').text.strip
         company=position.at_css('li a').text.strip
-        link=position.at_css('h3 a').at_css('h3 a').attribute('href').value
+        link=position.at_css('h3 a').attribute('href').value
         location=position.at_css('li.location').text
         date=position.at_css('li.posted').text
-        company_id=position.at_css('ul li a').attribute('href').value
-        job_id=position.at_css('h3 a').at_css('h3 a').attribute('href').value
+        company_id=position.at_css('ul li a').attribute('href').value.match(/([^\/]*)$/)[0]
+        job_id=position.at_css('h3 a').attribute('href').value
       end
       #pass back an arr
   end
