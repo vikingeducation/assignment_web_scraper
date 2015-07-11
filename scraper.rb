@@ -1,8 +1,11 @@
 
 require 'rubygems'
-require 'nokogiri'  
-require 'open-uri'  # our chosen HTTP library
+# require 'nokogiri'  
+# require 'open-uri'  # our chosen HTTP library
+
+require 'mechanize'
 require 'csv' 
+require 'pry'
 
 
 
@@ -13,13 +16,36 @@ class Scraper
   def initialize
 
     @page = grab_page
+    @results = grab_page
 
   end
 
 
   def grab_page
 
-    Nokogiri::HTML(open("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time"))  
+    # Nokogiri::HTML(open("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time")) 
+
+    agent = Mechanize.new
+    agent.get("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time").parser
+
+  end
+
+  def other
+
+   p  @results.search("div[@class='serp-result-content']")
+
+   job_elements = results.search("div[@class='serp-result-content']")
+
+    job_elements.each do |job|
+      job_link = job.at_css("h3 a").attributes["href"].value
+      job_title = job.at_css("h3").text.strip
+      company_name = job.at_css("li[@class = employer]").text
+      location = job.at_css("li[@class = location]").text
+      # time = calculate_date(job.at_css("li[@class = posted]").text)
+      
+    end
+
+
 
   end
 
@@ -64,7 +90,7 @@ class Scraper
     #   puts ul.children[-1].text
     # end
     puts temp_title.count
-    # puts temp_title
+    # puts temp_titlepr
   end
 
   def output_to_csv
@@ -80,5 +106,5 @@ class Scraper
 end
 
 s = Scraper.new
-s.location_scraper
+s.other
 
