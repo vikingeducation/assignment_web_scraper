@@ -40,7 +40,6 @@ def dice
 		submit_query.q = "Ruby on Rails"
 		submit_query.l = "San Francisco, CA"
 		result = b.submit(submit_query, submit_query.button)
-
 		result.links_with(:href => /(?<=www.dice.com\/company\/).*/).each do |link|
 			pp link.text
 		end
