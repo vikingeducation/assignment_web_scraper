@@ -20,7 +20,7 @@ class WriteJobs
 			CSV.open('csv_file.csv', 'a') do |csv|
 				# csv << [title(job), co_name(job), post_link(job), location(job), post_date(job), job_id(job), company_id(job)]
 				csv << [title(job), co_name(job), post_link(job),
-						location(job)]
+						location(job), company_id(job), job_id(job)]
 			end
 		end
 	end
@@ -45,7 +45,7 @@ class WriteJobs
 		job.css("li")[1].text
 	end
 
-	def post_date
+	def post_date(job)
 		posting_sched = job.css("li")[2].text
 		time = time.now
 		day = time.day
@@ -67,11 +67,21 @@ class WriteJobs
 		end
 	end
 
-	def company_id
-
+	def company_id(job)
+		#slice off question mark
+		#take off next to last one is co ID
+		link = job.css("h3 a").first.attr('href')
+		com_id_string = link.match(/(?<=[0-9]\/)([a-zA-Z]||[0-9]).*(?=\/)/)
+		com_id_string[0]
+		# link = post_link(job)
 	end
 
-	def job_id
+	def job_id(job)
+		#slice off question mark
+		#take off last one is job id
+		link = job.css("h3 a").first.attr('href')
+		job_id_string = link.match(/(?<=\/)([A-Z]|[0-9])+([A-Z]|[0-9])+.*(?=\?)/)
+		job_id_string[0]
 
 	end
 
