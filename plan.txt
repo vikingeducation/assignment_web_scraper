@@ -23,23 +23,28 @@ for each instance of class: serp-result-content
 
 
 Indeed.com
-Get every element that has class "row  result"
 
-for each instance of class: row  result
+listings = page.parser.xpath("//a[@class='jobtitle']") + page.parser.xpath("//h2[@class='jobtitle']")
 
-  1st class dice-btn-link
-    href = Link to posting on Dice
-    inner text = Job Title
-  2nd class dice-btn-link
-    inner text = Company name
-    href contains company ID
-  class 'location' inner text = location
-  class 'posted' inner text = time (but it's relative)
+listings.map {|listing| listing.parent}
 
+class: (.row && .result)
+  href = Link to posting on Dice (1. sponsor 2. non-sponsor)
+  inner text = Job Title
 
+  (.row && .result).company
+       inner text = Company name
 
-
+  (.row && .result).location
+       inner text = location
 
 
+class: result-link-bar
+  class 'date' inner text = time (but it's relative)
 
-  
+
+
+
+
+
+
