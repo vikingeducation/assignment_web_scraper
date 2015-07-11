@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
+require 'Nokogiri'  
 # this is all it takes. CSV is standard.
 require 'csv' 
 
@@ -29,20 +30,26 @@ class Scrapper
     # Actually submit the form
     page = @agent.submit(keyword_form)
 
-    write_csv (page)
+    # write_csv (page)
     # Print out the page using the "pretty print" command
-    pp page
+    # pp page
+      test = page.search(".//a[@class='dice-btn-link' ]")
+
+      test.each do |readout|
+        p readout.attributes
+
+      end
   end
 
-  def write_csv (page)
+#   def write_csv (page)
 
-    CSV.open('csv_file.csv', 'a') do |csv|
-    # each one of these comes out in its own row.
+#     CSV.open('csv_file.csv', 'a') do |csv|
+#     # each one of these comes out in its own row.
     
-    csv << ['Harry', 'Potter', 'Wizard', '7/31/1980', 'Male', 'England']
-    csv << ['Bugs', 'Bunny', 'Cartoon', '7/27/1940', 'Male', 'The Woods']
-end
-  end
+#     csv << ['Harry', 'Potter', 'Wizard', '7/31/1980', 'Male', 'England']
+#     csv << ['Bugs', 'Bunny', 'Cartoon', '7/27/1940', 'Male', 'The Woods']
+# end
+  # end
 
 end
 
