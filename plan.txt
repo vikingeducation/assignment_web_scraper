@@ -1,15 +1,21 @@
-Job title
-Company name
-Link to posting on Dice
+Job title .
+Company name .
+Link to posting on Dice .
 Location
 Posting date (not a relative date like "x weeks ago" because that will quickly be meaningless)
 Company ID
 Job ID
 
 
+Get every element that has class "serp-result-content"
 
+for each instance of class: serp-result-content
 
-class: serp-result-content
-  <h3><a>Job title
-  2nd class dice-btn-link  Company name
-  1st class dice-btn-link  Link to posting on Dice
+  1st class dice-btn-link
+    href = Link to posting on Dice
+    inner text = Job Title
+  2nd class dice-btn-link
+  	inner text = Company name
+  	href contains company ID
+  class 'location' inner text = location
+  class 'posted' inner text = time (but it's relative)
