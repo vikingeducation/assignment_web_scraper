@@ -1,5 +1,6 @@
 require 'mechanize'
 require 'csv'
+require 'pry'
 
 class Scraper
 
@@ -22,11 +23,11 @@ class Scraper
   def formatted_url(query, location)
     query = query.gsub(" ", "+").gsub(",", "%2C")
     location = location.gsub(" ", "+").gsub(",", "%2C")
-    "https://www.dice.com/jobs/q-#{query}-l-#{location}-radius-30-sort-date-limit-120"
+    return "https://www.dice.com/jobs/q-#{query}-l-#{location}-radius-30-sort-date-limit-120"
   end
 
   def nav_url
-    @url + "-startPage-#{@page_num}-jobs"
+    return @url + "-startPage-#{@page_num}-jobs"
   end
 
   def parse_page(url)
@@ -34,9 +35,10 @@ class Scraper
     listings = page.search(".serp-result-content")
 
     inside_duration = true
-    page_num = 1
-    while (page.search('Go to next page').any? && inside_duration)
+    @page_num = 1
+    while (page.search(".serp-result-content").search('.dice-btn-link').any? && inside_duration)
       listings.each do |listing|
+
         info = {}
         info[:title] = listing.search('.dice-btn-link')[0].inner_text.strip
         info[:link] = listing.search('.dice-btn-link')[0]["href"]
@@ -45,18 +47,18 @@ class Scraper
         info[:cid] = get_cid(listing.search('.dice-btn-link')[1]["href"])
         info[:loc] = listing.search('.location')[0].inner_text.strip
         info[:date] = get_post_date(listing.search('.posted')[0].inner_text.strip)
-        if (DateTime.now - duration) > info[:date]
+        if (DateTime.now - @duration) > info[:date]
           inside_duration = false
           break
         end
         @info_array << info
       end
-      go_to_page(page_num)
+      @page_num += 1
+      p "Getting url #{nav_url}"
+      page = @agent.get(nav_url)
+      listings = page.search(".serp-result-content")
     end
   end
-
-  def go_to_page(page_num)
-    @agent.get(location + "-radius-30-sort-date-jobs")
 
   def print_values(symbol)
     @info_array.each do |entry|
@@ -98,21 +100,10 @@ class Scraper
       end
     end
   end
-
 end
 
 s = Scraper.new
-s.search_dice('ruby dev', 'san francisco, ca')
-s.print_values(:title)
-
-puts ""
-
-s.print_values(:cname)
-s.print_values(:cid)
-
-s.print_values(:loc)
-
-s.print_values(:date)
+s.search_dice('cobol', 'ca')
 
 # page = agent.get('https://www.dice.com/jobs?q=ruby&l=60565')
 
