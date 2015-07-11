@@ -23,7 +23,7 @@ class Scraper
   def formatted_url(query, location)
     query = query.gsub(" ", "+").gsub(",", "%2C")
     location = location.gsub(" ", "+").gsub(",", "%2C")
-    return "https://www.dice.com/jobs/q-#{query}-l-#{location}-radius-30-sort-date-limit-120"
+    return "https://www.dice.com/jobs/q-#{query}-l-#{location}-radius-5-sort-date-limit-120"
   end
 
   def nav_url
@@ -37,6 +37,7 @@ class Scraper
     inside_duration = true
     @page_num = 1
     while (page.search(".serp-result-content").search('.dice-btn-link').any? && inside_duration)
+      p "Getting url #{nav_url}"
       listings.each do |listing|
 
         info = {}
@@ -54,7 +55,7 @@ class Scraper
         @info_array << info
       end
       @page_num += 1
-      p "Getting url #{nav_url}"
+      
       page = @agent.get(nav_url)
       listings = page.search(".serp-result-content")
     end
@@ -71,7 +72,7 @@ class Scraper
   end
 
   def get_jid(url)
-    url.match(/\/([\w\d-]*)[?]/)[1]
+    url.match(/\/([%\w\d-]*)[?]/)[1]
   end
 
   def get_post_date(relative_time_str)
@@ -103,7 +104,7 @@ class Scraper
 end
 
 s = Scraper.new
-s.search_dice('cobol', 'ca')
+s.search_dice('python', 'san francisco, ca', 7)
 
 # page = agent.get('https://www.dice.com/jobs?q=ruby&l=60565')
 

@@ -7,6 +7,7 @@ Company ID
 Job ID
 
 
+Dice.com
 Get every element that has class "serp-result-content"
 
 for each instance of class: serp-result-content
@@ -19,3 +20,26 @@ for each instance of class: serp-result-content
   	href contains company ID
   class 'location' inner text = location
   class 'posted' inner text = time (but it's relative)
+
+
+Indeed.com
+Get every element that has class "row  result"
+
+for each instance of class: row  result
+
+  1st class dice-btn-link
+    href = Link to posting on Dice
+    inner text = Job Title
+  2nd class dice-btn-link
+    inner text = Company name
+    href contains company ID
+  class 'location' inner text = location
+  class 'posted' inner text = time (but it's relative)
+
+
+
+
+
+
+
+  
