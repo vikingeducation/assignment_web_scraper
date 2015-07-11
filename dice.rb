@@ -30,15 +30,19 @@ def goog_searcher
 	  end
 	end
 end
-# a.get("http://www.dice.com/") do |page|
-# 	#submit the search fields and get result
-# 	search_result = page.form_with(:class => 'form-control') do |submit_query|
-# 		submit_query.q = "Ruby on Rails"
-# 		submit_query.l = "San Francisco, CA"
-# 	end.submit
 
-# 	search_result.length.each  do |link|
-# 		puts link.text
-# 	end
+def dice
+	b = Mechanize.new
 
-# end
+	b.get("http://www.dice.com/") do |page|
+		#submit the search fields and get result
+		submit_query = page.form(:id => 'search-form')
+		submit_query.q = "Ruby on Rails"
+		submit_query.l = "San Francisco, CA"
+		result = b.submit(submit_query, submit_query.button)
+
+		result.links_with(:href => /(?<=www.dice.com\/company\/).*/).each do |link|
+			pp link.text
+		end
+	end
+end
