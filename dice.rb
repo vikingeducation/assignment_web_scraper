@@ -18,7 +18,8 @@ a. Preform a search query and returns first results
 
 #make array of structs
 #make sleeper function
-
+require 'nokogiri'
+require 'open-uri'
 require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
@@ -33,13 +34,29 @@ def goog_searcher
 	  search_result = page.form('f')
 	  search_result.q = 'Hello world'
 	  page = a.submit(search_result, search_result.buttons.first)
-	  # end.submit
-	  # pp page
 	  page.links.each do |link|
 	    puts link.text
 	  end
 	end
 end
+
+# def dice
+# 	b = Mechanize.new
+
+# 	b.history_added = Proc.new { sleep 0.5 }
+
+# 	b.get("http://www.dice.com/") do |page|
+# 		jobs = []
+# 		#submit the search fields and get result
+# 		submit_query = page.form(:id => 'search-form')
+# 		submit_query.q = "Ruby on Rails"
+# 		submit_query.l = "San Francisco, CA"
+# 		result = b.submit(submit_query, submit_query.button)
+# 		result.links_with(:href => /(?<=www.dice.com\/company\/).*/).each_with_index do |link, index|
+# 			pp link.text
+# 		end
+# 	end
+# end
 
 def dice
 	b = Mechanize.new
@@ -47,13 +64,50 @@ def dice
 	b.history_added = Proc.new { sleep 0.5 }
 
 	b.get("http://www.dice.com/") do |page|
+		jobs = []
 		#submit the search fields and get result
 		submit_query = page.form(:id => 'search-form')
 		submit_query.q = "Ruby on Rails"
 		submit_query.l = "San Francisco, CA"
 		result = b.submit(submit_query, submit_query.button)
-		result.links_with(:href => /(?<=www.dice.com\/company\/).*/).each do |link|
-			pp link.text
-		end
+		process_search_results(result)
+		# result.links_with(:href => /(?<=www.dice.com\/company\/).*/).each_with_index do |link, index|
+		# 	pp link.text
+		# end
 	end
+end
+
+def process_search_results(results)
+	# results.each(:div => "serp-result-content").each do |line|
+	# 	pp line
+	rows = results.css("div")
+	rows.each {|row| pp row}
+end
+
+def title
+
+end
+
+def co_name
+
+end
+
+def post_link
+
+end
+
+def location
+
+end
+
+def post_date
+
+end
+
+def company_id
+
+end
+
+def job_id
+
 end
