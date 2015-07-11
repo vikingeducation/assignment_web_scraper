@@ -1,4 +1,5 @@
 require 'mechanize'
+require 'csv'
 
 class Scraper
 
@@ -8,10 +9,13 @@ class Scraper
   end
 
   def search_dice(query, location)
-    parse_page(@agent.get(formatted_url(query, location)))  
+    parse_page(@agent.get(formatted_url(query, location)))
+    append_to_file
   end
 
   def formatted_url(query, location)
+    query = query.gsub(" ", "+").gsub(",", "%2C")
+    location = location.gsub(" ", "+").gsub(",", "%2C")
     "https://www.dice.com/jobs?q=#{query}&l=#{location}"
   end
 
@@ -22,6 +26,7 @@ class Scraper
       info = {}
       info[:title] = listing.search('.dice-btn-link')[0].inner_text.strip
       info[:link] = listing.search('.dice-btn-link')[0]["href"]
+      info[:jid] = get_jid(info[:link])
       info[:cname] = listing.search('.dice-btn-link')[1].inner_text.strip
       info[:cid] = get_cid(listing.search('.dice-btn-link')[1]["href"])
       info[:loc] = listing.search('.location')[0].inner_text.strip
@@ -40,6 +45,10 @@ class Scraper
     url.split("/")[-1]
   end
 
+  def get_jid(url)
+    url.match(/\/([\w\d-]*)[?]/)[1]
+  end
+
   def get_post_date(relative_time_str)
     offsets = {"day" => 1, "days" => 1,
                "week" => 7, "weeks" => 7,
@@ -50,13 +59,27 @@ class Scraper
     duration = offsets[relative_time_str[1].downcase]
     duration = 0 if duration.nil?
 
-    return (DateTime.now - (multiplier * duration)).to_datetime
+    return (DateTime.now - (multiplier * duration)).to_datetime.strftime("%B %d, %Y")
+  end
+
+  def append_to_file
+    CSV.open("results.csv", "a") do |file|
+      @info_array.each do |entry|
+        file << [entry[:title], 
+                 entry[:cname],
+                 entry[:link], 
+                 entry[:loc],
+                 entry[:date],
+                 entry[:cid],
+                 entry[:jid]]
+      end
+    end
   end
 
 end
 
 s = Scraper.new
-s.search_dice('ruby', 60565)
+s.search_dice('ruby dev', 'san francisco, ca')
 s.print_values(:title)
 
 puts ""
