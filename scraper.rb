@@ -14,20 +14,30 @@ class Scraper
 
   attr_reader :page, :links
 
-  def initialize
+  def initialize (initial_url)
 
-    @page = grab_page
-    @results = grab_page
+    @page = set_page(initial_url)
+
 
   end
 
+  def 
 
-  def grab_page
 
-    # Nokogiri::HTML(open("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time")) 
+  def grab_page(url)
 
     @agent = Mechanize.new
-    @page = @agent.get("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time").parser
+    @page = @agent.get(url).parser
+
+  end
+
+  def set_page(url)
+      
+    (1... how many pages ) do |current|
+
+      url.gsub("Page-#{current}","Page-#{current+1}")
+
+   end
 
   end
 
@@ -58,8 +68,6 @@ class Scraper
     info = [titles, companies, links, locations, date, company_id, position_id].transpose
 
     output_to_csv(info)
-
-  
 
   end
 
@@ -122,15 +130,15 @@ class Scraper
     temp.slice!("?")
     temp.split("/")
 
-  
-
   end
 
   def get_jobs_number
 
-     @page.at_css("div h4 span").text.to_i
+     @page.css("div.serp-result-content").count/2
 
   end
+
+
 
   def output_to_csv(info)
 
@@ -144,7 +152,11 @@ class Scraper
 
 end
 
-s = Scraper.new
+original_url = "https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time"
+
+java_url = "https://www.dice.com/jobs/q-javascript+senior+developer-jtype-Full+Time-l-San+Francisco%2C+CA-radius-20-startPage-1-limit-120-jobs.html"
+
+s = Scraper.new(java_url)
 s.main
 
 
