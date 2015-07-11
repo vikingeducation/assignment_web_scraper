@@ -92,8 +92,8 @@ def dice()
 	b = Mechanize.new
 	b.history_added = Proc.new { sleep 0.5 }
 
-	submit_search(get_page(b))
-
+	result  = submit_search(get_page(b))
+	# process_search_results(result)
 end
 
 def get_page(b)
@@ -113,7 +113,7 @@ end
 def process_search_results(results)
 	# results.each(:div => "serp-result-content").each do |line|
 	# 	pp line
-	rows = results.css("div.serp-result-content")
+	rows = results.search("div.serp-result-content")
 	# rows = results.div('serp-result-content')
 	rows.each {|row| pp row}
 end
