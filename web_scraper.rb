@@ -36,11 +36,12 @@ agent.get(dice_search_page) do |page|
 end
 
 #results_page
-binding.pry
+#binding.pry
 noko_tree = results_page.parser
 
 job_list = noko_tree
 job_arr = []
+scrape_job_post
 def scrape_job_post
   job_list.each do |job|
     #click on post for ID
@@ -55,6 +56,7 @@ def scrape_job_post
 end
 
 def search_IDs(link)
+  binding.pry
   post_page = agent.results_page.link_with(:href => link)
   tree = post_page.parser
   company_id = nil
