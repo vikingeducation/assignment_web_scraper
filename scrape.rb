@@ -7,35 +7,35 @@ class Scraper
     @agent = Mechanize.new
     @agent.history_added = Proc.new { sleep 0.9 }
     @info_array = []
-    @location = ""
+    @url = ""
+    @page_num = 1
   end
 
-  def search_dice(query, location)
-    parse_page(@agent.get(formatted_url(query, location)), nil)
+  def search_dice(query, location, duration=1000)
+    @duration = duration
+    @url = formatted_url(query, location)
+    parse_page(nav_url)
     append_to_file
   end
 
-  def search_dice_duration(query, location, duration)
-    parse_page(@agent.get(formatted_url(query, location)), duration)
-    append_to_file
-  end
 
-  def formatted_url(query, location, duration=nil)
+  def formatted_url(query, location)
     query = query.gsub(" ", "+").gsub(",", "%2C")
     location = location.gsub(" ", "+").gsub(",", "%2C")
-    if duration
-      @location = "https://www.dice.com/jobs?q=#{query}&l=#{location}-radius-30-sort-date-jobs.html"
-    else
-      @location = "https://www.dice.com/jobs?q=#{query}&l=#{location}"
-    end
+    "https://www.dice.com/jobs/q-#{query}-l-#{location}-radius-30-sort-date-limit-120"
   end
 
-  def parse_page(page, duration)
+  def nav_url
+    @url + "-startPage-#{@page_num}-jobs"
+  end
+
+  def parse_page(url)
+    page = @agent.get(url)
     listings = page.search(".serp-result-content")
 
     inside_duration = true
     page_num = 1
-    while (page.search('Go to next page').any? && inside_duration && !duration.nil?)
+    while (page.search('Go to next page').any? && inside_duration)
       listings.each do |listing|
         info = {}
         info[:title] = listing.search('.dice-btn-link')[0].inner_text.strip
