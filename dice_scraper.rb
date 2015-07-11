@@ -7,11 +7,11 @@ require "pry"
 
 class DiceScraper
 
-  def initialize(start_date = 0)
+  def initialize(year = 2015, month = 1, day = 1)
 
-    @start_date = start_date
+    @start_date = Time.new(year, month, day)
 
-    job_postings = initialize_page)
+    job_postings = initialize_page
 
     scrape(job_postings)
 
@@ -52,25 +52,26 @@ class DiceScraper
     current_time = Time.now
 
     # Get difference between current time and post time
-    post_time = current_time - (time_value * period_in_seconds)
+    @post_time = current_time - (time_value * period_in_seconds)
 
-    "#{post_time.day}/#{post_time.month}/#{post_time.year}"
+    "#{@post_time.month}/#{@post_time.day}/#{@post_time.year}"
 
   end
 
   def scrape(job_elements)
 
     #binding.pry
+    add_header = File.exist?('job_list.csv')
     CSV.open('job_list.csv', 'a') do |csv|
 
       csv << ["Title", "Company Name", "Link", "Location",
-      "Post Date", "Dice ID", "Job ID"]
+      "Post Date", "Dice ID", "Job ID"] unless add_header
 
       job_elements.each do |job_post|
 
         job_details = get_job_details(job_post)
 
-        csv << job_details
+        csv << job_details if  @post_time > @start_date
 
       end
 
@@ -79,7 +80,7 @@ class DiceScraper
 
   end
 
-  def initialize_page
+  def initialize_page(url = "https://www.dice.com/jobs/q-ruby-sort-date-startPage-1-limit-120-jobs.html")
 
     agent = Mechanize.new
     agent.history_added = Proc.new { sleep 0.5 }
@@ -87,7 +88,7 @@ class DiceScraper
     # search_form = page.form(:id => "search-form")
     # search_form.q = "ruby web developer"
     # results = search_form.submit
-    page = agent.get('https://www.dice.com/jobs/q-ruby-startPage-1-limit-120-jobs.html')
+    page = agent.get(url)
     page.search("div[@class='serp-result-content']")
 
   end
@@ -113,6 +114,6 @@ class DiceScraper
   end
 end
 
-scraper = DiceScraper.new
+scraper = DiceScraper.new(2015, 6, 11)
 
 
