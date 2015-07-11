@@ -10,10 +10,12 @@
 
 a. Preform a search query and returns first results
 
-=end
+A. GetJobPage - sends tree
+B. WriteJobs - parses the tree and writes to the file
 
-#  struct job-title, company name, 
-# link to posting on dice, 
+=end
+#  struct job-title, company name,
+# link to posting on dice,
 # location, posting date, comp ID, Job ID
 
 #make array of structs
@@ -33,18 +35,43 @@ require 'mechanize'
 JobPosting = Struct.new(:title, :co_name, :post_link,
 							:location, :post_date, :co_ID, :job_ID)
 
-def goog_searcher
-	a = Mechanize.new
+class GetJobPage
+	def scrape
+		@b = Mechanize.new
+		@b.history_added = Proc.new { sleep 0.5 }
+		parsed_page = submit_search(get_page(@b))
+		process_search_results(parsed_page)
+	end
 
-	a.get('http://google.com/') do |page|
-	  search_result = page.form('f')
-	  search_result.q = 'Hello world'
-	  page = a.submit(search_result, search_result.buttons.first)
-	  page.links.each do |link|
-	    puts link.text
-	  end
+	def get_page(b)
+		@b.get("http://www.dice.com/")
+	end
+
+	def submit_search(page)
+		submit_query = page.form(:id => 'search-form')
+		submit_query.q = "Ruby on Rails"
+		submit_query.l = "San Francisco, CA"
+		result = @b.submit(submit_query, submit_query.button)
+		result.parser
+	end
+
+	def process_search_results(parsed_page)
+		parsed_page.css("div .serp-result-content")
 	end
 end
+
+
+# def goog_searcher
+# 	a = Mechanize.new
+# 	a.get('http://google.com/') do |page|
+# 	  search_result = page.form('f')
+# 	  search_result.q = 'Hello world'
+# 	  page = a.submit(search_result, search_result.buttons.first)
+# 	  page.links.each do |link|
+# 	    puts link.text
+# 	  end
+# 	end
+# end
 
 # def dice
 # 	b = Mechanize.new
@@ -85,63 +112,6 @@ end
 # 		# 	pp link.text
 # 		# end
 # 	end
+
 # end
 
-def dice()
-	
-	b = Mechanize.new
-	b.history_added = Proc.new { sleep 0.5 }
-
-	result  = submit_search(get_page(b))
-	# process_search_results(result)
-end
-
-def get_page(b)
-	[b.get("http://www.dice.com/"), b]
-end
-
-def submit_search(page)
-
-	submit_query = page[0].form(:id => 'search-form')
-	submit_query.q = "Ruby on Rails"
-	submit_query.l = "San Francisco, CA"
-	result = page[1].submit(submit_query, submit_query.button)
-	result
-
-end
-
-def process_search_results(results)
-	# results.each(:div => "serp-result-content").each do |line|
-	# 	pp line
-	rows = results.search("div.serp-result-content")
-	# rows = results.div('serp-result-content')
-	rows.each {|row| pp row}
-end
-
-def title
-
-end
-
-def co_name
-
-end
-
-def post_link
-
-end
-
-def location
-
-end
-
-def post_date
-
-end
-
-def company_id
-
-end
-
-def job_id
-
-end
