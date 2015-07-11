@@ -12,18 +12,15 @@ a. Preform a search query and returns first results
 
 =end
 
-<<<<<<< HEAD
 #  struct job-title, company name, 
 # link to posting on dice, 
 # location, posting date, comp ID, Job ID
 
 #make array of structs
 #make sleeper function
-=======
 # struct job-title, company name,
 # link to posting on dice,
 # location, posting date, comp ID, Job ID
->>>>>>> c10fc201d6b7039a24c5be2d82e667103da3b8f8
 
 #make array of structs
 #make sleeper function
@@ -67,29 +64,57 @@ end
 # 	end
 # end
 
-def dice
-	b = Mechanize.new
+# def dice
+# 	b = Mechanize.new
 
+# 	b.history_added = Proc.new { sleep 0.5 }
+
+# 	# b.get("http://www.dice.com/") do |page|
+# 	# 	jobs = []
+# 		#submit the search fields and get result
+# 		# submit_query = page.form(:id => 'search-form')
+# 		# submit_query.q = "Ruby on Rails"
+# 		# submit_query.l = "San Francisco, CA"
+# 		# result = b.submit(submit_query, submit_query.button)
+
+# 		puts result.class
+# 		pp result
+# 		result
+# 		# process_search_results(result)
+# 		# result.links_with(:href => /(?<=www.dice.com\/company\/).*/).each_with_index do |link, index|
+# 		# 	pp link.text
+# 		# end
+# 	end
+# end
+
+def dice()
+	
+	b = Mechanize.new
 	b.history_added = Proc.new { sleep 0.5 }
 
-	b.get("http://www.dice.com/") do |page|
-		jobs = []
-		#submit the search fields and get result
-		submit_query = page.form(:id => 'search-form')
-		submit_query.q = "Ruby on Rails"
-		submit_query.l = "San Francisco, CA"
-		result = b.submit(submit_query, submit_query.button)
-		process_search_results(result)
-		# result.links_with(:href => /(?<=www.dice.com\/company\/).*/).each_with_index do |link, index|
-		# 	pp link.text
-		# end
-	end
+	submit_search(get_page(b))
+
+end
+
+def get_page(b)
+	[b.get("http://www.dice.com/"), b]
+end
+
+def submit_search(page)
+
+	submit_query = page[0].form(:id => 'search-form')
+	submit_query.q = "Ruby on Rails"
+	submit_query.l = "San Francisco, CA"
+	result = page[1].submit(submit_query, submit_query.button)
+	result
+
 end
 
 def process_search_results(results)
 	# results.each(:div => "serp-result-content").each do |line|
 	# 	pp line
-	rows = results.css("div")
+	rows = results.css("div.serp-result-content")
+	# rows = results.div('serp-result-content')
 	rows.each {|row| pp row}
 end
 
