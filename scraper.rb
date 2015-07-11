@@ -29,7 +29,7 @@ class Scraper
     companies = []
     links = []
 
-    20.times do |i|
+    50.times do |i|
 
     titles << title_scraper(i)
     companies << company_scraper(i)
@@ -59,9 +59,12 @@ class Scraper
   end
 
   def location_scraper
-    temp_title = ""
-    temp_title =  @page.css("div.shortdesc li.location").count
-    p temp_title
+    temp_title = []
+    temp_title =  @page.css("ul.list-inline.details li.location") #.each do |ul|
+    #   puts ul.children[-1].text
+    # end
+    puts temp_title.count
+    # puts temp_title
   end
 
   def output_to_csv
