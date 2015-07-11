@@ -41,7 +41,7 @@ def calculate_date(time)
   # Get difference between current time and post time
   post_time = current_time - (time_value * period_in_seconds)
 
-
+  formatted_time = "#{post_time.day}/#{post_time.month}/#{post_time.year}"
 end
 
 agent = Mechanize.new
@@ -57,11 +57,13 @@ results = search_form.submit
 job_elements = results.search("div[@class='serp-result-content']")
 
 job_elements.each do |job|
-  job_link = job.at_css("h3 a").attributes["href"].value
-  job_title = job.at_css("h3").text.strip
+  link = job.at_css("h3 a").attributes["href"].value
+  title = job.at_css("h3").text.strip
   company_name = job.at_css("li[@class = employer]").text
   location = job.at_css("li[@class = location]").text
   time = calculate_date(job.at_css("li[@class = posted]").text)
+  company_id = find_company_id(job_link)
+  job_id = find_job_id(job_link)
 
 end
 
