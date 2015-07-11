@@ -1,0 +1,15 @@
+Job title
+Company name
+Link to posting on Dice
+Location
+Posting date (not a relative date like "x weeks ago" because that will quickly be meaningless)
+Company ID
+Job ID
+
+
+
+
+class: serp-result-content
+  <h3><a>Job title
+  2nd class dice-btn-link  Company name
+  1st class dice-btn-link  Link to posting on Dice
