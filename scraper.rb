@@ -6,53 +6,76 @@ require 'csv'
 
 
 
+class Scraper
+
+  attr_reader :page
+
+  def initialize
+
+    @page = grab_page
+
+  end
 
 
-# Use `open-uri`'s `open` method to grab the page
-page = Nokogiri::HTML(open("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time"))  
+  def grab_page
 
-# Helpers for searching and returning the element's text
+    Nokogiri::HTML(open("https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time"))  
 
+  end
 
-links = []
-links = page.css('a#position0 a').map { |link| link['href'] }
-p links
+  def main
 
+    titles = []
+    companies = []
+    links = []
 
+    20.times do |i|
 
-titles = []
-companies = []
+    titles << title_scraper(i)
+    companies << company_scraper(i)
+    links << link_scraper(i)
 
-# 20.times do |i|
-# temp_title = ""
-# temp_company = ""
+    end
 
-# temp_title =  page.css("a#position#{i}").text
-# temp_title.gsub!(/[\t\r\n]/, "")
-# temp_title = temp_title[0..temp_title.length/2 - 1]
+  end
 
-# temp_company = page.css("a#company#{i}").text
-# temp_company.gsub!(/[\t\r\n]/, "")
-# temp_company = temp_company[0..temp_company.length/2 - 1]
+  def title_scraper(i)
+    temp_title = ""
+    temp_title =  @page.css("a#position#{i}").text
+    temp_title.gsub!(/[\t\r\n]/, "")
+    temp_title = temp_title[0..temp_title.length/2 - 1]
+  end
 
-# titles << temp_title
-# companies << temp_company
+  def company_scraper(i)
+    temp_company = ""
+    temp_company = @page.css("a#company#{i}").text
+    temp_company.gsub!(/[\t\r\n]/, "")
+    temp_company = temp_company[0..temp_company.length/2 - 1]
+  end
 
-# end
+  def link_scraper(i)
+    temp_link = ""
+    temp_link = @page.css('a#position#{i}')[0].attributes["href"].value
+  end
 
+  def location_scraper
+    temp_title = ""
+    temp_title =  @page.css("div.shortdesc li.location").count
+    p temp_title
+  end
 
+  def output_to_csv
 
-puts titles
-puts "-------"
-puts companies
-puts "^^^^^^^^^"
+    # CSV.open('csv_file.csv', 'a') do |csv|
+    #     each one of these comes out in its own row.
+    #     csv << titles
+    #     csv << companies
+    # end
 
+  end
 
+end
 
-# CSV.open('csv_file.csv', 'a') do |csv|
-#     # each one of these comes out in its own row.
-#     csv << titles
-#     csv << companies
-# end
+s = Scraper.new
+s.location_scraper
 
-# p csv
