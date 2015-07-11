@@ -5,35 +5,58 @@ class Scraper
 
   def initialize
     @agent = Mechanize.new
+    @agent.history_added = Proc.new { sleep 0.9 }
     @info_array = []
+    @location = ""
   end
 
   def search_dice(query, location)
-    parse_page(@agent.get(formatted_url(query, location)))
+    parse_page(@agent.get(formatted_url(query, location)), nil)
     append_to_file
   end
 
-  def formatted_url(query, location)
+  def search_dice_duration(query, location, duration)
+    parse_page(@agent.get(formatted_url(query, location)), duration)
+    append_to_file
+  end
+
+  def formatted_url(query, location, duration=nil)
     query = query.gsub(" ", "+").gsub(",", "%2C")
     location = location.gsub(" ", "+").gsub(",", "%2C")
-    "https://www.dice.com/jobs?q=#{query}&l=#{location}"
-  end
-
-  def parse_page(page)
-    listings = page.search(".serp-result-content")
-
-    listings.each do |listing|
-      info = {}
-      info[:title] = listing.search('.dice-btn-link')[0].inner_text.strip
-      info[:link] = listing.search('.dice-btn-link')[0]["href"]
-      info[:jid] = get_jid(info[:link])
-      info[:cname] = listing.search('.dice-btn-link')[1].inner_text.strip
-      info[:cid] = get_cid(listing.search('.dice-btn-link')[1]["href"])
-      info[:loc] = listing.search('.location')[0].inner_text.strip
-      info[:date] = get_post_date(listing.search('.posted')[0].inner_text.strip)
-      @info_array << info
+    if duration
+      @location = "https://www.dice.com/jobs?q=#{query}&l=#{location}-radius-30-sort-date-jobs.html"
+    else
+      @location = "https://www.dice.com/jobs?q=#{query}&l=#{location}"
     end
   end
+
+  def parse_page(page, duration)
+    listings = page.search(".serp-result-content")
+
+    inside_duration = true
+    page_num = 1
+    while (page.search('Go to next page').any? && inside_duration && !duration.nil?)
+      listings.each do |listing|
+        info = {}
+        info[:title] = listing.search('.dice-btn-link')[0].inner_text.strip
+        info[:link] = listing.search('.dice-btn-link')[0]["href"]
+        info[:jid] = get_jid(info[:link])
+        info[:cname] = listing.search('.dice-btn-link')[1].inner_text.strip
+        info[:cid] = get_cid(listing.search('.dice-btn-link')[1]["href"])
+        info[:loc] = listing.search('.location')[0].inner_text.strip
+        info[:date] = get_post_date(listing.search('.posted')[0].inner_text.strip)
+        if (DateTime.now - duration) > info[:date]
+          inside_duration = false
+          break
+        end
+        @info_array << info
+      end
+      go_to_page(page_num)
+    end
+  end
+
+  def go_to_page(page_num)
+    @agent.get(location + "-radius-30-sort-date-jobs")
 
   def print_values(symbol)
     @info_array.each do |entry|
@@ -59,7 +82,7 @@ class Scraper
     duration = offsets[relative_time_str[1].downcase]
     duration = 0 if duration.nil?
 
-    return (DateTime.now - (multiplier * duration)).to_datetime.strftime("%B %d, %Y")
+    return (DateTime.now - (multiplier * duration)).to_datetime
   end
 
   def append_to_file
@@ -69,7 +92,7 @@ class Scraper
                  entry[:cname],
                  entry[:link], 
                  entry[:loc],
-                 entry[:date],
+                 entry[:date].strftime("%B %d, %Y"),
                  entry[:cid],
                  entry[:jid]]
       end
