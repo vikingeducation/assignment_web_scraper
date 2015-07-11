@@ -5,6 +5,7 @@ require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
 require 'csv'
+require 'time'
 
 class WriteJobs
 	attr_accessor :job_search_results
@@ -18,8 +19,8 @@ class WriteJobs
 		@job_search_results.each_with_index do |job, i|
 			CSV.open('csv_file.csv', 'a') do |csv|
 				# csv << [title(job), co_name(job), post_link(job), location(job), post_date(job), job_id(job), company_id(job)]
-				csv << [title(job), co_name(job), post_link(job), 
-								location(job)]
+				csv << [title(job), co_name(job), post_link(job),
+						location(job)]
 			end
 		end
 	end
@@ -45,7 +46,25 @@ class WriteJobs
 	end
 
 	def post_date
+		posting_sched = job.css("li")[2].text
+		time = time.now
+		day = time.day
+		month = time.month
+		year = time.year
 
+		if posting_sched.include?("day") || posting_sched.include?("days")
+			posting_day = posting_sched.match(/\d/)
+			day = day - posting_day[0].to_i
+			"Post date: #{month}/#{day}/#{year}"
+		elsif posting_sched.include?("week") || posting_sched.include?("weeks")
+			posting_week = posting_sched.match(/\d/)
+			week = week - posting_day[0].to_i
+			"Post date: #{month}/#{day}/#{year}"
+		elsif posting_sched.include?("month") || posting_sched.include?("months")
+
+		else
+			"Post date: #{month}/#{day}/#{year}"
+		end
 	end
 
 	def company_id
