@@ -7,9 +7,11 @@ require "pry"
 
 class DiceScraper
 
-  def initialize
+  def initialize(start_date = 0)
 
-    job_postings = initialize_page
+    @start_date = start_date
+
+    job_postings = initialize_page)
 
     scrape(job_postings)
 
@@ -81,11 +83,12 @@ class DiceScraper
 
     agent = Mechanize.new
     agent.history_added = Proc.new { sleep 0.5 }
-    page = agent.get('http://www.dice.com')
-    search_form = page.form(:id => "search-form")
-    search_form.q = "ruby web developer"
-    results = search_form.submit
-    results.search("div[@class='serp-result-content']")
+    # page = agent.get('http://www.dice.com')
+    # search_form = page.form(:id => "search-form")
+    # search_form.q = "ruby web developer"
+    # results = search_form.submit
+    page = agent.get('https://www.dice.com/jobs/q-ruby-startPage-1-limit-120-jobs.html')
+    page.search("div[@class='serp-result-content']")
 
   end
 
