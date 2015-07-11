@@ -4,6 +4,7 @@ class Scraper
 
   def initialize
     @agent = Mechanize.new
+    @info_array = []
   end
 
   def search_dice(query, location)
@@ -11,13 +12,12 @@ class Scraper
   end
 
   def formatted_url(query, location)
-    "www.dice.com/jobs?q=#{query}&l=#{location}"
+    "https://www.dice.com/jobs?q=#{query}&l=#{location}"
   end
 
   def parse_page(page)
     listings = page.search(".serp-result-content")
 
-    info_array = []
     listings.each do |listing|
       info = {}
       info[:title] = listing.search('.dice-btn-link')[0].inner_text.strip
@@ -26,24 +26,47 @@ class Scraper
       info[:cid] = get_cid(listing.search('.dice-btn-link')[1]["href"])
       info[:loc] = listing.search('.location')[0].inner_text.strip
       info[:date] = get_post_date(listing.search('.posted')[0].inner_text.strip)
-      info_array << info
+      @info_array << info
     end
   end
 
+  def print_values(symbol)
+    @info_array.each do |entry|
+      p entry[symbol.to_sym]
+    end
+  end
 
   def get_cid(url)
     url.split("/")[-1]
   end
 
   def get_post_date(relative_time_str)
-    relative_time = parse_time(relative_time_str)
-    time = Time.now + relative_time
-  end
+    offsets = {"day" => 1, "days" => 1,
+               "week" => 7, "weeks" => 7,
+               "month" => 30, "months" => 30,
+               "year" => 365, "years" => 365}
+    relative_time_str = relative_time_str.split(" ")
+    multiplier = relative_time_str[0].to_i
+    duration = offsets[relative_time_str[1].downcase]
+    duration = 0 if duration.nil?
 
-  def parse_time(relative_time_str)
+    return (DateTime.now - (multiplier * duration)).to_datetime
   end
 
 end
+
+s = Scraper.new
+s.search_dice('ruby', 60565)
+s.print_values(:title)
+
+puts ""
+
+s.print_values(:cname)
+s.print_values(:cid)
+
+s.print_values(:loc)
+
+s.print_values(:date)
 
 # page = agent.get('https://www.dice.com/jobs?q=ruby&l=60565')
 
