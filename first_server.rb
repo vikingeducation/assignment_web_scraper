@@ -8,12 +8,15 @@ server = TCPServer.new("0.0.0.0", 8080)
 loop do
     connection = server.accept   # Open connection
     connection.print "HTTP/1.1 200 OK\r\n" +
-           "Content-Type: text/plain\r\n" +
+           "Content-Type: text/html\r\n" +
            "Connection: close\r\n\r\n"
 
     
-    inputline = connection.gets  # Read from connection
-    puts inputline
+   # inputline = connection.gets  # Read from connection
+    while lines = server.gets # Read lines from socket
+      puts lines         # and print them
+    end
+    #puts inputline
     #connection.puts "Hello World"   # Write into connection
     connection.puts File.readlines("test.html") {|line| puts line}
 

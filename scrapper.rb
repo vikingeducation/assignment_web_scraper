@@ -17,30 +17,38 @@ class Scrapper
     # like we did with Nokogiri and open-uri
     page = @agent.get('http://www.dice.com/')
 
-    # Grab the form of class="f" from the page
-    #search_form = page.form('search-form')
-
     # Grab the form by ID or action
     keyword_form = page.form_with(:id => "search-form")
     #another_form = page.form_with(:action => "/some_path")
 
-    # Fill in the field named "q" (Google's search query)
+    # Fill in the field named "q" (search query)
     keyword_form.q = 'ruby developer'
 
     # Actually submit the form
     page = @agent.submit(keyword_form)
 
-    # write_csv (page)
-    # Print out the page using the "pretty print" command
-    # pp page
-      test = page.search(".//a[@class='dice-btn-link' ]")
+    
 
-      test.each do |readout|
-        p readout.attributes
+    results = page.search(".//div[@class='serp-result-content']")
+      # pp test.first.text
+    info=build_info(results)
+        # write_csv(info)
+      
 
-      end
   end
 
+  def build_info(arr)
+      arr.each do |position|
+        position_name=position.at_css('h3 a').text.strip
+        company=position.at_css('li a').text.strip
+        link=position.at_css('h3 a').at_css('h3 a').attribute('href').value
+        location=position.at_css('li.location').text
+        date=position.at_css('li.posted').text
+        company_id=position.at_css('ul li a').attribute('href').value
+        job_id=position.at_css('h3 a').at_css('h3 a').attribute('href').value
+      end
+      #pass back an arr
+  end
 #   def write_csv (page)
 
 #     CSV.open('csv_file.csv', 'a') do |csv|
