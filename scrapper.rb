@@ -9,43 +9,42 @@ class Scrapper
   attr_reader :page
 
   def initialize
-    # Instantiate a new Mechanize
     @agent = Mechanize.new
   end
 
-  def scrap
-    # Grab and parse our page in one step
-    # like we did with Nokogiri and open-uri
+  def scrap 
+    
     @page = @agent.get('http://www.dice.com/')
-
-    # Grab the form by ID or action
     keyword_form = page.form_with(:id => "search-form")
-    #another_form = page.form_with(:action => "/some_path")
-
-    # Fill in the field named "q" (search query)
     keyword_form.q = 'ruby developer'
 
     # Actually submit the form
     @page = @agent.submit(keyword_form)
 
-    search_by_date
+    results = page.search(".//div[@class='serp-result-content']")
+    build_info(results)  
+  end
 
-    # results = page.search(".//div[@class='serp-result-content']")
-    #   # pp test.first.text
-    # info=build_info(results)
-    #     # write_csv(info)
-    
+  def load_page (url)
+
+    @agent.get(url).search(".//div[@class='serp-result-content']")
 
   end
 
+#start_url ="https://www.dice.com/jobs/q-ruby+developer-sort-date-l-San+Francisco%2C+CA-radius-30-startPage-1-limit-30-jobs.html"
 
-  def search_by_date
+  def search_by_date(start_url)
 
     #page.link_with(:text => /date/).click ??? does return us a sorted page
+    # nok=sorted_page.search(".//div[@class='jobs-page-header']")
 
-    page_sorted_by_date = @agent.get('https://www.dice.com/jobs/q-ruby+developer-l-San+Francisco%2C+CA-radius-30-sort-date-jobs.html')
-      
-     # .search(".//a[@id='sort-by-date-link']")
+    loop do 
+
+        j=load_page(url)
+        write_csv(build_info(j))
+        #regex URL increment page index << Page-2
+      break if load_page(url).empty?
+    end
     
   end
 
@@ -65,8 +64,7 @@ class Scrapper
         all_positions << [position_name,company,link,location, date,company_id,job_id]
           
       end
-      #pass back an arr
-      write_csv(all_positions)
+     all_positions
   end
 
   def write_csv (jobs)
@@ -77,14 +75,13 @@ class Scrapper
       end
     end
   end
+
 end
 
 def data_calc(str)
-  #minute/minutes hour/hours day/days week/weeks
-  
+  #minute/minutes hour/hours day/days week/weeks 
   digit=str.split(' ')[0].to_i
   order=str.split(' ')[1]
-
   order=order[0..-2] if order[-1] == "s"
   
   case order.downcase
@@ -102,9 +99,6 @@ def data_calc(str)
 
 end
 
-# puts data_calc("45 minutes ago")
-# puts data_calc("1 day ago")
-# puts data_calc("2 weeks ago")
-# puts data_calc("5 hours ago")
+
 Scrapper.new.scrap
 
