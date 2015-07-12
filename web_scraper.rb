@@ -16,9 +16,9 @@ class DiceScraper
   end
 
   def scrape_n_save
-    mech_obj = scraping_dice
+    mech_obj, time_scraped = scraping_dice
     job_list = post_generator(mech_obj)
-    data = scrape_job_post(job_list)
+    data = scrape_job_post(job_list, time_scraped)
     save_data(data)
   end
 
@@ -32,14 +32,15 @@ class DiceScraper
           search.l = 'New York, NY'
       end.submit
     end
-    results_page
+    time = Time.now
+    return results_page, time
   end
 
   def post_generator(mech_obj)
     job_list = mech_obj.search("div[@class=serp-result-content]") #nokogiri obj
   end
 
-  def scrape_job_post(job_list)
+  def scrape_job_post(job_list, time_of_scraping)
     job_arr = []
     job_list.each do |job|
       link = job.css("h3 a").attribute("href").value
@@ -47,9 +48,8 @@ class DiceScraper
       employer = job.css("li.employer").text
       title = job.css("h3 a").text.strip
       location = job.css("li.location").text
-      date_posted = date_conversion(job.css("li.posted").text)
+      date_posted = date_conversion(job.css("li.posted").text, time_of_scraping)
       job_arr << [id, employer, title, link, location, date_posted].flatten!
-    #binding.pry
     end
     job_arr #all job posts on one page
   end
@@ -66,20 +66,30 @@ class DiceScraper
     link.match(DICE_ID_RGX).captures #returns [company_id, post_id]
   end
 
-  def date_conversion(date_str, time_of_scraping = Time.new(2015, 7, 11, 17, 8, 2, "-04:00"))
-    date_str.split(" ")
-    words_to_date(time_of_scraping) unless time_of_scraping.is_a?(Time)
-    date = date_str[0].to_i * words_to_date(date_str[1])
+  def date_conversion(date_str, time_of_scraping)
+    date_str = date_str.split(" ")
+    seconds_ago = words_to_date(date_str[1])
+    date_posted = time_of_scraping - (date_str[0].to_i * seconds_ago)
+    date_posted.strftime("%c")
   end
 
   def words_to_date(word)
-    case word
-    when "hours"
+    word = word[0..-2] if word[-1] == "s"
+    case word.downcase
+    when "second"
+      1
+    when "minute"
+      60
+    when "hour"
       60*60
-    when "days"
+    when "day"
       60*60*24
-    when "weeks"
+    when "week"
       60*60*24*7
+    when "month"
+      60*60*24*30
+    when "year"
+      60*60*24*30
     end
   end
 
