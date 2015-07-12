@@ -26,12 +26,20 @@ Indeed.com
 
 listings = page.parser.xpath("//a[@class='jobtitle']") + page.parser.xpath("//h2[@class='jobtitle']")
 
-listings.map {|listing| listing.parent}
+while listings.length > 0
+listings = listings.map {|listing| listing.parent}
+
+listing.search(".jobtitle").search("a")[0].text = job title
+listing.search(".company").search("span")[0].text = company name
+listing.search(".jobtitle").search("a")[0].href = link
+listing.search(".location").search("span")[0].text
+listings[2].search(".date")[0].text
+
+
 
 class: (.row && .result)
   href = Link to posting on Dice (1. sponsor 2. non-sponsor)
-  inner text = Job Title
-
+  inner text = 
   (.row && .result).company
        inner text = Company name
 
