@@ -13,6 +13,7 @@ class DiceScraper
     @agent = Mechanize.new
     @agent.history_added = Proc.new { sleep 0.5 }
     scrape
+    scrape_indeed
 
   end
 
@@ -98,6 +99,62 @@ class DiceScraper
 
   end
 
+  def scrape_indeed
+
+    page_count = 1
+    @post_time = Time.now
+    added_jobs = []
+
+    add_header = File.exist?('job_list.csv')
+    CSV.open('job_list.csv', 'a') do |csv|
+
+      csv << ["Title", "Company Name", "Link", "Location",
+      "Post Date", "Indeed ID"] unless add_header
+
+      until @start_date > @post_time
+
+        job_postings = initialize_indeed_page(generate_indeed_url(page_count))
+
+        job_postings.each do |job_post|
+
+          job_details = get_indeed_details(job_post)
+
+          unless added_jobs.include?(job_details[-1])
+
+            csv << job_details if @post_time > @start_date
+
+            added_jobs << job_details[-1]
+
+          end
+
+        end
+
+        page_count += 1
+        break if page_count > 50
+
+      end
+
+    end
+
+  end
+
+  def get_indeed_details(job_element)
+
+    path = job_element.at_css("h2 a").attributes["href"].value
+    job_link = "http://www.indeed.com#{path}"
+    job_title = job_element.at_css("h2").text.strip
+    company_name = job_element.at_css("span[@itemprop = name]").text
+    job_location = job_element.at_css("span[@itemprop = addressLocality]").text
+    formatted_time = calculate_date(job_element.at_css("span[@class = date]").text)
+
+    binding.pry
+
+    [ job_title, company_name, job_link, job_location,
+      formatted_time, path,
+    ]
+
+  end
+
   def generate_url(page_num)
     "https://www.dice.com/jobs/q-ruby-sort-date-startPage-#{page_num}-limit-120-jobs.html"
   end
@@ -138,7 +195,7 @@ class DiceScraper
   end
 
   def generate_indeed_url(count_start)
-    "http://www.indeed.com/jobs?q=ruby&start=#{count_start}"
+    "http://www.indeed.com/jobs?q=ruby&start=#{(count_start * 10) - 10}"
   end
 end
 
