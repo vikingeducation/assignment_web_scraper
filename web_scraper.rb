@@ -36,21 +36,6 @@ class DiceScraper
     return results_page, time
   end
 
-  def spec_date_scraping(days)
-    #need to generalize scraping method: DRY!!!
-    #&postedDate=1   <=# is day
-    #first_result_page = 'https://www.dice.com/jobs/?for_one=developer&for_loc=New+York%2C+NY&postedDate=1'
-    #agent.get(first_result_page) do |page|
-    # => results
-    #=> links for other pages
-    #=> results.links_with(:href => /postedDate=/).each do |link|
-    #=> #call method to scrape again...
-    # =>next_page = link.click
-
-    ##OR just increment url with "-startPage-2" update number
-    ## w/ "-limit-120-jobs.html"
-    ## stop when "h4.posiCount span".text's second #(i.e. 3773)/120 + 1 times
-  end
 
   def post_generator(mech_obj)
     job_list = mech_obj.search("div[@class=serp-result-content]") #nokogiri obj
@@ -108,5 +93,49 @@ class DiceScraper
       60*60*24*30
     end
   end
+
+  #def spec_date_scraping(days)
+    #need to generalize scraping_dice method: DRY!!!
+    #&postedDate=1   <=# is day
+    #first_result_page = 'https://www.dice.com/jobs/?for_one=developer&for_loc=New+York%2C+NY&postedDate=1'
+    #agent.get(first_result_page) do |page|
+    # => results
+    #=> links for other pages
+    #=> results.links_with(:href => /postedDate=/).each do |link|
+    #=> #call method to scrape again...
+    # =>next_page = link.click
+
+    ##OR just increment url with "-startPage-2" update number
+    ## w/ "-limit-120-jobs.html"
+    ## stop when "h4.posiCount span".text's second #(i.e. 3773)/120 + 1 times
+#     first_result_page = 'https://www.dice.com/jobs/sort-date-postedDate-1-l-New+York%2C+NY-radius-30-startPage-1-limit-120-jobs.html'
+#     page = @agent.get(first_result_page)
+#     results_pages = [page]
+#     times = 3772/120+1
+# =>  until times ==0
+  #     @agent.get(first_result_page) do |link|
+  # # => link.click
+    # => scrape page
+  #     end
+  # =>  update link
+  #     times -= 1
+#     end
+
+  # def search_IDs(link)
+  #   post_page = agent.results_page.link_with(:href => link)
+  #   tree = post_page.parser
+  #   company_id = nil
+  #   job_id =nil
+  #   company_node = tree.css("div.company-header-info")
+  #   company_node.each do |node|
+  #     if node.content.include?("Dice Id : ")
+  #       company_id = node.text.strip
+  #     elsif node.content.include?("Position Id : ")
+  #       job_id = node.text.strip
+  #     end
+  #   end
+  #   return company_id, job_id
+  #  end
+  #end
 
 end
