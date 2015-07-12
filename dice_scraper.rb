@@ -62,6 +62,8 @@ class DiceScraper
 
     @post_time = Time.now
 
+    added_jobs = []
+
     #binding.pry
     add_header = File.exist?('job_list.csv')
     CSV.open('job_list.csv', 'a') do |csv|
@@ -77,7 +79,13 @@ class DiceScraper
 
           job_details = get_job_details(job_post)
 
-          csv << job_details if @post_time > @start_date
+          unless added_jobs.include?(job_details[-1])
+
+            csv << job_details if @post_time > @start_date
+
+            added_jobs << job_details[-1]
+
+          end
 
         end
 
@@ -100,9 +108,14 @@ class DiceScraper
     # search_form.q = "ruby web developer"
     # results = search_form.submit
     page = @agent.get(url)
-    binding.pry
+    # binding.pry
     page.search("div[@class='serp-result-content']")
 
+  end
+
+  def initialize_indeed_page(url)
+    page = @agent.get(url)
+    page.search("div[@class='  row  result']")
   end
 
   def get_job_details(job_element)
@@ -122,6 +135,10 @@ class DiceScraper
       formatted_time, job_company_id, post_id
     ]
 
+  end
+
+  def generate_indeed_url(count_start)
+    "http://www.indeed.com/jobs?q=ruby&start=#{count_start}"
   end
 end
 
