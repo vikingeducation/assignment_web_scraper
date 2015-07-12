@@ -10,7 +10,8 @@ class DiceScraper
   def initialize(year = 2015, month = 01, day = 01)
 
     @start_date = Time.new(year, month, day)
-
+    @agent = Mechanize.new
+    @agent.history_added = Proc.new { sleep 0.5 }
     scrape
 
   end
@@ -70,8 +71,6 @@ class DiceScraper
 
       until @start_date > @post_time
 
-        p generate_url(page_count)
-
         job_postings = initialize_page(generate_url(page_count))
 
         job_postings.each do |job_post|
@@ -82,9 +81,8 @@ class DiceScraper
 
         end
 
-        break if @start_date > @post_time
-
         page_count += 1
+        break if page_count > 50
 
       end
 
@@ -92,18 +90,17 @@ class DiceScraper
 
   end
 
-  def generate_url(page_num = 1)
-    url = "https://www.dice.com/jobs/q-ruby-sort-date-startPage-#{page_num}-limit-120-jobs.html"
+  def generate_url(page_num)
+    "https://www.dice.com/jobs/q-ruby-sort-date-startPage-#{page_num}-limit-120-jobs.html"
   end
 
   def initialize_page(url)
-    agent = Mechanize.new
-    agent.history_added = Proc.new { sleep 0.5 }
     # page = agent.get('http://www.dice.com')
     # search_form = page.form(:id => "search-form")
     # search_form.q = "ruby web developer"
     # results = search_form.submit
-    page = agent.get(url)
+    page = @agent.get(url)
+    binding.pry
     page.search("div[@class='serp-result-content']")
 
   end
@@ -128,6 +125,6 @@ class DiceScraper
   end
 end
 
-scraper = DiceScraper.new(2015, 07, 01)
+scraper = DiceScraper.new(2015, 06, 15)
 
 
