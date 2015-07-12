@@ -12,14 +12,16 @@ class WriteJobs
 
 	def initialize
 		a = GetJobPage.new
-		@job_search_results = a.scrape
+		@job_search_results = a.main
 	end
 
 	def create_arr_of_job_entries
-		@job_search_results.each_with_index do |job, i|
-			CSV.open('csv_file.csv', 'a') do |csv|
-				csv << [title(job), co_name(job), post_link(job),
-						location(job), company_id(job), job_id(job), post_date(job)]
+		@job_search_results.each do |j|
+			@job_search_results[j].each_with_index do |job, i|
+				CSV.open('csv_file.csv', 'a') do |csv|
+					csv << [title(job), co_name(job), post_link(job),
+							location(job), company_id(job), job_id(job), post_date(job)]
+				end
 			end
 		end
 	end
