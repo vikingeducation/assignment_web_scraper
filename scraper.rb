@@ -6,6 +6,7 @@ require 'rubygems'
 require 'mechanize'
 require 'csv' 
 require 'pry'
+require './prompt.rb'
 # require 'date'
 
 
@@ -15,6 +16,7 @@ class Scraper
   attr_reader :page, :links
 
   def initialize (initial_url)
+    p initial_url
     @url = initial_url
     grab_page
     
@@ -172,8 +174,9 @@ end
 original_url = "https://www.dice.com/jobs/q-junior+AND+developer+%28rails+OR+ruby%29-jtype-Full+Time-sort-relevance-postedDate-15-l-Los+Angeles%2C+CA-radius-20-startPage-1-limit-20-jobs.html"
 
 js_url = "https://www.dice.com/jobs/q-javascript+senior+developer-jtype-Full+Time-l-San+Francisco%2C+CA-radius-20-startPage-1-limit-120-jobs.html"
+p = Prompt.new
 
-s = Scraper.new(original_url)
+s = Scraper.new(p.get_search_params)
 s.main
 
 
