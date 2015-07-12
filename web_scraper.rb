@@ -36,6 +36,22 @@ class DiceScraper
     return results_page, time
   end
 
+  def spec_date_scraping(days)
+    #need to generalize scraping method: DRY!!!
+    #&postedDate=1   <=# is day
+    #first_result_page = 'https://www.dice.com/jobs/?for_one=developer&for_loc=New+York%2C+NY&postedDate=1'
+    #agent.get(first_result_page) do |page|
+    # => results
+    #=> links for other pages
+    #=> results.links_with(:href => /postedDate=/).each do |link|
+    #=> #call method to scrape again...
+    # =>next_page = link.click
+
+    ##OR just increment url with "-startPage-2" update number
+    ## w/ "-limit-120-jobs.html"
+    ## stop when "h4.posiCount span".text's second #(i.e. 3773)/120 + 1 times
+  end
+
   def post_generator(mech_obj)
     job_list = mech_obj.search("div[@class=serp-result-content]") #nokogiri obj
   end
