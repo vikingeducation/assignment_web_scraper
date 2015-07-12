@@ -16,34 +16,33 @@ class WriteJobs
 	end
 
 	def create_arr_of_job_entries
-		@job_search_results.each do |j|
-			@job_search_results[j].each_with_index do |job, i|
-				CSV.open('csv_file.csv', 'a') do |csv|    #open outside the loop and close after
+		# @job_search_results.each do |j|
+			@job_search_results.each_with_index do |job, i|
+				CSV.open('csv_file.csv', 'a') do |csv|
 					csv << [title(job), co_name(job), post_link(job),
 							location(job), company_id(job), job_id(job), post_date(job)]
 				end
 			end
-		end
 	end
 
 	def title(job)
-		job.css("a").first.text.strip
+		job.css("a").first.text.strip if job.css("a").first != nil
 	end
 
 	def co_name(job)
-		job.css("li a").first.children.text
+		job.css("li a").first.children.text if job.css("li a").first != nil
 	end
 
 	def post_link(job)
-		job.css("h3 a").first.attr('href')
+		job.css("h3 a").first.attr('href') if job.css("h3 a").first != nil
 	end
 
 	def location(job)
-		job.css("li")[1].text
+		job.css("li")[1].text if job.css("li")[1] != nil
 	end
 
 	def post_date(job)
-		posting_sched = job.css("li")[2].text
+		posting_sched = job.css("li")[2].text if job.css("li")[2] != nil
 		date = Date.today
 		if posting_sched.include?("day")
 			posting_day = posting_sched.match(/\d/)
@@ -60,13 +59,13 @@ class WriteJobs
 	end
 
 	def company_id(job)
-		link = job.css("h3 a").first.attr('href')
+		link = job.css("h3 a").first.attr('href') if job.css("h3 a").first != nil
 		com_id_string = link.match(/(?<=[0-9]\/)([a-zA-Z]||[0-9]).*(?=\/)/)
 		com_id_string[0]
 	end
 
 	def job_id(job)
-		link = job.css("h3 a").first.attr('href')
+		link = job.css("h3 a").first.attr('href') if job.css("h3 a").first != nil
 		job_id_string = link.match(/(?<=\/)([A-Z]|[0-9])+([A-Z]|[0-9])+.*(?=\?)/)
 		exact = job_id_string[0].split("/") if job_id_string[0].include?("/")
 		exact != nil ? exact[1] : job_id_string[0]

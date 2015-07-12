@@ -10,14 +10,13 @@ class GetJobPage
 
 	def initialize
 		@b = Mechanize.new
+		@array = 0
 	end
 
 	def main
-		@array = []
+		# binding.pry
 		@array << scrape
-		[2..3].each do |i|
-			@b.history_added = Proc.new { sleep 0.5 }
-			# binding.pry
+		[2,3].each do |i|
 			@array << pagination(i)
 		end
 		@array								#[[scraped parsed nokogiri tree], [scraped parsed nokogiri tree], [scraped parsed nokogiri tree]]
