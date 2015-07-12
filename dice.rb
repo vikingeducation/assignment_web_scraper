@@ -6,7 +6,7 @@ require 'mechanize'
 require 'pry'
 
 class GetJobPage
-	attr_reader :array
+	attr_reader :array, :b
 
 	def initialize
 		@b = Mechanize.new
@@ -38,7 +38,7 @@ class GetJobPage
 		submit_query.q = "Ruby on Rails"
 		submit_query.l = "San Francisco, CA"
 		result = @b.submit(submit_query, submit_query.button)
-		return result.parser
+		result.parser
 	end
 
 	def process_search_results(parsed_page)
@@ -47,6 +47,6 @@ class GetJobPage
 
 	def pagination(page_num)
 		result = @b.get("https://www.dice.com/jobs/q-Ruby+on+Rails-sort-relevance-l-San+Francisco%2C+CA-radius-30-startPage-#{page_num}-limit-30-jobs.html")
-		return result.parser
+		process_search_results(result.parser)
 	end
 end
