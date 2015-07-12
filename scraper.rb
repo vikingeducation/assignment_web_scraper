@@ -15,33 +15,50 @@ class Scraper
   attr_reader :page, :links
 
   def initialize (initial_url)
-
-    @page = set_page(initial_url)
+    @url = initial_url
+    grab_page
+    
 
 
   end
 
-  def 
 
-
-  def grab_page(url)
+  def grab_page
 
     @agent = Mechanize.new
-    @page = @agent.get(url).parser
+    @page = @agent.get(@url).parser
 
   end
 
-  def set_page(url)
+  def next_page
       
-    (1... how many pages ) do |current|
+    regex = /Page-\d+/
 
-      url.gsub("Page-#{current}","Page-#{current+1}")
+    pagenum = @url.match(regex).to_s
 
-   end
+    pagenum.slice!("Page-")
 
+    pagenum = pagenum.to_i
+
+
+    @url.gsub!("Page-#{pagenum}","Page-#{pagenum+1}")
+    p @url
   end
+
 
   def main
+
+    until get_jobs_number == 0
+      sleep(1)
+      parse_page
+      puts "Going to next page..."
+      next_page
+      grab_page
+    end
+
+  end
+
+  def parse_page
 
     titles = []
     companies = []
@@ -152,11 +169,11 @@ class Scraper
 
 end
 
-original_url = "https://www.dice.com/jobs/advancedResult.html?for_all=junior+developer&for_one=rails+ruby&for_loc=San+Francisco%2C+CA&limit=50&radius=20&postedDate=15&sort=relevance&jtype=Full+Time"
+original_url = "https://www.dice.com/jobs/q-junior+AND+developer+%28rails+OR+ruby%29-jtype-Full+Time-sort-relevance-postedDate-15-l-Los+Angeles%2C+CA-radius-20-startPage-1-limit-20-jobs.html"
 
-java_url = "https://www.dice.com/jobs/q-javascript+senior+developer-jtype-Full+Time-l-San+Francisco%2C+CA-radius-20-startPage-1-limit-120-jobs.html"
+js_url = "https://www.dice.com/jobs/q-javascript+senior+developer-jtype-Full+Time-l-San+Francisco%2C+CA-radius-20-startPage-1-limit-120-jobs.html"
 
-s = Scraper.new(java_url)
+s = Scraper.new(original_url)
 s.main
 
 
