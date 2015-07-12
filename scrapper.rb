@@ -38,9 +38,15 @@ class Scrapper
 
   end
 
+
   def search_by_date
-    p @page.search(".//a[@div='sort-by-date-link']")
-    puts "testing"
+
+    #page.link_with(:text => /date/).click ??? does return us a sorted page
+
+    page_sorted_by_date = @agent.get('https://www.dice.com/jobs/q-ruby+developer-l-San+Francisco%2C+CA-radius-30-sort-date-jobs.html')
+      
+     # .search(".//a[@id='sort-by-date-link']")
+    
   end
 
   def build_info(arr)
