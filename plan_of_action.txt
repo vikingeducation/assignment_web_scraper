@@ -1,0 +1,32 @@
+dice.com
+
+1) How does the search form work? What do its parameters look like?
+sends a GET request to /jobs page with info
+input type=search, id = "search-field-keyword", name = "q"
+id= "search-field-location"
+
+2) How does the pagination of the results page work? What do its URL parameters look like?
+https://www.dice.com/jobs?q=&l=New+York%2C+NY
+https://www.dice.com/jobs?q=junior+developer&l=New+York%2C+NY
+https://www.dice.com/jobs/q-junior+developer-l-New+York%2C+NY-radius-30-startPage-2-limit-30-jobs.html
+
+goes to jobs section of site
+l <= location
++ == space
+& == additional parameter
+%2C == ,
+
+startPage-2-limit-40-jobs.html
+startPage-[page#]-limit-[number of results per page]-jobs.html
+
+
+
+3) How do the filters work?
+
+radius: radius-10 <- # is miles
+company segment: dcs-DirectHire <-adds on after location
+title: djt-Ruby+on+Rails+Developer <-after company segment
+company: dc-Delta+International+INC <-b/w location and title
+job type: jtype-Full+Time <- b/w
+
+questions: object -> csv file? or string?
