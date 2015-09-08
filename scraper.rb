@@ -12,6 +12,9 @@ class Scraper
 
     @agent = Mechanize.new
 
+    # add rate limit of 500ms between requests
+    @agent.history_added = Proc.new { sleep 0.5 }
+
   end
 
   def scrap
@@ -40,8 +43,12 @@ class Scraper
       post_link = job.at_css('h3 a').attribute('href').value
       location = job.at_css('li.location').text
       post_date = job.at_css('li.posted').text
-      company_ID = job.at_css('ul li a').attribute('href').value.match(/([^\/]*)$/)[0]
-      job_ID = job.at_css('h3 a').attribute('href').value.match(/([^\/]*)\?/)[0][0..-2]
+
+      # capture every instance of characters in between '/' and '/'.  only returns the last value which is the company ID
+      company_ID = job.at_css('h3 a').attribute('href').value.scan(/([^\/]*)\//)[-1]
+
+      # capture all values before the first question mark
+      job_ID = job.at_css('h3 a').attribute('href').value.match(/([^\/]*)\?/)[1]
 
       jobs << [job_title, company_name, post_link, location, post_date, company_ID, job_ID]
 
