@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>Scraper</title>
+		<style>
+			body {
+				max-width: 1024px;
+				margin: 0 auto;
+			}
+			td {
+				min-width: 96px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Scraper</h1>
+		<form action="/scrape">
+			<button id="submit" type="submit">Scrape</button>
+		</form>
+		<div id="status"></div>
+		<h2>Data:</h2>
+		<%
+		table_headers = @csv.shift
+		%>
+		<table>
+			<thead>
+				<tr>
+					<% table_headers.each do |th| %>
+						<th>
+							<%= th %>
+						</th>
+					<% end %>
+				</tr>
+			</thead>
+			<tbody>
+				<% @csv.each do |job| %>
+				<tr>
+					<% job.each do |td| %>
+					<td>
+						<% if td =~ /^http(s)?:\/\//%>
+							<a href="<%= td %>">
+								<%= job[0] %>
+							</a>
+						<% else %>
+							<%= td %>
+						<% end %>
+					</td>
+					<% end %>
+				</tr>
+				<% end %>
+			</tbody>
+		</table>
+		<script>
+
+			var SENDING = false;
+
+			document.getElementById('submit').onclick = function doAjax(e) {
+				e.preventDefault();
+
+				if (SENDING = false) {
+					SENDING = true;
+				}
+
+				document.getElementById("status").innerHTML = 'Please wait while scraping...';
+
+				var xmlhttp;
+				if (window.XMLHttpRequest)
+				{// code for IE7+, Firefox, Chrome, Opera, Safari
+					xmlhttp = new XMLHttpRequest();
+				} else {// code for IE6, IE5
+					xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange = function() {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+					{
+						document.getElementById("status").innerHTML = xmlhttp.responseText;
+						window.location = '/';
+						SENDING = false;
+					}
+				}
+				xmlhttp.open("GET", "/scrape", true);
+				xmlhttp.send();
+			}
+		</script>
+	</body>
+</html>
