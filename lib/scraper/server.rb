@@ -14,22 +14,25 @@ class Server
 			"Connection: close\r\n\r\n"
 		].join
 		@server = TCPServer.new(host, port)
+		@running = false
 	end
 
 	def start
 		puts "Listening at http://#{host}:#{port}"
 		puts "Crtl-C to quit"
+		@running = true
 		serve		
 	end
 
 	def stop
-		raise Interrupt
+		@server.close
+		@running = false
 	end
 
 	private
 		def serve
 			begin
-				loop do
+				while @running
 					client = @server.accept
 					request = client.recvfrom(2**16)
 					print "\n#{request}\n"
