@@ -20,7 +20,7 @@ describe Server do
 		after {stop}
 
 		it 'starts the server' do
-			expect(agent.get(url)).to eq(nil)
+			expect(agent.get(url)).to be_an_instance_of(Mechanize::Page)
 		end
 	end
 
@@ -33,7 +33,7 @@ describe Server do
 		it 'stops the server' do
 			expect do
 				agent.get(url)
-			end.to_not raise_error(Net::HTTP::Persistent::Error)
+			end.to raise_error(Net::HTTP::Persistent::Error)
 		end
 	end
 end
