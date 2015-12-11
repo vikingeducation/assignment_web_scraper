@@ -1,6 +1,9 @@
-require_relative 'scraper'
+require 'csv'
+require 'mechanize'
 
-class DiceScraper < Scraper
+Job = Struct.new(:title, :company, :direct_link, :location, :post_date, :company_id, :job_id, :source)
+
+class DiceScraper
   attr_reader :jobs
 
   def initialize
@@ -9,10 +12,22 @@ class DiceScraper < Scraper
 
     search_url = "https://www.dice.com/jobs?q=Ruby+on+Rails&l=New+Orleans%2C+LA"
 
+    # TODO:  add pagination functionality (loop over each page)
     results = agent.get(search_url).search("div.serp-result-content")
     stop = results.length / 2
 
     @jobs = parse_jobs(results[0...stop])
+  end
+
+  def save_results
+    file = 'job_results.csv'
+    CSV.open(file, 'a') do |csv|
+      # each one of these comes out in its own row.
+      @jobs.each do |job|
+        csv << [job.title, job.company, job.direct_link, job.location, job.post_date, job.company_id, job.job_id, job.source]
+      end
+    end
+    puts "Successfully saved to #{file}!"
   end
 
   private
@@ -41,4 +56,4 @@ class DiceScraper < Scraper
 end
 
 d = DiceScraper.new
-puts d.jobs
+d.save_results
