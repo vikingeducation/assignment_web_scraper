@@ -46,12 +46,29 @@ class DiceScraper
       location = node.css('li.location').first.children.text
 
       # TODO: change to real date
-      post_date = node.css('li.posted').first.children.text
+      post_ago = node.css('li.posted').first.children.text
+      post_date = get_date(post_ago)
 
       jobs << Job.new(title, company, link, location, post_date, company_id, job_id, :dice)
     end
 
     jobs
+  end
+
+  def get_date(ago_string)
+    terms = ago_string.split(' ')[0..1]
+    time_quantity = terms.first.to_i
+
+    if terms.last.include? 'week'
+      date = Date.today - 7 * time_quantity
+    elsif terms.last.include? 'day'
+      date = Date.today - time_quantity
+    elsif terms.last.include?('hour') || terms.last.include?('minute')
+      date = Date.today
+    else
+      date = nil
+    end
+    date
   end
 end
 
