@@ -15,7 +15,7 @@ CSV.open('dice_job.csv', 'a') do |csv|
   jobs.each do |job|
     title = job.at("h3 a").attributes["title"].value # job title
     location = job.at(".location").text # location
-    company = job.at("ul li span a .dice-btn-link").text # location
+    company = job.at("ul li span a").text # location
     print title, location, company
     puts
 
