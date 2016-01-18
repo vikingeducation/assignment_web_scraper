@@ -21,16 +21,30 @@ class DiceScraper
 
   def search_for(query)
     query = query.split(" ").join("+")
-    address = "https://www.dice.com/jobs?q=#{query}-limit-200-jobs"
-    @agent.get(address)
+    search_page(query)
+  end
+
+  def search_page(query, page = 1)
+    puts "Searching page # #{page}"
+    @agent.get("https://www.dice.com/jobs/q-#{query}-limit-120-startPage-#{page}-limit-120-jobs")
   end
 
   def scrape_jobs(query)
     page = search_for(query)
-    job_nodes = get_job_nodes(page)
-    job_nodes.each do |job_node|
-      @jobs << job_from_node(job_node)
+    count = 1
+    until error_page?(page)
+      job_nodes = get_job_nodes(page)
+      job_nodes.each do |job_node|
+        @jobs << job_from_node(job_node)
+      end
+      count += 1
+      page = search_page(query, count)
     end
+  end
+
+  def error_page?(page)
+    page = @agent.get(page)
+    !!page.at(".err_p")
   end
 
   def get_job_nodes(page)
@@ -70,6 +84,6 @@ class DiceScraper
 end
 
 scraper = DiceScraper.new
-scraper.scrape_jobs("Ruby on Rails")
+scraper.scrape_jobs("Javascript")
 scraper.save_to_csv
 

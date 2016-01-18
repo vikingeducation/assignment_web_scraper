@@ -12,6 +12,10 @@ query address: "https://www.dice.com/jobs?q=#{serch+term}"
 scraper.history_added = Proc.new { sleep 0.5 }
 
 
+https://www.dice.com/jobs/q-#{query}-limit-120-startPage-#{page}-limit-120-jobs
+
+increment page until .err_p text = 404
+
 Increment Page-#{i} until 404'ed!
 https://www.dice.com/jobs/q-rails-limit-100-jobs.html
 

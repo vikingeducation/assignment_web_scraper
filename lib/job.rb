@@ -6,7 +6,7 @@ class Job
     @company = company
     @link = link
     @location = location
-    @date = date
+    @date = date || Time.now
     @company_id = company_id
     @job_id = job_id
   end

@@ -6,11 +6,13 @@
 !_TAG_PROGRAM_VERSION	5.8	//
 DiceScraper	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^class DiceScraper$/;"	c
 Job	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/job.rb	/^class Job$/;"	c
-get_job_nodes	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def get_job_nodes(page)$/;"	f	class:DiceScraper
+error_page?	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def error_page?(page)$/;"	f
+get_job_nodes	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def get_job_nodes(page)$/;"	f
 initialize	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/job.rb	/^  def initialize(title:, company:, link:, location:, date:, company_id:, job_id:)$/;"	f	class:Job
 initialize	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def initialize$/;"	f	class:DiceScraper
-job_from_node	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def job_from_node(job_node)$/;"	f	class:DiceScraper
-save_to_csv	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def save_to_csv$/;"	f	class:DiceScraper
+job_from_node	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def job_from_node(job_node)$/;"	f
+save_to_csv	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def save_to_csv$/;"	f
 scrape_jobs	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def scrape_jobs(query)$/;"	f	class:DiceScraper
 search_for	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def search_for(query)$/;"	f	class:DiceScraper
+search_page	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def search_page(query, page = 1)$/;"	f	class:DiceScraper
 to_a	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/job.rb	/^  def to_a$/;"	f	class:Job
