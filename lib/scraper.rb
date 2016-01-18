@@ -89,6 +89,5 @@ class DiceScraper
 end
 
 scraper = DiceScraper.new
-scraper.scrape_jobs("Ruby")
+scraper.scrape_jobs("Javascript", Time.now-(60*60*24))
 scraper.save_to_csv
-
