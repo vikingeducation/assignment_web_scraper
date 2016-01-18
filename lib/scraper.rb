@@ -25,17 +25,22 @@ class DiceScraper
   end
 
   def search_page(query, page = 1)
-    puts "Searching page # #{page}"
     @agent.get("https://www.dice.com/jobs/q-#{query}-limit-120-startPage-#{page}-limit-120-jobs")
   end
 
-  def scrape_jobs(query)
+  def scrape_jobs(query, date=nil)
     page = search_for(query)
     count = 1
     until error_page?(page)
+      puts "Searching page # #{count}"
       job_nodes = get_job_nodes(page)
       job_nodes.each do |job_node|
-        @jobs << job_from_node(job_node)
+        new_job = job_from_node(job_node)
+        if date
+          @jobs << new_job if new_job.date > date
+        else
+          @jobs << new_job
+        end
       end
       count += 1
       page = search_page(query, count)
@@ -84,6 +89,6 @@ class DiceScraper
 end
 
 scraper = DiceScraper.new
-scraper.scrape_jobs("Javascript")
+scraper.scrape_jobs("Javascript", Time.now-(60*60*24))
 scraper.save_to_csv
 
