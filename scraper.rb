@@ -45,6 +45,7 @@ class Scraper
       # obtain mechanized job page by following job_link
       job_page = @mech.get(job_link)
 
+      #scraping job page for each job
       company_info = job_page.search('.company-header-info')
       ids = company_info.css('div.row div.col-md-12')
       dice_id = ids.first.text.strip
