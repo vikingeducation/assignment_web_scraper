@@ -1,23 +1,31 @@
 require 'nokogiri'
+require 'pp'
 require 'mechanize'
 require 'byebug'
 require 'chronic'
+require_relative 'lib/job'
 
-id_regex = /\/([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)\?icid/
+id_regex = /\/([^\/]+)\/([^\/]+?)\?icid/
 
 address = "https://www.dice.com/jobs?q=rails&l=Oakland%2C+NJ"
 agent = Mechanize.new { |agent| agent.user_agent_alias = "Mac Safari" }
 page = agent.get(address)
 jobs = page.css(".col-md-9 > #serp > .serp-result-content")
 
+jobs_array = []
 jobs.each do |job|
-  puts job.at("h3 a").attributes["title"].value # job title
-  p job.at(".employer .hidden-md a").text # company name
-  p link = job.at("h3 a").attributes["href"].value # link to posting on dice
-  p job.at(".location").text
+  title = job.at("h3 a").attributes["title"].value # job title
+  company = job.at(".employer .hidden-md a").text # company name
+  link = job.at("h3 a").attributes["href"].value # link to posting on dice
+  location = job.at(".location").text # location
   date = Chronic.parse(job.at(".posted").text) # date of posting
-  p date
-  company_id, job_id = link.match(id_regex)
-  p company_id
-  p job_id
+  matches = link.match(id_regex)
+  if matches
+    company_id, job_id = matches.captures
+  else
+    puts link
+  end
+  jobs_array << Job.new(title: title, company: company, link: link, location: location, date: date, company_id: company_id, job_id: job_id)
 end
+
+pp jobs_array
