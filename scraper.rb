@@ -42,10 +42,17 @@ class Scraper
 
       actual_time = now - time_num*time_hash[time_string.downcase.to_sym]
 
-      
+      # obtain mechanized job page by following job_link
+      job_page = @mech.get(job_link)
+
+      company_info = job_page.search('.company-header-info')
+      ids = company_info.css('div.row div.col-md-12')
+      dice_id = ids.first.text.strip
+      job_id = ids.last.text.strip
+
 
       current_job = Job.new
-      p employer
+      p "#{dice_id} #{job_id}"
       puts
     end
   end
