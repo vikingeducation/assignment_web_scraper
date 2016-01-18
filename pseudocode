@@ -1,0 +1,24 @@
+# search form is: 
+# search term (q) + location (l)
+
+query looks like:
+https://www.dice.com/jobs?q=ruby&l=San+Francisco%2C+CA
+
+they give us 30 results per page, page 2 url:
+https://www.dice.com/jobs?q=ruby&l=San+Francisco%2C+CA&startPage=2
+
+
+filters:
+distance (default is 30, other options are 5, 10, 20, and 40) &radius=30
+
+title (takes you to new page) &djt=job_title
+
+location (default parameter) &l=san_francisco%2C_ca
+
+company (takes you to new page) &dc=CompanyName
+
+employment type (three types are Full Time, Part Time, Contract) &jtype=Full_Time
+
+telecommute (yes is the only option) &dtco=true
+
+company segment (Recruiter or DirectHire) &dcs=Recruiter
