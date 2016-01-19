@@ -72,6 +72,7 @@ class Scraper
 
   def create_csv
     CSV.open("jobs.csv", 'a') do |csv|
+      # csv << ["job_title", "job_shortdesc", "employer", "job_link", "location", "actual_time", "dice_id", "job_id"]
       @jobs.each do |job|
         csv << job
       end
