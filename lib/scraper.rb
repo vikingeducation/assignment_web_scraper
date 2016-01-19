@@ -4,9 +4,10 @@ require 'byebug'
 require 'chronic'
 require 'csv'
 require_relative 'job'
+require_relative 'job_saver'
+require_relative 'filter'
 
 class DiceScraper
-
   attr_reader :jobs
 
   ID_REGEX = /\/([^\/]+)\/([^\/]+?)\?icid/
@@ -28,7 +29,7 @@ class DiceScraper
     @agent.get("https://www.dice.com/jobs/q-#{query}-limit-120-startPage-#{page}-limit-120-jobs")
   end
 
-  def scrape_jobs(query, date=nil)
+  def scrape_jobs(query)
     page = search_for(query)
     count = 1
     until error_page?(page)
@@ -36,11 +37,7 @@ class DiceScraper
       job_nodes = get_job_nodes(page)
       job_nodes.each do |job_node|
         new_job = job_from_node(job_node)
-        if date
-          @jobs << new_job if new_job.date > date
-        else
-          @jobs << new_job
-        end
+        @jobs << new_job
       end
       count += 1
       page = search_page(query, count)
@@ -70,24 +67,10 @@ class DiceScraper
     end
     Job.new(title: title, company: company, link: link, location: location, date: date, company_id: company_id, job_id: job_id)
   end
-
-  def save_to_csv
-    headers = ['Title', 'Company', 'Link', 'Location', 'Date', 'Company Id', 'Job Id']
-
-    unless File.exist?('scraped_jobs.csv')
-      CSV.open("scraped_jobs.csv", 'w') do |csv|
-        csv << headers
-      end
-    end
-
-    CSV.open("scraped_jobs.csv", 'a') do |csv|
-      @jobs.each do |job|
-        csv << job.to_a
-      end
-    end
-  end
 end
 
 scraper = DiceScraper.new
-scraper.scrape_jobs("Javascript", Time.now-(60*60*24))
-scraper.save_to_csv
+scraper.scrape_jobs("Ruby on Rails")
+filter = Filter.new(date: "1 day ago", title: "Developer")
+jobs = filter.filter_jobs(scraper.jobs)
+JobSaver.new(jobs).save_to_csv
