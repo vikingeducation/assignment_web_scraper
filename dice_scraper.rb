@@ -3,18 +3,13 @@ require 'bundler/setup'
 require 'mechanize'
 require 'csv'
 
-Job = Struct.new(:title, :descript, :employer, :link, :location, :posted, :dice_id, :job_id)
-
-class Scraper
+class DiceScraper
 
   def initialize
     @mech = Mechanize.new
     @mech.user_agent_alias = 'Mac Safari'
-    @page = nil
-    # this gives your Mechanize object
-    # an 0.5 second wait time after every HTML request
-    # Don't forget it!!!
     @mech.history_added = Proc.new { sleep 0.5 }
+    @page = nil
     @jobs = []
   end
 
@@ -108,7 +103,7 @@ class Scraper
   end
 end
 
-scraper = Scraper.new
+scraper = DiceScraper.new
 
 scraper.scrape_jobs(Time.new(2016, 1, 18))
 scraper.create_csv
