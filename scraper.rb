@@ -22,54 +22,77 @@ class Scraper
     @page = @mech.get('https://www.dice.com/jobs?q=Ruby+on+Rails&l=New+York%2C+NY')
     results = @page.search('#search-results-control .col-md-9 #serp .serp-result-content')
 
-    results.each do |job|
-      job_title = job.at('h3 a').attributes["title"].value
-      job_shortdesc = job.css('div.shortdesc').text.strip
-      employer = job.css('li.employer span.hidden-md a').text.strip
-      job_link = job.at('h3 a').attributes["href"].value
-      location = job.css('li.location').text.strip
-      rel_time_arr = job.css('li.posted').text.split(" ")
-      now = Time.now
-      time_num = rel_time_arr[0].to_i
-      time_string = rel_time_arr[1]
-
-      time_hash = { year: 365*24*60*60, years: 365*24*60*60,
-                    week: 7*24*60*60, weeks: 7*24*60*60,
-                    month: 30*24*60*60, months: 30*24*60*60,
-                    day: 24*60*60, days: 24*60*60,
-                    hour: 60*60, hours: 60*60,
-                    minute: 60, minutes: 60,
-                    second: 1, seconds: 1 }
+    scrape_page(results, date)
 
 
-      actual_time = now - time_num*time_hash[time_string.downcase.to_sym]
+  end
 
-      next if actual_time < date
+  def scrape_page(nokogiri_result, date)
 
-      # obtain mechanized job page by following job_link
-      job_page = @mech.get(job_link)
+    nokogiri_result.each do |job|
 
-      #scraping job page for each job
-      company_info = job_page.search('.company-header-info').first
-      ids = company_info.css('div.row div.col-md-12')
+      next if get_date(job) < date
 
-      if ids.length == 2
-        dice_id = ids[0].text.strip[10..-1]
-        job_id = ids[1].text.strip[13..-1]
-      elsif ids.length == 3
-        dice_id = ids[1].text.strip[10..-1]
-        job_id = ids[2].text.strip[13..-1]
-      end
+      ids = get_ids(job)
+      @jobs << [get_job(job), get_descript(job), get_employer(job), get_link(job), get_location(job), get_date(job), ids[0], ids[1]]
 
-      @jobs << [job_title, job_shortdesc, employer, job_link, location, actual_time, dice_id, job_id]
+    end
+  end
 
-      # p job_title
-      # p employer
-      # p "#{dice_id} #{job_id}"
-      # puts
+  def get_job(job)
+    job.at('h3 a').attributes["title"].value
+  end
+
+  def get_descript(job)
+    job.css('div.shortdesc').text.strip
+  end
+
+  def get_employer(job)
+    job.css('li.employer span.hidden-md a').text.strip
+  end
+
+  def get_link(job)
+    job.at('h3 a').attributes["href"].value
+  end
+
+  def get_location(job)
+    job.css('li.location').text.strip
+  end
+
+  def get_date(job)
+    time_hash = { year: 365*24*60*60, years: 365*24*60*60,
+                  week: 7*24*60*60, weeks: 7*24*60*60,
+                  month: 30*24*60*60, months: 30*24*60*60,
+                  day: 24*60*60, days: 24*60*60,
+                  hour: 60*60, hours: 60*60,
+                  minute: 60, minutes: 60,
+                  second: 1, seconds: 1 }
+
+    rel_time_arr = job.css('li.posted').text.split(" ")
+    now = Time.now
+    time_num = rel_time_arr[0].to_i
+    time_string = rel_time_arr[1]
+
+    return now - time_num*time_hash[time_string.downcase.to_sym]
+  end
+
+  def get_ids(job)
+    # obtain mechanized job page by following job_link
+    job_page = @mech.get(get_link(job))
+
+    #scraping job page for each job
+    company_info = job_page.search('.company-header-info').first
+    ids = company_info.css('div.row div.col-md-12')
+
+    if ids.length == 2
+      dice_id = ids[0].text.strip[10..-1]
+      job_id = ids[1].text.strip[13..-1]
+    elsif ids.length == 3
+      dice_id = ids[1].text.strip[10..-1]
+      job_id = ids[2].text.strip[13..-1]
     end
 
-
+    return [dice_id, job_id]
   end
 
   def create_csv
