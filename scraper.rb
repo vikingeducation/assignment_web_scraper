@@ -1,8 +1,9 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
+require 'csv'
 
-Job = Struct.new(:title, :descript, :employer, :location, :posted)
+Job = Struct.new(:title, :descript, :employer, :link, :location, :posted, :dice_id, :job_id)
 
 class Scraper
 
@@ -14,12 +15,13 @@ class Scraper
     # an 0.5 second wait time after every HTML request
     # Don't forget it!!!
     @mech.history_added = Proc.new { sleep 0.5 }
+    @jobs = []
   end
 
   def scrape_jobs
     @page = @mech.get('https://www.dice.com/jobs?q=Ruby+on+Rails&l=New+York%2C+NY')
     results = @page.search('#search-results-control .col-md-9 #serp .serp-result-content')
-    puts results.length
+
     results.each do |job|
       job_title = job.at('h3 a').attributes["title"].value
       job_shortdesc = job.css('div.shortdesc').text.strip
@@ -46,22 +48,41 @@ class Scraper
       job_page = @mech.get(job_link)
 
       #scraping job page for each job
-      company_info = job_page.search('.company-header-info')
+      company_info = job_page.search('.company-header-info').first
       ids = company_info.css('div.row div.col-md-12')
-      dice_id = ids.first.text.strip
-      job_id = ids.last.text.strip
 
-      current_job = Job.new
-      p employer
-      puts
+      if ids.length == 2
+        dice_id = ids[0].text.strip[10..-1]
+        job_id = ids[1].text.strip[13..-1]
+      elsif ids.length == 3
+        dice_id = ids[1].text.strip[10..-1]
+        job_id = ids[2].text.strip[13..-1]
+      end
+
+      @jobs << [job_title, job_shortdesc, employer, job_link, location, actual_time, dice_id, job_id]
+
+      # p job_title
+      # p employer
+      # p "#{dice_id} #{job_id}"
+      # puts
     end
+
+
   end
 
+  def create_csv
+    CSV.open("jobs.csv", 'a') do |csv|
+      @jobs.each do |job|
+        csv << job
+      end
+    end
+  end
 end
 
 scraper = Scraper.new
 
 scraper.scrape_jobs
+scraper.create_csv
 
 # job title, keywords input field id='search-field-keyword'
 # location id='search-field-location'
