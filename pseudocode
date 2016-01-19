@@ -1,12 +1,12 @@
 extract the following:
 
-1. Job title
-2. Company name
-3. Link to posting on Dice
-4. Location
-5. Posting date (not a relative date like "x weeks ago" because that will quickly be meaningless)
-6. Company ID
-7. Job ID
+1. Job title (done)
+2. Company name (done)
+3. Link to posting on Dice (done)
+4. Location (done)
+5. Posting date (not a relative date like "x weeks ago" because that will quickly be meaningless) (done-ish, want to implement chronic)
+6. Company ID (pending, returning like, want id)
+7. Job ID (done)
 
 
 job1 = {'title': 'title', 'company_name: 'company_name'}

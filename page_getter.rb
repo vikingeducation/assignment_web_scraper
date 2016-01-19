@@ -40,7 +40,35 @@ class PageGetter
 
 
   def get_job_info
+    listing = {}
+    i = 0
 
+
+    # until i == 29 do |jobs|
+        @jobs.each_with_index do |info_block, index|
+          if info_block.nil? 
+            print "Nothing to evaluate."
+          elsif !info_block.is_a? Hash
+            print "Nothing to evaluate."
+          elsif info_block['id'].nil?
+              print "Nothing to evaluate."
+          elsif info_block['id'].value.nil?
+            print "Nothing to evaluate."
+          else
+            if info_block['id'].value == 'position0'
+              listing['job_title'] = info_block['title'].value
+              listing['link'] = info_block['href'].value
+              listing['job_id'] = info_block['href'].value
+            end
+            if info_block['id'].value == 'company0'
+              listing['company_id'] = info_block['href'].value
+              listing['company_name'] = @jobs[index + 1].text
+              listing['company_location'] = @jobs[index + 5].text
+              listing['posting_date'] = @jobs[index + 9].text
+            end
+          end
+        end
+        print listing
   end
 
 end
@@ -48,4 +76,4 @@ end
 m = PageGetter.new
 m.make_search_query("ruby", "francisco")
 m.create_jobs_array(m.search_query)
-pp m.jobs
+m.get_job_info
