@@ -19,24 +19,27 @@ class Scraper
   end
 
   def scrape_jobs(date)
-    @page = @mech.get('https://www.dice.com/jobs?q=Ruby+on+Rails&l=New+York%2C+NY')
-    results = @page.search('#search-results-control .col-md-9 #serp .serp-result-content')
+    (1..10).each do |page_num|
+      print "Currently scraping page #{page_num}"
 
-    scrape_page(results, date)
+      @page = @mech.get("https://www.dice.com/jobs/q-Ruby_on_Rails-limit-30-l-New_York%2C_NY-radius-30-startPage-#{page_num}-limit-30-jobs")
+      results = @page.search('#search-results-control .col-md-9 #serp .serp-result-content')
 
-
+      scrape_page(results, date)
+    end
+    puts "Scraping Complete!"
   end
 
   def scrape_page(nokogiri_result, date)
-
     nokogiri_result.each do |job|
+      print "."
 
       next if get_date(job) < date
 
       ids = get_ids(job)
       @jobs << [get_job(job), get_descript(job), get_employer(job), get_link(job), get_location(job), get_date(job), ids[0], ids[1]]
-
     end
+    puts
   end
 
   def get_job(job)
@@ -109,6 +112,8 @@ scraper = Scraper.new
 
 scraper.scrape_jobs(Time.new(2016, 1, 18))
 scraper.create_csv
+# https://www.dice.com/jobs/q-Ruby_on_Rails-limit-30-l-New_York%2C_NY-radius-30-startPage-1-limit-30-jobs
+# https://www.dice.com/jobs/q-Ruby_on_Rails-limit-30-l-New_York%2C_NY-radius-30-startPage-2-limit-30-jobs
 
 # job title, keywords input field id='search-field-keyword'
 # location id='search-field-location'
