@@ -1,0 +1,40 @@
+extract the following:
+
+1. Job title (done)
+2. Company name (done)
+3. Link to posting on Dice (done)
+4. Location (done)
+5. Posting date (not a relative date like "x weeks ago" because that will quickly be meaningless) (done-ish, want to implement chronic)
+6. Company ID (pending, returning like, want id)
+7. Job ID (done)
+
+
+job1 = {'title': 'title', 'company_name: 'company_name'}
+job['title'] = 'title'
+csv_row = job.values
+
+
+# search form is: 
+# search term (q) + location (l)
+
+query looks like:
+https://www.dice.com/jobs?q=ruby&l=San+Francisco%2C+CA
+
+they give us 30 results per page, page 2 url:
+https://www.dice.com/jobs?q=ruby&l=San+Francisco%2C+CA&startPage=2
+
+
+filters:
+distance (default is 30, other options are 5, 10, 20, and 40) &radius=30
+
+title (takes you to new page) &djt=job_title
+
+location (default parameter) &l=san_francisco%2C_ca
+
+company (takes you to new page) &dc=CompanyName
+
+employment type (three types are Full Time, Part Time, Contract) &jtype=Full_Time
+
+telecommute (yes is the only option) &dtco=true
+
+company segment (Recruiter or DirectHire) &dcs=Recruiter
