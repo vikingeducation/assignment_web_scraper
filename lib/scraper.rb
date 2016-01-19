@@ -69,8 +69,8 @@ class DiceScraper
   end
 end
 
-scraper = DiceScraper.new
-scraper.scrape_jobs("Ruby on Rails")
-filter = Filter.new(date: "1 day ago", title: "Developer")
-jobs = filter.filter_jobs(scraper.jobs)
-JobSaver.new(jobs).save_to_csv
+# scraper = DiceScraper.new
+# scraper.scrape_jobs("Ruby on Rails")
+# filter = Filter.new(date: "1 day ago", title: "Developer")
+# jobs = filter.filter_jobs(scraper.jobs)
+# JobSaver.new(jobs).save_to_csv

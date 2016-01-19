@@ -30,3 +30,28 @@ https://www.dice.com/jobs/q-rails-limit-100-jobs.html
     <li class="employer"><span class="hidden-md"><a id="company{number}" href="link to company page">Employer</a></span></li>
     <li class="location">Location</li>
     <li class="posted">Date Posted</li>
+
+Indeed
+<div class="row sjlast result">
+  <a class="jobtitle" href="job page link" title="title of job">Title of Job</a>
+  <div class="sjcl">
+    <span class="company">Company Name</span>
+    <span class="location">Job location</span>
+  </div>
+  <div class"result-link-bar">
+    <span class="date">Date of posting</span>
+  </div>
+</div>
+
+<a class="jobtitle" href="Link to posting">Job title</a>
+<span class="company">Company Name</span>
+<span class="location">Location</span>
+<span class="date">Date of posting</span>
+<span class="np">Next&nbsp;</span>
+
+
+http://jobs.apptentive.com/apply/job_20151216013927_WZ0RXNEVULWUJG6E/Platform-Engineer?source=INDEP
+
+http://www.indeed.com/cmp/PC--Doctor,-Inc./jobs/Software-Engineer-4709d64fdeaffd24?q=ruby+on+rails
+
+http://www.indeed.com/jobs?q=ruby+on+rails&l=Reno%2C+NV

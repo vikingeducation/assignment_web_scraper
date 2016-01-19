@@ -1,7 +1,7 @@
 class Job
   attr_accessor :title, :company, :link, :location, :date, :company_id, :job_id
 
-  def initialize(title:, company:, link:, location:, date:, company_id:, job_id:)
+  def initialize(title:, company:, link:, location:, date:, company_id: nil, job_id: nil)
     @title = title
     @company = company
     @link = link
