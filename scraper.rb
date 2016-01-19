@@ -18,7 +18,7 @@ class Scraper
     @jobs = []
   end
 
-  def scrape_jobs
+  def scrape_jobs(date)
     @page = @mech.get('https://www.dice.com/jobs?q=Ruby+on+Rails&l=New+York%2C+NY')
     results = @page.search('#search-results-control .col-md-9 #serp .serp-result-content')
 
@@ -43,6 +43,8 @@ class Scraper
 
 
       actual_time = now - time_num*time_hash[time_string.downcase.to_sym]
+
+      next if actual_time < date
 
       # obtain mechanized job page by following job_link
       job_page = @mech.get(job_link)
@@ -82,7 +84,7 @@ end
 
 scraper = Scraper.new
 
-scraper.scrape_jobs
+scraper.scrape_jobs(Time.new(2016, 1, 18))
 scraper.create_csv
 
 # job title, keywords input field id='search-field-keyword'
