@@ -5,32 +5,43 @@ require 'nokogiri'
 require 'pp'
 require 'csv' 
 
-address = "https://www.dice.com/jobs?q=ruby&l=San+Jose%2C+CA"
-agent = Mechanize.new
-page = agent.get(address)
-jobs = page.search(".col-md-9 > #serp > .serp-result-content")
+class DiceScraper
 
-CSV.open('dice_job.csv', 'a') do |csv|
-  
-  jobs.each do |job|
-    title = job.at("h3 a").attributes["title"].value # job title
-    location = job.at(".location").text # location
-    company = job.at("ul li span a").text # location
-    print title, location, company
-    puts
+  def initialize( address = "https://www.dice.com/jobs?q=ruby&l=San+Jose" )
+    @address = address
+  end
 
-    csv << [title, location]
+# address = "https://www.dice.com/jobs?q=ruby&l=San+Jose%2C+CA"
+
+
+
+
+  def scrape
+    agent = Mechanize.new
+    page = agent.get(@address)
+
+    jobs = page.search(".col-md-9 > #serp > .serp-result-content")
+    CSV.open('dice_job.csv', 'w') do |csv|
+      
+      jobs.each do |job|
+        title = job.at("h3 a").attributes["title"].value # job title
+        location = job.at(".location").text # location
+        company = job.at("ul li span a").text # location
+        link = job.at("h3 a").attributes["href"].value
+        posted =  job.at(".posted").text
+        # # print title, location, company
+        # puts
+        csv << [ title, location, company, link, posted ]
+      end
+    end
   
   end
 end
 
+scraper = DiceScraper.new
+scraper.scrape
 
 
-
-
-
-# you don't need a CSV.close, 
-# because it's wrapped in a block
 
 # Job title
 # Company name
