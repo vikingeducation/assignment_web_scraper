@@ -1,0 +1,39 @@
+Building the Scraper
+
+1. Go to dice.com and familiarize yourself with the layout of the site. A few things to note (pay attention to the URL parameters):
+
+  1. How does the search form work? What do its parameters look like?
+  - 1 box to search via job title, skills, keywords or company name
+  - 1 box to search via zip code, city, or state
+  - 1 search button but you don't need to click on it, just hitting enter works.
+  - An Advanced search link****
+
+  2. How does the pagination of the results page work?
+  ** On the Internet, pagination is used for such things as displaying a limited number of results on search engine results pages, or showing a limited number of posts when viewing a forum thread. Pagination is used in some form in almost every web application to divide returned data and display it on multiple pages. Pagination also includes the logic of preparing and displaying the links to the various pages.
+
+  - It looks like they show 30 results per page.
+
+  What do its URL parameters look like?
+  when searching junior ruby developers - https://www.dice.com/jobs?q=junior+ruby+developer&l=&searchid=5970967267640
+
+  when searching San Francisco, CA - https://www.dice.com/jobs?q=&l=San+Francisco%2C+CA&searchid=4481891354080
+
+  3. How do the filters work?
+  Different filters like Distance, Title, Location, Company etc and they all present square boxes that you can click which auto loads a new page.
+
+2. Build a simple scraper using Mechanize and Ruby which performs a search query and returns the first results page. Play with it! You should figure out:
+
+  1. What does the response object that Mechanize gives you look like?
+  - First it gives all the standard parts of the dice.com page then it's followed by the results. There's a lot of \t's for some reason.
+
+  2. What methods can you run on this object?
+  On this object, you can:
+  - from this object you can get all the links from the next page and get details from those links. links_with seems pretty tricky for this.
+  - thaiwood tutorial, he uses those links that match to get the movie year out of those links.
+  - Once he clicks on those links he...
+  - GETS TITLES because he can access all the CENTERED items on that page.
+
+  3. What do you have to do in order to run Nokogiri methods (e.g. to_css) on this response? What does parse do?
+- Never had to do it because i could just use .search(“title”).text[1]
+
+Note: Remember that you can use the click method to click links and buttons (See here)
