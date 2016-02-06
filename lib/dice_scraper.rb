@@ -59,39 +59,63 @@ class DiceScraper
     current_job.title = get_title(description_page)
 
     # Getting the company name from the description page
-    current_job.company = description_page.search(".employer").text.strip
+    current_job.company = get_company_name(description_page)
 
     # Getting the link to more info from the link
     current_job.link = link.href
 
     # Getting the job location from the description page
-    current_job.location = description_page.search(".location").text.strip
+    current_job.location = get_location(description_page)
 
     # Getting the posting data from description_page
-    current_job.posting_date = description_page.search('title').text.match(/([\d]+[-][\d]+[-][\d]+)/)[1]
+    current_job.posting_date = get_posting_date(description_page)
 
     # Getting the company id from the descriptin page
-    description_page.links_with(:href => /www.dice.com\/company/).each do |link2|
-      current_job.company_id = link2.href.match(/company\/([\w\d]+)/)[1]
-    end
+    current_job.company_id = get_company_id(description_page)
 
     # Getting the job id from the link
-    current_job.job_id = link.href.match(/#{current_job.company_id}\/(.*)\?/)[1]
+    current_job.job_id = get_job_id(link, current_job.company_id)
 
     current_job
   end
 
+  # Works
   def get_title(description_page)
     description_page.search(".jobTitle").text.strip
+  end
+
+  # Works
+  def get_company_name(description_page)
+    description_page.search(".employer").text.strip
+  end
+
+  # Works
+  def get_location(description_page)
+    description_page.search(".location").text.strip
+  end
+
+  # Works
+  def get_posting_date(description_page)
+    description_page.search('title').text.match(/([\d]+[-][\d]+[-][\d]+)/)[1]
+  end
+
+  def get_company_id(description_page)
+    description_page.links_with(:href => /www.dice.com\/company/).each do |link2|
+      return link2.href.match(/company\/([\w\d]+)/)[1]
+    end
+  end
+
+  def get_job_id(link, company_id)
+    link.href.match(/#{company_id}\/(.*)\?/)[1]
   end
 
 end
 
 # I think search subject is an option the user should definitely get an option on.
-# a = DiceScraper.new('ruby junior')
+a = DiceScraper.new('ruby junior')
 
 # Where to save and the mode are good options to have as well in case they want to have different files for different times or search results.
 # More I'm willing to have in their for now but it might be one of those things that could be mandatory in the future - as in it will always be on 'a'.
-# a.scrape_and_save('testing.csv', 'a')
+a.scrape_and_save('testing3.csv', 'a')
 
 
