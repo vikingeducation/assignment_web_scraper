@@ -1,0 +1,25 @@
+Scraping Ethics and Challenges
+
+We've mentioned this before, but it's important to note that web scraping is a sensitive subject. Here are some issues and fixes:
+
+1. It frequently violates Terms of Use for a site. Make sure to be considerate and only use it for personal projects.
+
+2. You can accidentally DOS attack a site by having a loop (and get yourself banned). Make sure you rate limit your application to, at the fastest, 500ms between requests.
+
+In order to do so, use this code:
+
+scraper = Mechanize.new
+# this gives your Mechanize object
+# an 0.5 second wait time after every HTML request
+# Don't forget it!!!
+scraper.history_added = Proc.new { sleep 0.5 }
+
+3. It's brittle anyway, since any changes to the site will break your scraper. Maintaining scrapers can be a pain.
+
+4. With the increasing popularity of JavaScript-driven sites, scraping has become more difficult. Some sites will be blank of their important data until JavaScript goes back and fills them in. The best way not to get confused is to run a browser with JavaScript disabled and see what shows up. Here's how to disable JavaScript in Chrome.
+
+5. Be a good citizen and avoid scraping pages listed in the Robots.txt file, which can usually be accessed by going directly to http://www.thesite.com/robots.txt. Those are pages that the site owner has explicitly forbidden robots from visiting.
+
+6. Make sure you've got safeguards to prevent yourself from getting pulled into an infinite loop by following links on a page that circle back. Some sites intentionally do this to catch scrapers. It's good to have a maximum "depth" you're willing to go.
+
+You've probably been banned if you get 403 errors suddenly. Avoid this!

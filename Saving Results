@@ -1,0 +1,17 @@
+Saving Results
+
+# How do the resulting links differ from the other links... I think all the links with p&q are for the actual results.
+
+  1. Job title - Title seems to be amongst all those \t and \n (DONE)
+
+  2. Company name - Seems to be in that Mechanize::Page::Link
+
+  3. Link to posting on Dice - Link is under title amongst all those \t's and \n's
+
+  4. Location - I can see it in the link
+
+  5. Posting date (not a relative date like "x weeks ago" because that will quickly be meaningless)
+
+  6. Company ID - you can get from the ending of the link on the company name from results.
+
+  7. Job ID

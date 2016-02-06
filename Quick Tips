@@ -1,0 +1,12 @@
+Quick Tips
+
+1. Play with things before you dive in! Send test queries and check out your response objects before you even try to start the official project. It's important to understand how the tools work before you try to work with them.
+
+2. When working with the Mechanize gem and its Nokogiri objects, try to utilize helper methods as much as possible instead of indexing directly into your Nokogiri objects using hard-coded array indexes or XPaths.
+
+3. Don't forget object orientation when building this! Make sure your classes each have a single responsibility and that they "only do the work that they should care about".
+
+4. Look for shortcuts wherever possible. Why bother to manually submit a form if you can go directly to the results page via URL?
+5. Think about how you can traverse the DOM tree to find specific tags. Don't forget that you can go up the tree too...
+
+6. Take a look through the sections below this for helpful tips on working with CSVs and ways to not get yourself banned from a website.
