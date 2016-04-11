@@ -41,14 +41,31 @@ class Parser
   def initialize( link )
     @page = Loader.load( link )
     @searcher = Searching.new
-    @result = []
   end
 
   def parsing_html
     result = @searcher.parse( @page )
+
+    # Why gets.chomp doesnt work on pry ? work on ruby
+
+
+    puts "Print result? Y or N"
+    choice = gets.chomp.upcase
+    puts choice
+    print( result ) if choice == "Y"
+
+    puts "Save result? Y or N"
+    choice = gets.chomp.upcase
+    save( result ) if choice == "Y"
+  end
+
+  def print( result )
     Printing.print_search( result )
   end
 
+  def save( result )
+    Saving.save( result )
+  end
 end
 
 parser = Parser.new( 'https://www.dice.com/jobs/sort-date-q-ruby-limit-30-l-New_york-radius-El-jobs.html?searchid=3223042923491' )

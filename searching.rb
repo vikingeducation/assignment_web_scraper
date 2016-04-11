@@ -19,7 +19,7 @@ class Searching
     queue = []
     count = 0
     page.links_with( :href => /jobs\/detail/ ).each do |link|
-      break if count == 5
+      break if count == 1
       queue << link.click
       count += 1
     end
