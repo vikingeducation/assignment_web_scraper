@@ -1,11 +1,12 @@
+require_relative 'attributes'
+
 Job = Struct.new(:title, :company, :link, :location, :date, :company_id, :job_id)
 
 class Searching
-  attr_accessor :result, :job
 
   def initialize
+    @attribute_handler = Attributes.new
     @result = []
-    @job = nil
   end
 
   def parse( page )
@@ -18,8 +19,25 @@ class Searching
   def get_posts_jobs( page )
     queue = []
     count = 0
+
+    # Take the last post date if there was a previous saved search ?
+    if File.exist?("last_date.txt")
+      last_date = File.readlines('last_date.txt','r').join("")
+    end
+
+    # Loop through all the job posts
     page.links_with( :href => /jobs\/detail/ ).each do |link|
-      break if count == 1
+
+      # Compare to the last post date saved, so don't go any further
+      unless last_date.nil?
+        current_date = @attribute_handler.add_date( link.click )
+        if Time.parse(current_date) - Time.parse(last_date) <= 0
+          puts 'We reach your previous last post'
+          break
+        end
+      end
+
+      break if count >= 3 # Or break when the post is 1 day old : Time.now - current_date > 86400
       queue << link.click
       count += 1
     end
@@ -33,38 +51,18 @@ class Searching
   end
 
   def parse_post_job( job )
-    @job = job
     current_job = Job.new
-    add_attributes( current_job )
+    @attribute_handler.add_attributes( current_job, job )
     @result << current_job
   end
 
-  def add_attributes( current_job )
-    current_job.date = add_date
-    current_job.title = add_title
-    current_job.link = add_link
-    current_job.company = add_company
-    current_job.location = add_location
-  end
-
-  def add_date
-    post_date = @job.search('#header-wrap .posted').text.strip
-  end
-
-  def add_title
-    post_title = @job.search('#jt').text.strip
-  end
-
-  def add_link
-    @job.uri.to_s
-  end
-
-  def add_company
-    @job.search('#header-wrap .employer a.dice-btn-link').text.strip
-  end
-
-  def add_location
-    @job.search('#header-wrap .details .location').text.strip
-  end
-
 end
+
+
+
+
+
+
+
+
+

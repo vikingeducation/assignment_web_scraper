@@ -37,40 +37,38 @@ require_relative 'Printing'
 
 class Parser
 
-  attr_reader :page, :result
-  def initialize( link )
-    @page = Loader.load( link )
+  def initialize
     @searcher = Searching.new
   end
 
-  def parsing_html
-    result = @searcher.parse( @page )
+  def parsing_html( link )
+
+    page = Loader.load( link )
+    results = @searcher.parse( page )
 
     # Why gets.chomp doesnt work on pry ? work on ruby
 
+    print( results )
 
-    puts "Print result? Y or N"
-    choice = gets.chomp.upcase
-    puts choice
-    print( result ) if choice == "Y"
-
-    puts "Save result? Y or N"
-    choice = gets.chomp.upcase
-    save( result ) if choice == "Y"
+    unless results.empty?
+      puts "Save results? Y or N"
+      choice = gets.chomp.upcase
+      save( results ) if choice == "Y"
+    end
   end
 
-  def print( result )
-    Printing.print_search( result )
+  def print( results )
+    Printing.print_search( results )
   end
 
-  def save( result )
-    Saving.save( result )
+  def save( results )
+    Saving.save( results )
   end
 end
 
-parser = Parser.new( 'https://www.dice.com/jobs/sort-date-q-ruby-limit-30-l-New_york-radius-El-jobs.html?searchid=3223042923491' )
+parser = Parser.new
 
-parser.parsing_html
+parser.parsing_html( 'https://www.dice.com/jobs/sort-date-q-ruby-limit-30-l-New_york-radius-El-jobs.html?searchid=3223042923491' )
 
 
 
