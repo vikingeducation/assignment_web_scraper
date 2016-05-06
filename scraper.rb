@@ -6,3 +6,5 @@ require_relative 'lib/scraper/scrape_task.rb'
 require_relative 'lib/scraper/scraper.rb'
 require_relative 'lib/scraper/server.rb'
 require_relative 'lib/scraper/view.rb'
+
+Server.new.start

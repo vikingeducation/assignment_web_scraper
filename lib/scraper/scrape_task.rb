@@ -10,7 +10,7 @@ class ScrapeTask
 	def exec(agent=nil)
 		agent = agent || @agent
 		data = []
-		url = 'https://www.dice.com/jobs/q-ruby-l-19044-radius-30-startPage-1-limit-1-jobs'
+		url = 'https://www.dice.com/jobs/q-ruby-l-19044-radius-30-startPage-1-limit-5-jobs'
 		page = agent.get(url)
 		puts "Scraping: #{page}"
 		links = page.links_with(:href => /jobs\/detail/)
