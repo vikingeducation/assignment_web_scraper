@@ -1,10 +1,15 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
+require 'csv'
 
 class Search
 
-  attr_reader :agent
+  attr_accessor :results
+
+  def initialize
+    @results = []
+  end
 
   def get_input
     puts "What are you looking for?\nYou can search for job title, skills, keywords, or company name."
@@ -16,14 +21,39 @@ class Search
   end
 
   def create_search_url(search, location)
-    url = "https://dice.com/jobs?q=#{search}&l=#{location}"
+    url = "http://dice.com/jobs?q=#{search}&l=#{location}"
     get_results(url)
   end
 
   def get_results(url)
-    agent = Mechanize.new{|a| a.ssl_version, a.verify_mode = 'SSLv3', OpenSSL::SSL::VERIFY_NONE}
-    results = agent.get(url)
-    pp results
+    agent = Mechanize.new
+    results = agent.get(url).links_with(href: /^https:\/\/www.dice.com\/jobs\/detail\/.*/)
+    visit_jobs(results)
+  end
+
+  def visit_jobs(jobs)
+    jobs.each_with_index do |job, index|
+      next if index % 2 != 0
+      page = job.click
+      extract_job(page)
+    end
+    make_csv
+  end
+
+  def extract_job(page)
+    print "**"
+    data = page.title.split(" - ")
+    title, company, location, date = data[0], data[1], data[2], data[3][0..9]
+    url = page.canonical_uri
+    @results << [title, company, url, location, date]
+  end
+
+  def make_csv
+    CSV.open('jobs.csv', 'a') do |csv|
+      @results.each do |result|
+        csv << result
+      end
+    end
   end
 
 end
