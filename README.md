@@ -1,3 +1,5 @@
+Assignment completed by [Stephen Mayeux](http://stephenmayeux.com)
+
 # assignment_web_scraper
 Bottom feeding your way across the web
 
