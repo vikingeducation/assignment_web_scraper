@@ -27,6 +27,7 @@ class Search
 
   def get_results(url)
     agent = Mechanize.new
+    agent.history_added = Proc.new { sleep 0.5 }
     results = agent.get(url).links_with(href: /^https:\/\/www.dice.com\/jobs\/detail\/.*/)
     visit_jobs(results)
   end
@@ -42,10 +43,15 @@ class Search
 
   def extract_job(page)
     print "**"
-    data = page.title.split(" - ")
-    title, company, location, date = data[0], data[1], data[2], data[3][0..9]
-    url = page.canonical_uri
-    @results << [title, company, url, location, date]
+    title =   page.search("h1.jobTitle").text.strip
+    company = page.search("li.employer").text.strip
+    location = page.search("li.location").text.strip
+    date =    page.title.split(" | ")[0][-10..-1]
+    url =     page.canonical_uri.to_s
+    puts url.class
+    company_id = url.split("/")[-2]
+    job_id = url.split("/")[-1].split("?")[0]
+    @results << [title, company, url, location, date, company_id, job_id]
   end
 
   def make_csv
