@@ -1,0 +1,25 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+DiceScraper	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^class DiceScraper$/;"	c
+Filter	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/filter.rb	/^class Filter$/;"	c
+Job	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/job.rb	/^class Job$/;"	c
+JobSaver	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/job_saver.rb	/^class JobSaver$/;"	c
+error_page?	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def error_page?(page)$/;"	f
+filter_by_date	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/filter.rb	/^  def filter_by_date(jobs)$/;"	f	class:Filter
+filter_by_title	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/filter.rb	/^  def filter_by_title(jobs)$/;"	f	class:Filter
+filter_jobs	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/filter.rb	/^  def filter_jobs(jobs)$/;"	f	class:Filter
+get_job_nodes	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def get_job_nodes(page)$/;"	f
+initialize	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/filter.rb	/^  def initialize(date: nil, title: nil)$/;"	f	class:Filter
+initialize	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/job.rb	/^  def initialize(title:, company:, link:, location:, date:, company_id:, job_id:)$/;"	f	class:Job
+initialize	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/job_saver.rb	/^  def initialize(jobs)$/;"	f	class:JobSaver
+initialize	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def initialize$/;"	f	class:DiceScraper
+job_from_node	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def job_from_node(job_node)$/;"	f
+save_to_csv	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/job_saver.rb	/^  def save_to_csv$/;"	f	class:JobSaver
+scrape_jobs	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def scrape_jobs(query)$/;"	f	class:DiceScraper
+search_for	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def search_for(query)$/;"	f	class:DiceScraper
+search_page	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/scraper.rb	/^  def search_page(query, page = 1)$/;"	f	class:DiceScraper
+to_a	/Users/kitlangton/Viking/Unit6/assignment_web_scraper/lib/job.rb	/^  def to_a$/;"	f	class:Job
