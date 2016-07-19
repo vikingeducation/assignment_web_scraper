@@ -58,29 +58,42 @@ class DiceScraper
     elements = page.css(element)
   end
 
+
+  def get_job_title(page)
+    noko_job = get_elements(page, ".jobTitle").children.to_s
+    noko_job = noko_job.gsub("  ", " ")
+  end
+
+  def get_company(page)
+    noko_company = get_elements(page, ".employer .dice-btn-link").children.to_s
+  end
+
+  def get_location(page)
+    noko_location = get_elements(page, ".list-inline .location").children.to_s
+  end
+
+  def get_position_id(page)
+    noko_position_id = get_elements(page, "meta[name='jobId']")[0].attributes["content"].value
+  end
+
+  def get_company_id(page)
+    noko_company_id = get_elements(page, "meta[name='groupId']")[0].attributes["content"].value
+  end
+
+  def get_date(page)
+    all_info = get_elements(page, "title").children.to_s
+    date = all_info.match(/\d\d-\d\d-\d\d\d\d/)[0]
+  end
   #inputs a link and outputs company_arr
   def get_company_info(link)
     info = {}
     company_page =  parse_page(@agent.get(link))
-
-    noko_job = get_elements(company_page, ".jobTitle").children.to_s
-    noko_job = noko_job.gsub("  ", " ")
-    noko_company = get_elements(company_page, ".employer .dice-btn-link").children.to_s
-    noko_location = get_elements(company_page, ".list-inline .location").children.to_s
-
-    noko_position_id = get_elements(company_page, "meta[@name=jobId]")[0].attributes["content"].value
-    noko_company_id = get_elements(company_page, "meta[@name=groupId]")[0].attributes["content"].value
-
-    all_info = get_elements(company_page, "title").children.to_s
-    date = all_info.match(/\d\d-\d\d-\d\d\d\d/)[0]
-    
-    info[:title] = noko_job
-    info[:company] = noko_company
-    info[:location] = noko_location
-    info[:date] = date
-    info[:company_id] = noko_company_id
-    info[:position_id] = noko_position_id
-
+    info[:title] = get_job_title(company_page)
+    info[:company] = get_company(company_page)
+    info[:location] = get_location(company_page)
+    info[:date] = get_date(company_page)
+    info[:company_id] = get_company_id(company_page)
+    info[:position_id] = get_position_id(company_page)
     info
   end
 
