@@ -19,14 +19,18 @@ page = agent.submit(form)
 
 divs = page.parser.css('div.serp-result-content')
 
-jobtitles, companynames, postinglinks, locations, postingdates, companyids, jobids = [], [], [], [], [], [], []
+#jobids = [], [], [], [], [], [], []
 
-posting = { jobtitle: nil, companyname: nil, location: nil, postingdate: nil,
-            companyid: nil, jobid: nil }
-
-postings = []
-
-divs.each do |div|
+#posting = { jobtitle: nil, companyname: nil, location: nil, postingdate: nil,
+#            companyid: nil, jobid: nil }
 
 
+postings = divs.map do |div|
+  {
+  jobtitle: div.css("a[id]").select{ |a| a['id'] =~ /\Aposition/}[0].attributes[1].value,
+  companyname: div.css("a[id]").select{ |a| a['id'] =~ /\Acompany/}[0].children[0].value
+  #hash[:companyname] = div.parse.css("a[id]").select( |a| a[id] =~ /\Acompany/)
+  }
 end
+
+pp postings[0]
