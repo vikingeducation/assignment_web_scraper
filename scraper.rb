@@ -40,18 +40,37 @@ a = Mechanize.new { |agent|
 
 
 a.get('https://www.dice.com/jobs?q=&l=') do |page|
+   jobs_links = page.links.find_all { |l| l.attributes.parent.name == 'h3' }
+   jobs_links = jobs_links[0..29]
+   pp jobs_links.length
    search_result = page.form_with(:id => "searchJob") do |form|
      form.q = "rails developer"
      form.l = "Orange County, CA"
      #form.radius = '40'
    end.submit
 
-  # pp search_result.links_with(:class => 'dice-btn-link')#to_css('a.dice-btn-link')
+
+
   job_links = search_result.links_with(:id => /position\d+/ ).map do |link|
     link.href
   end
   job_links = job_links[0..29]
   # pp job_links.length
+
+
+  job_ids = []
+  company_ids = []
+  jobs_links[0..2].each do |link|
+    job_posting = link.click
+    job_posting.search('div.company-header-info div.row').each do |text|
+      # search(".details").at("span:contains('title 3')").parent.text
+      # if text.include?
+      pp text
+    end
+  end
+
+
+
 
   job_titles = search_result.search('#serp h3 a').text.split(/\n\t/).map(&:strip).select{|item| !item.empty?}[0..29] # gives us job Title
 
@@ -67,7 +86,7 @@ a.get('https://www.dice.com/jobs?q=&l=') do |page|
     locations << location.text
   end
   locations = locations[0..29]
-  
+
 
   posting_dates = []
   search_result.search('#serp ul li.posted').each do |obj|
@@ -86,7 +105,7 @@ a.get('https://www.dice.com/jobs?q=&l=') do |page|
    end
   end
 
-  p posting_dates
+  # p posting_dates
 
   #pp a.find_all { |list| list.attributes.parent.name == 'h3' }
 
