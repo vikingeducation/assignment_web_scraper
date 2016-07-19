@@ -5,3 +5,11 @@ Bottom feeding your way across the web
 
 Authors: Dylan and Vishal.
 
+How does search query work?
+-https://www.dice.com/jobs?q=ruby&l=Tampa
+
+jobs?
+q=full%stack
+&
+l=Tampa
+
