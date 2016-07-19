@@ -37,11 +37,10 @@ module WebScraperProject
           results.map do |outter_div|
             title = get_title(outter_div)
             details = get_details(outter_div)
+            date = get_date(outter_div)
             summary = get_desc(outter_div)
             url = get_url(outter_div)
-            [title,url,summary] + details
-            # date posted
-            # details.css('li.posted').css('span.icon-calendar-2').text.strip
+            [title,url,date,summary] + details
           end
         end
 
@@ -72,7 +71,8 @@ module WebScraperProject
         end
 
         def get_date(result)
-          result.css('ul').css('li.posted').text.strip
+          date = result.css('ul').css('li.posted').text.strip
+          format_date(date)
         end
 
         def format_date(date)
