@@ -12,6 +12,7 @@ module WebScraperProject
     class << self
 
       def run(url)
+        @agent = Mechanize.new
         results = get_results(url)
         build_results(results)
       end
@@ -27,8 +28,7 @@ module WebScraperProject
       private
 
         def get_results(url)
-          scraper = Mechanize.new
-          scraper.history_added = Proc.new { sleep 0.5 }
+          @agent.history_added = Proc.new { sleep 0.5 }
           page = scraper.get(url)
           page.css('div#search-results-control').css('div.serp-result-content')
         end
@@ -48,7 +48,10 @@ module WebScraperProject
         end
 
         def get_details(result)
-          employer = result.css('li.employer').css('span.hidden-xs').css('a').text.strip
+          job_page = doc.at('div.serp-result-content').at('h3').at('a')
+          employer = @agent.click(job_page).at('li.employer').text.strip
+          employer_id = @agent.click(job_page).at('div.company-header-info').at('div')
+          # employer = result.css('li.employer').css('span.hidden-xs').css('a').text.strip
           location = result.css('li.location').text.strip
           # binding.pry
           [employer,location]
