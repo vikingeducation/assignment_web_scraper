@@ -1,10 +1,9 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
-require 'pry'
 
 class DiceScraper 
-  attr_reader :agent, :page, :parsed_page
+  attr_reader :agent, :page, :parsed_page, :jobs
   
   def initialize(query, location)
     @agent = Mechanize.new
@@ -67,20 +66,25 @@ class DiceScraper
     noko_job = noko_job.gsub("  ", " ")
     noko_company = get_elements(company_page, ".employer .dice-btn-link").children.to_s
     noko_location = get_elements(company_page, ".list-inline .location").children.to_s
-    noko_company_id = get_elements(company_page, ".company-header-info .col-md-12").children[5].to_s
-    noko_position_id = get_elements(company_page, ".company-header-info .col-md-12").children[6].to_s
+
+    noko_position_id = get_elements(company_page, "meta[@name=jobId]")[0].attributes["content"].value
+    noko_company_id = get_elements(company_page, "meta[@name=groupId]")[0].attributes["content"].value
+
+    #binding.pry
+
     all_info = get_elements(company_page, "title").children.to_s
     date = all_info.match(/\d\d-\d\d-\d\d\d\d/)[0]
-    binding.pry
-    company_id = noko_company_id.match(/: ([-\da-zA-Z]*)/).captures[0]
-    position_id = noko_position_id.match(/: ([-\da-zA-Z]*)/).captures[0]
     #binding.pry
+    #company_id = noko_company_id.match(/: ([-\da-zA-Z]*)/).captures[0]
+    #position_id = noko_position_id.match(/: ([-\da-zA-Z]*)/).captures[0]
+    
     info[:title] = noko_job
     info[:company] = noko_company
     info[:location] = noko_location
     info[:date] = date
-    info[:company_id] = company_id
-    info[:position_id] = position_id
+    info[:company_id] = noko_company_id
+    info[:position_id] = noko_position_id
+
     info
   end
 
@@ -96,8 +100,17 @@ d = DiceScraper.new("Web Developer","Hanover, NH")
 
 arr = d.find_elements_and_return_links("div#search-results-experiment h3 .dice-btn-link")
 
-p d.get_company_info(arr[0])
-#p d.get_all_company_info(arr)
+#p d.get_company_info(arr[0])
+d.get_all_company_info(arr)
+
+d.jobs.each do |hash|
+  puts 
+  puts 
+  hash.each_pair do |key, value|
+    print "\n#{key} __::__ #{value}"
+  end
+
+end
 
 #test to recieve array of links
 #p d.find_elements_and_return_links("div#search-results-experiment h3 .dice-btn-link")

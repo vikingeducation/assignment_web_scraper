@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    byebug (9.0.5)
     coderay (1.1.1)
     domain_name (0.5.20160615)
       unf (>= 0.0.5, < 1.0.0)
@@ -29,6 +30,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-byebug (3.4.0)
+      byebug (~> 9.0)
+      pry (~> 0.10)
     slop (3.6.0)
     unf (0.1.4)
       unf_ext
@@ -41,6 +45,7 @@ PLATFORMS
 DEPENDENCIES
   mechanize (~> 2.7.2, < 2.7.3)
   pry
+  pry-byebug
 
 BUNDLED WITH
    1.12.5
