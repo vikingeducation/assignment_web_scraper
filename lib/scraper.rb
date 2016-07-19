@@ -17,7 +17,7 @@ module WebScraperProject
 
       def to_csv(results)
         CSV.open('results.csv', 'a') do |csv|
-          mapped_results.each do |result|
+          results.each do |result|
             csv << result
           end
         end
@@ -27,12 +27,13 @@ module WebScraperProject
 
         def get_results(url)
           scraper = Mechanize.new
+          scraper.history_added = Proc.new { sleep 0.5 }
           page = scraper.get(url)
           page.css('div.serp-result-content')
         end
 
         def build_results(results)
-          mapped_results = results.map do |outter_div|
+          results.map do |outter_div|
             title = get_title(outter_div)
             desc = get_details(outter_div)
             details = get_details(outter_div.css('ul'))
@@ -41,7 +42,7 @@ module WebScraperProject
             url = get_url(outter_div)
             [title,employer,location,desc,url]
             # date posted
-            # str += details.css('li.posted').css('span.icon-calendar-2').text.strip
+            # details.css('li.posted').css('span.icon-calendar-2').text.strip
           end
         end
 
@@ -56,11 +57,11 @@ module WebScraperProject
         end
 
         def get_desc(result)
-          desc = result.css('div.shortdesc').text.strip
+          result.css('div.shortdesc').text.strip
         end
 
         def get_company_id(result)
-          get_url(result).
+          # get_url(result).
         end
 
         def get_url(result)
@@ -73,7 +74,7 @@ module WebScraperProject
 
 end
 
-results = WebScraperProject::WebScraper.run('https://www.dice.com/jobs?q=web+developer&l=San+Jose\%2C+CA')
+results = WebScraperProject::WebScraper.run('https://www.dice.com/jobs?q=web+developer&l=San+Jose&limit=5')
 WebScraperProject::WebScraper.to_csv(results)
 
 
@@ -83,4 +84,4 @@ WebScraperProject::WebScraper.to_csv(results)
 
 
 
-scraper.history_added = Proc.new { sleep 0.5 }
+#
