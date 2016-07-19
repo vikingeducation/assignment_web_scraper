@@ -46,6 +46,17 @@ a.get('https://www.dice.com/jobs?q=&l=') do |page|
     # form.radius = '40'
   end.submit
 
-  pp search_result.links_with(:class => 'dice-btn-link')#to_css('a.dice-btn-link')
+  # pp search_result.links_with(:class => 'dice-btn-link')#to_css('a.dice-btn-link')
+
+  # pp search_result.search('#serp h3 a').text.split(/\n\t/).map(&:strip).select{|item| !item.empty?} # gives us job Title
+
+  pp search_result.links_with(:id => /\d+/)
+
   
+
+  # search_result.search('#serp h3 a').links.each do |link|
+  #   text = link.text.strip
+  #   next unless text.length > 0
+  #   puts text
+  # end
 end
