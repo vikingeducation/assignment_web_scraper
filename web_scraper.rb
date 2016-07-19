@@ -3,7 +3,7 @@ require 'mechanize'
 
 class Scraper
 
-  attr_reader :scraper, :page, :job_search, :keyword, :location, :links, :link_array
+  attr_reader  :attribute_array, :scraper, :page, :job_search, :keyword, :location, :links, :link_array
 
   def initialize(keyword, location)
     @scraper = Mechanize.new
@@ -13,6 +13,12 @@ class Scraper
   end
 
 
+  def link_through
+    @attribute_array = []
+    # @link_array.each do |link|
+      job_page = @scraper.click(@link_array[0]) 
+      @attribute_array <<  job_page.css("#jt")[-1].children[0]
+  end
   
 
   def get_page(link)
@@ -42,11 +48,13 @@ class Scraper
     @link_array.flatten!
   end
 
+#iterate through link array and click each.
+#search for each attribute we want
+#move that found attribute into an array
+# return that array
+#array for each job that has each of the attributes
+#eventually put all arrays into a big array into csv file
 
-  def get_title
-    @page.css("#jt")[0][0]
-
-  end
 
 
 
@@ -56,8 +64,8 @@ class Scraper
 
 end
 
-s = Scraper.new("ruby", "Boston")
-s.get_page('http://www.dice.com')
+# s = Scraper.new("ruby", "Boston")
+# s.get_page('http://www.dice.com')
 
 
 # s = Mechanize.new
