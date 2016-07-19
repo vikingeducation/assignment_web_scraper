@@ -67,7 +67,26 @@ a.get('https://www.dice.com/jobs?q=&l=') do |page|
     locations << location.text
   end
   locations = locations[0..29]
-  pp locations
+  
+
+  posting_dates = []
+  search_result.search('#serp ul li.posted').each do |obj|
+    posting_dates << obj.text
+  end
+  posting_dates = posting_dates[0..29]
+  current_time = Time.now
+  posting_dates = posting_dates.map do |rel_time|
+   num = rel_time.match(/\d+/)[0].to_i
+   if rel_time.include?("hour")
+     Time.new(current_time.year, current_time.month, current_time.day, current_time.hour - num)
+   elsif rel_time.include?("day")
+     Time.new(current_time.year, current_time.month, current_time.day - num)
+   elsif rel_time.include?("week")
+     Time.new(current_time.year, current_time.month, current_time.day - (7 * num))
+   end
+  end
+
+  p posting_dates
 
   #pp a.find_all { |list| list.attributes.parent.name == 'h3' }
 
