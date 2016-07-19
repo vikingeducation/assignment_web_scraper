@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
-
+require 'csv'
 
 # agent = Mechanize.new
 # page = agent.get('http://www.dice.com')
@@ -42,7 +42,6 @@ a = Mechanize.new { |agent|
 a.get('https://www.dice.com/jobs?q=&l=') do |page|
    jobs_links = page.links.find_all { |l| l.attributes.parent.name == 'h3' }
    jobs_links = jobs_links[0..29]
-   pp jobs_links.length
    search_result = page.form_with(:id => "searchJob") do |form|
      form.q = "rails developer"
      form.l = "Orange County, CA"
@@ -62,21 +61,22 @@ a.get('https://www.dice.com/jobs?q=&l=') do |page|
   company_ids = []
   jobs_links[0..2].each do |link|
     job_posting = link.click
-    job_posting.search('div.company-header-info div.row').each do |text|
+    job_posting.search('div.company-header-info div.row').each do |noko_obj|
       # search(".details").at("span:contains('title 3')").parent.text
-      # if text.include?
-      pp text
+      text = noko_obj.text
+      if text.include? "Dice Id"
+        company_ids << text.strip
+      elsif text.include? "Position Id"
+        job_ids << text.strip
+      end
     end
   end
 
-
-
-
   job_titles = search_result.search('#serp h3 a').text.split(/\n\t/).map(&:strip).select{|item| !item.empty?}[0..29] # gives us job Title
 
-  #pp job_titles
+
   company_names = []
-  search_result.search('#serp ul li span.hidden-xs a').each do |obj| #.each do |noko_obj|
+  search_result.search('#serp ul li span.hidden-xs a').each do |obj|
     company_names << obj.text.strip
   end
   company_names = company_names[0..29]
@@ -105,15 +105,6 @@ a.get('https://www.dice.com/jobs?q=&l=') do |page|
    end
   end
 
-  # p posting_dates
-
-  #pp a.find_all { |list| list.attributes.parent.name == 'h3' }
 
 
-
-  # search_result.search('#serp h3 a').links.each do |link|
-  #   text = link.text.strip
-  #   next unless text.length > 0
-  #   puts text
-  # end
 end
