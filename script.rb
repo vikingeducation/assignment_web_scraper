@@ -65,9 +65,8 @@ class DiceScraper
     noko_company = get_elements(company_page, ".employer .dice-btn-link").children.to_s
     noko_location = get_elements(company_page, ".list-inline .location").children.to_s
     noko_date = get_elements(company_page, ".posted").children.to_s
-
-    noko_company_id = get_elements(company_page, ".company-header-info .col-md-12")
-
+    noko_company_id = get_elements(company_page, ".company-header-info .col-md-12").children[5].to_s
+    noko_position_id = get_elements(company_page, ".company-header-info .col-md-12").children[6].to_s
     binding.pry
     
   end
