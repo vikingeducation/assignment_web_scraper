@@ -41,21 +41,37 @@ class WebScraper
     @mech.get("https://www.dice.com#{search_query}")
   end
 
-
+  def job_links
+    get_results.links.select do |link|
+      /https:\/\/www.dice.com\/jobs\/detail/.match(link.href)
+    end
+  end
 end
 
+# web_scraper = WebScraper.new
+# results =  web_scraper.get_results.links_with(:href => %r{/jobs/})
+
+
 web_scraper = WebScraper.new
-p web_scraper.get_results
+jobs = web_scraper.get_results.links.select do |link|
+  /https:\/\/www.dice.com\/jobs\/detail/.match(link.href)
+end
 
+jobs_links = jobs.map { |job| job.href }
+p jobs_links
 
-
-
-
-
-
-
-
-
+  # results.each do |result|
+  #   puts result.strip
+  # end
+# puts results
+# links = results
+# relevant_jobs = links.select do |link|
+#   link.href.include?("jobs")
+# end
+# relevant_jobs.each do |job|
+#   puts job
+# end
+# p links
 
 #agent.history_added = Proc.new { sleep 3.0 }
 #agent.user_agent_alias = 'Mac Safari'
@@ -66,5 +82,4 @@ p web_scraper.get_results
 # search_form.field_with(:name => "q").value = "Hello"
 
 # search_results = agent.submit search_form
-# puts search_results.body
-
+# puts search_results.body # =>
