@@ -1,19 +1,49 @@
 require 'rubygems'
 require 'bundler/setup'
-require  'mechanize'
+require 'mechanize'
 
-# JobListing = Struct.new(:title, )
+JobListing = Struct.new(:title, :company, :link, :location, :date, :company_id, :job_id)
 
-# class JobSearcher
+class JobSearcher
 
-# end
+  def initialize(position, location)
+    @position = position
+    @location = location
+    @agent = Mechanize.new
+    @home_page = @agent.get("http://www.dice.com/")
+  end
 
-  agent = Mechanize.new
-  page = agent.get("http://www.dice.com/")
+  def get_jobs_page
+    form = @home_page.form_with(:class => "search-form")
+    form.q = @position
+    form.l = @location
+    job_page = @agent.submit(form)
+    # pp job_page
+  end
 
-  form = page.form_with(:class => "search-form")
-  form.q = "software engineer"
-  form.l = 'San Francisco, CA'
+end
 
-  job_page = agent.submit(form)
-  pp job_page
+
+# page.link_with(:href => /foo/).click
+
+
+class JobParser
+
+  attr_reader :page
+
+  def initialize(job_page)
+    @page = job_page
+  end
+
+  def job_count
+    @page.links_with(:href => /jobs\/detail/)
+  end
+
+end
+
+
+j = JobSearcher.new("Software Engineer", "San Francisco, CA")
+p = JobParser.new(j.get_jobs_page)
+
+p p.job_count
+  
