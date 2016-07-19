@@ -27,10 +27,11 @@ divs = page.parser.css('div.serp-result-content')
 
 postings = divs.map do |div|
   {
-  jobtitle: div.css("a[id]").select{ |a| a['id'] =~ /\Aposition/}[0].attributes[1].value,
-  companyname: div.css("a[id]").select{ |a| a['id'] =~ /\Acompany/}[0].children[0].value
+  jobtitle: div.css("a[id]").select{ |a| a['id'] =~ /\Aposition/}[0].attributes['title']
+  # jobtitle: div.search('a').search()
+  # companyname: div.css("a[id]").select{ |a| a['id'] =~ /\Acompany/}[0].children[0].value
   #hash[:companyname] = div.parse.css("a[id]").select( |a| a[id] =~ /\Acompany/)
   }
 end
 
-pp postings[0]
+pp postings[2]
