@@ -18,7 +18,8 @@ search_results = page.search('.serp-result-content')
 p search_results.count
 
 pp search_results[1].css('h3').text.strip
-pp search_results[1].css("[id*='company']").text
+pp search_results[1].css("[id*='company']")[1].text
+p search_results[1].css('a[id*="position"]').map { |link| link['href'] }[0]
 
 
 # Grab the form of class="f" from the page
