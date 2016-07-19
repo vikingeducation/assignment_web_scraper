@@ -35,6 +35,16 @@ class JobParser
     @page = job_page
   end
 
+  def get_all_jobs
+    current_page = @page
+    jobs = []
+    loop do
+      jobs + current_page.links_with(:href => /jobs\/detail/)
+      current_page.link_with(:title => "Go to next page" ).click
+    end
+    jobs
+  end
+
   def job_count
     @page.links_with(:href => /jobs\/detail/)
   end
@@ -45,5 +55,5 @@ end
 j = JobSearcher.new("Software Engineer", "San Francisco, CA")
 p = JobParser.new(j.get_jobs_page)
 
-p p.job_count
-  
+p p.get_all_jobs
+
