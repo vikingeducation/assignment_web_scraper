@@ -42,19 +42,49 @@ class DiceScraper
     i=0
     until (i == search_results.size/2)
 
-      pp search_results[i].css('h3').text.strip
-      pp search_results[i].css("[id*='company']")[1].text
-      p link = search_results[i].css('a[id*="position"]').map { |link| link['href'] }[0]
-      pp search_results[i].css("li.location").text
-      pp date_parser(search_results[i].css("li.posted").text)
-      link = search_results[i].css('a[id*="position"]')[0]
+      pp title(search_results[i])
+      pp company_name(search_results[i])
+      p link(search_results[i])
+      pp location(search_results[i])
+      pp date(search_results[i])
 
       posting_page = @scraper.get(search_results[i].css('a[id*="position"]').map { |link| link['href'] }[0])
-      pp position_id = posting_page.search('.company-header-info').css('[text()*="Position Id"]').text.strip
-      pp dice_id = posting_page.search('.company-header-info').css('[text()*="Dice Id"]').text.strip
+      pp job_id(posting_page)
+      pp company_id(posting_page)
       puts
       i+=1
     end
 
   end
 
+  def title(listing)
+    listing.css('h3').text.strip
+  end
+
+  def company_name(listing)
+    listing.css("[id*='company']")[1].text
+  end
+
+  def link(listing)
+    link = listing.css('a[id*="position"]').map { |link| link['href'] }[0]
+  end
+
+  def date(listing)
+    date_parser(listing.css("li.posted").text)
+  end
+
+  def location(listing)
+    listing.css("li.location").text
+  end
+
+  def job_id(posting_page)
+    position_id = posting_page.search('.company-header-info').css('[text()*="Position Id"]').text.strip
+  end
+
+  def company_id(posting_page)
+    dice_id = posting_page.search('.company-header-info').css('[text()*="Dice Id"]').text.strip
+  end
+end
+
+scraper = DiceScraper.new
+scraper.scrape('www.google.com')
