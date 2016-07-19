@@ -24,37 +24,34 @@ class JobSearcher
     @location.gsub(" ", "+")
   end
 
-  def get_url(page_number)
+  def get_other_pages(page_number)
     url = @job_page.uri.to_s + "&startPage=#{page_number}"
   end
 
   def get_all_links
     current_page = @job_page
-    jobs = []
+    job_links = []
     page_number = 1
     until current_page.body.include?("404 - The page you're looking for couldn't be found or it may have expired.")
 
-      jobs += current_page.links_with(:href => /jobs\/detail/)
+      job_links += current_page.links_with(:href => /jobs\/detail/)
       page_number += 1
-      current_page = @agent.get(get_url(page_number))
+      current_page = @agent.get(get_other_pages(page_number))
     end
-    jobs
-  end
-
-  def get_all_urls
-    urls = []
-    get_all_links.each do |link|
-      urls << link.uri.to_s
-    end
-    urls.uniq.length
+    job_links.uniq { |job_link| job_link.uri }
   end
 
   def create_listings
-    listings_array = []
-    get_all_urls.each do |url|
-      @agent.get(url)
-
-    end
+    # listings_array = []
+    # get_all_links.each do |link|
+    #   current_page = link.click
+    #   title = current_page.search("h1.jobTitle").text
+        # company = current_page.search("li.employer a").text
+        #link = current_page.uri.to_s
+        #location = current_page.search("li.location").text
+    # end
+    links = get_all_links
+    links[0].click.search("div.company-header-info div").text.map
   end
 
 end
@@ -63,4 +60,4 @@ j = JobSearcher.new("Software Engineer", "Boise, ID")
 #p j.get_jobs_page.uri.to_s
 # p p.get_all_jobs
 
-p j.get_all_urls
+p j.create_listings
