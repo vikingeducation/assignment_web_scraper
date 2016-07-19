@@ -3,7 +3,7 @@ require 'mechanize'
 
 class Scraper
 
-  attr_reader :scraper, :page, :job_search, :keyword, :location, :links
+  attr_reader :scraper, :page, :job_search, :keyword, :location, :links, :link_array
 
   def initialize(keyword, location)
     @scraper = Mechanize.new
@@ -11,8 +11,14 @@ class Scraper
     @location = location
   end
 
+
+  
+
   def get_page(link)
     @page = @scraper.get(link)
+    fill_out_form
+    submit_form
+    get_job_links
   end
 
   def fill_out_form
@@ -26,7 +32,18 @@ class Scraper
   end
 
   def get_job_links
-    @links = @page.css('#serp a.dice-btn-link')
+    counter = 0
+    @link_array = []
+    30.times do @link_array << @page.css("#position#{counter}")
+      counter += 1
+     end
+    @link_array
+  end
+
+
+  def get_title
+    @page.css("#jt")[0][0]
+
   end
 
 
