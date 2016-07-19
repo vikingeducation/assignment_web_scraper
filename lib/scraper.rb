@@ -29,32 +29,30 @@ module WebScraperProject
 
         def get_results(url)
           @agent.history_added = Proc.new { sleep 0.5 }
-          page = scraper.get(url)
+          page = @agent.get(url)
           page.css('div#search-results-control').css('div.serp-result-content')
         end
 
         def build_results(results)
           results.map do |outter_div|
             title = get_title(outter_div)
-            desc = get_details(outter_div)
-            details = get_details(outter_div.css('ul'))
-            employer = details[0]
-            location = details[1]
+            details = get_details(outter_div)
+            summary = get_desc(outter_div)
             url = get_url(outter_div)
-            [title,employer,location,desc,url]
+            [title,url,summary] + details
             # date posted
             # details.css('li.posted').css('span.icon-calendar-2').text.strip
           end
         end
 
+
         def get_details(result)
-          job_page = doc.at('div.serp-result-content').at('h3').at('a')
+          job_page = result.at('h3').at('a')
           employer = @agent.click(job_page).at('li.employer').text.strip
-          employer_id = @agent.click(job_page).at('div.company-header-info').at('div')
-          # employer = result.css('li.employer').css('span.hidden-xs').css('a').text.strip
-          location = result.css('li.location').text.strip
-          # binding.pry
-          [employer,location]
+          employer_id = @agent.click(job_page).at('div.company-header-info').css('div')[1].text.strip
+          job_id = @agent.click(job_page).at('div.company-header-info').css('div')[2].text.strip
+          location = result.css('ul').css('li.location').text.strip
+          [employer,location,employer_id,job_id]
         end
 
         def get_title(result)
@@ -71,6 +69,14 @@ module WebScraperProject
 
         def get_url(result)
           result.css('h3').css('a').attribute('href').text.strip
+        end
+
+        def get_date(result)
+          result.css('ul').css('li.posted').text.strip
+        end
+
+        def format_date(date)
+          date.split(" ")
         end
 
     end
