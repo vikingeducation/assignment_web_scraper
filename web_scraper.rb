@@ -39,14 +39,23 @@ page = scraper.get('https://www.dice.com/jobs/advancedResult.html?for_one=Ruby&f
 search_results = page.search('.serp-result-content')
 p search_results.count
 
-pp search_results[1].css('h3').text.strip
-pp search_results[1].css("[id*='company']")[1].text
-p link = search_results[1].css('a[id*="position"]').map { |link| link['href'] }[0]
-pp search_results[1].css("li.location").text
-pp date_parser(search_results[1].css("li.posted").text)
-link = search_results[1].css('a[id*="position"]')[0]
 
-posting_page = scraper.get(search_results[1].css('a[id*="position"]').map { |link| link['href'] }[0])
+i=0
+until (i == search_results.size/2)
+
+  pp search_results[i].css('h3').text.strip
+  pp search_results[i].css("[id*='company']")[1].text
+  p link = search_results[i].css('a[id*="position"]').map { |link| link['href'] }[0]
+  pp search_results[i].css("li.location").text
+  pp date_parser(search_results[i].css("li.posted").text)
+  link = search_results[i].css('a[id*="position"]')[0]
+
+  posting_page = scraper.get(search_results[i].css('a[id*="position"]').map { |link| link['href'] }[0])
+  pp dice_id = posting_page.search('.company-header-info').css('div')[3].text.strip
+  pp position_id = posting_page.search('.company-header-info').css('div')[5].text.strip
+  i+=1
+end
+
 
 
 
