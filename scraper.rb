@@ -21,19 +21,31 @@ a = Mechanize.new { |agent|
 #  pp search_result.links_with(:text => /Full Stack/)
 # end
 
-a.get('https://www.dice.com/jobs/advancedSearch.html') do |page|
-  search_result = page.form_with(:id => 'ajs') do |form|
-    # form.for_all = 'Full Stack'
-    form.for_jt = 'Rails developer'
-    form.for_loc = 'Orange County, CA'
-    form.field_with(:id => 'radius') = '30 miles'
-    form.radiobuttons_with(:name => 'sort')[0].check
-  end.submit
+# a.get('https://www.dice.com/jobs/advancedSearch.html') do |page|
+#   search_result = page.form_with(:id => 'ajs') do |form|
+#     # form.for_all = 'Full Stack'
+#     form.for_jt = 'Rails developer'
+#     form.for_loc = 'Orange County, CA'
+#     form.field_with(:id => 'radius') = '30 miles'
+#     form.radiobuttons_with(:name => 'sort')[0].check
+#   end.submit
 
-  puts search_result.class
- # pp search_result.dlinks.map(&:text).map(&:strip)
-end
+#   puts search_result.class
+#  # pp search_result.dlinks.map(&:text).map(&:strip)
+# end
 
   # search_result = page.form_with(:id => "search-field-keyword") do |search|
   #   search.q = 'rails developer'
   # end.submit
+
+
+a.get('https://www.dice.com/jobs?q=&l=') do |page|
+  search_result = page.form_with(:id => "searchJob") do |form|
+    form.q = "rails developer"
+    form.l = "Orange County, CA"
+    # form.radius = '40'
+  end.submit
+
+  pp search_result.links_with(:class => 'dice-btn-link')#to_css('a.dice-btn-link')
+  
+end
