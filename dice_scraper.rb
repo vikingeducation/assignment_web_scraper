@@ -2,39 +2,32 @@ require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
 require 'time'
-require 'csv' 
+require 'csv'
 
-JobListing = Struct.new(:title, :company, :link, :location, :date, :dice_id, :position_id)
-
-  UNITS_TO_SECONDS = { minutes: 60,
-                        hours: 3600,
-                        days: 3600*24,
-                        weeks: 3600*24*7,
-                        months: 3600*24*30,
-                        years: 3600*24*365 }
+UNITS_TO_SECONDS = { minutes: 60,
+                    hours: 3600,
+                    days: 3600*24,
+                    weeks: 3600*24*7,
+                    months: 3600*24*30,
+                    years: 3600*24*365 }
 
 class DiceScraper
 
   attr_reader :job_page
 
-  def initialize(position, location)
-    @position = position
+  def initialize(query, location)
+    @query = query
     @location = location
     @agent = Mechanize.new
-    @job_page = @agent.get("https://www.dice.com/jobs?q=#{p_update}&l=#{l_update}")
+    @job_page = @agent.get("https://www.dice.com/jobs?q=#{query_to_url}&l=#{location_to_url}")
   end
 
-  def p_update
-    @position.gsub(" ", "+")
+  def query_to_url
+    @query.gsub(" ", "+")
   end
 
-  def l_update
-    @location.gsub(",", "%2C")
-    @location.gsub(" ", "+")
-  end
-
-  def get_other_pages(page_number)
-    url = @job_page.uri.to_s + "&startPage=#{page_number}"
+  def location_to_url
+    @location.gsub(",", "%2C").gsub(" ", "+")
   end
 
   def get_all_links
@@ -49,7 +42,11 @@ class DiceScraper
     job_links.uniq { |job_link| job_link.uri }
   end
 
-  def create_listings
+  def get_other_pages(page_number)
+    url = @job_page.uri.to_s + "&startPage=#{page_number}"
+  end
+
+  def create_listings_array
     listings_array = []
     get_all_links.each do |link|
       current_page = link.click
@@ -58,8 +55,8 @@ class DiceScraper
                           link(current_page),
                           location(current_page),
                           date(current_page),
-                          dice_id(current_page),
-                          position_id(current_page)]
+                          id(current_page, "Dice"),
+                          id(current_page, "Position")]
     end
     listings_array
   end
@@ -84,27 +81,20 @@ class DiceScraper
     page.search("li.location").text
   end
 
-  def dice_id(page)
+  def id(page, type)
     return "" unless page.search("div.company-header-info div")
     return "" unless page.search("div.company-header-info div").text
-    return "" unless page.search("div.company-header-info div").text.match(/Dice Id : (.*?)\n/)
-    page.search("div.company-header-info div").text.match(/Dice Id : (.*?)\n/)[1]
-  end
-
-  def position_id(page)
-    return "" unless page.search("div.company-header-info div")
-    return "" unless page.search("div.company-header-info div").text
-    return "" unless page.search("div.company-header-info div").text.match(/Position Id : (.*?)\n/)
-    page.search("div.company-header-info div").text.match(/Position Id : (.*?)\n/)[1]
+    return "" unless page.search("div.company-header-info div").text.match(/#{type} Id : (.*?)\n/)
+    page.search("div.company-header-info div").text.match(/#{type} Id : (.*?)\n/)[1]
   end
 
   def date(page)
     return "" unless page.search("li.posted")
     date_string = page.search("li.posted").text
-    datestamp(date_string)
+    string_to_date(date_string)
   end
 
-  def datestamp(posted_string)
+  def string_to_date(posted_string)
     integer = posted_string.split(" ")[1].to_i
     time_unit = posted_string.split(" ")[2]
     time_unit << "s" if time_unit[-1] != "s"
@@ -115,14 +105,15 @@ class DiceScraper
   def create_csv(file_name)
     CSV.open(file_name, 'w') do |csv|
       csv << ["Title", "Company", "Link", "Location", "Date", "Dice ID", "Position ID"]
-      create_listings.each  {|listing| csv << listing}
+      create_listings_array.each  {|listing| csv << listing}
     end
+    puts "Your csv has been saved to #{file_name}."
   end
 
 end
 
-j = DiceScraper.new("Software Engineer", "Fresno, CA")
+j = DiceScraper.new("Software Engineering", "Fresno, CA")
 #p j.get_jobs_page.uri.to_s
 # p p.get_all_jobs
 
-p (j.create_csv("listings.csv"))
+j.create_csv("listings.csv")
