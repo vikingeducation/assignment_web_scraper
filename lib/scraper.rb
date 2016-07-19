@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'mechanize'
 require 'csv'
+require 'pry'
 
 
 
@@ -29,7 +30,7 @@ module WebScraperProject
           scraper = Mechanize.new
           scraper.history_added = Proc.new { sleep 0.5 }
           page = scraper.get(url)
-          page.css('div.serp-result-content')
+          page.css('div#search-results-control').css('div.serp-result-content')
         end
 
         def build_results(results)
@@ -47,8 +48,9 @@ module WebScraperProject
         end
 
         def get_details(result)
-          employer = result.css('li.employer').css('span.hidden-md hidden-sm hidden-lg visible-xs').css('a').text.strip
+          employer = result.css('li.employer').css('span.hidden-xs').css('a').text.strip
           location = result.css('li.location').text.strip
+          # binding.pry
           [employer,location]
         end
 
