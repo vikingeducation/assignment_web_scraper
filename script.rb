@@ -11,7 +11,13 @@ end
 
 d = DiceScraper.new
 
+#form
 page = d.agent.get('http://www.dice.com/')
+job_form = page.form_with(:action => "/jobs")
 
+#input fields
+job_form.q = "Web Developer"
+job_form.l =  "New York"
 
+page = d.agent.submit(job_form, job_form.buttons.first)
 pp page
