@@ -3,6 +3,29 @@ require 'bundler/setup'
 require 'mechanize'
 require 'csv'
 
+def date_parser(date)
+  # match for minutes, hours, days, or weeks
+  # match for the number
+  # format properly to be subtracted from Time.now
+  units = date.match(/(moments|minutes|hours|days|weeks|months)/)[0]
+  number = date.match(/\d+/)[0].to_i
+  result = case units
+  when "moments"
+    0
+  when "minutes"
+    number * 60
+  when "hours"
+    number * 3600
+  when "days"
+    number * 86_400
+  when "weeks"
+    number * 86_400 * 7
+  when "months"
+    number * 86_400 * 30
+  end
+
+  "Posted around #{Time.now - result}"
+end
 # Instantiate a new Mechanize
 scraper = Mechanize.new
 
@@ -18,15 +41,15 @@ p search_results.count
 
 pp search_results[1].css('h3').text.strip
 pp search_results[1].css("[id*='company']")[1].text
-p search_results[1].css('a[id*="position"]').map { |link| link['href'] }[0]
+p link = search_results[1].css('a[id*="position"]').map { |link| link['href'] }[0]
 pp search_results[1].css("li.location").text
+pp date_parser(search_results[1].css("li.posted").text)
+link = search_results[1].css('a[id*="position"]')[0]
 
-def date_parser(date)
-  # match for minutes, hours, days, or weeks
-  # match for the number
-  # format properly to be subtracted from Time.now
-  units = date.match(/(moments|minutes|hours|days|weeks|months)/)[0]
-end
+posting_page = scraper.get(search_results[1].css('a[id*="position"]').map { |link| link['href'] }[0])
+
+
+
 
 
 # Grab the form of class="f" from the page
