@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
+require 'pry'
 
 class DiceScraper 
   attr_reader :agent, :page, :parsed_page
@@ -51,10 +52,35 @@ class DiceScraper
     end
     links
   end
+
+  def get_elements(page, element)
+    elements = page.css(element)
+  end
+
+  #inputs a link and outputs company_arr
+  def get_company_info(link)
+    company_page =  parse_page(@agent.get(link))
+
+    noko_job = get_elements(company_page, ".jobTitle").children.to_s
+    noko_company = get_elements(company_page, ".employer .dice-btn-link").children.to_s
+    noko_location = get_elements(company_page, ".list-inline .location").children.to_s
+    noko_date = get_elements(company_page, ".posted").children.to_s
+
+    noko_company_id = get_elements(company_page, ".company-header-info .col-md-12")
+
+    binding.pry
+    
+  end
 end
 
 d = DiceScraper.new("Web Developer","Hanover, NH")
-puts d.find_elements_and_return_links("div#search-results-experiment h3 .dice-btn-link")
+
+arr = d.find_elements_and_return_links("div#search-results-experiment h3 .dice-btn-link")
+
+p d.get_company_info(arr[0])
+
+#test to recieve array of links
+#p d.find_elements_and_return_links("div#search-results-experiment h3 .dice-btn-link")
 
 
 # #form
