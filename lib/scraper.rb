@@ -11,10 +11,10 @@ module WebScraperProject
 
     class << self
 
-      def run(url)
+      def run(url,ref=nil)
         @agent = Mechanize.new
         results = get_results(url)
-        build_results(results)
+        build_results(results,ref)
       end
 
       def to_csv(results)
@@ -38,7 +38,7 @@ module WebScraperProject
           results.each do |outer_div|
             given_date = get_date(outer_div)
             # binding.pry
-            if reference.nil? || (reference > given_date)
+            if reference.nil? || (reference >= given_date)
               title = get_title(outer_div)
               details = get_details(outer_div)
               date = string_date(given_date)
@@ -111,7 +111,7 @@ module WebScraperProject
 
 end
 
-results = WebScraperProject::WebScraper.run('https://www.dice.com/jobs?q=web+developer&l=San+Jose&limit=5')
+results = WebScraperProject::WebScraper.run('https://www.dice.com/jobs?q=web+developer&l=San+Jose&limit=5',Time.new)
 WebScraperProject::WebScraper.to_csv(results)
 
 
