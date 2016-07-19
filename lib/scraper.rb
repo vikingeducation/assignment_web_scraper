@@ -76,7 +76,10 @@ module WebScraperProject
         end
 
         def format_date(date)
-          date.split(" ")
+          date_arr = date.split(" ")
+          num = date_arr[0]
+          time = date_arr[1]
+          Time.new()
         end
 
     end
