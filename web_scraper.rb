@@ -9,6 +9,7 @@ class Scraper
     @scraper = Mechanize.new
     @keyword = keyword
     @location = location
+    @num_results = 30
   end
 
 
@@ -34,10 +35,11 @@ class Scraper
   def get_job_links
     counter = 0
     @link_array = []
-    30.times do @link_array << @page.css("#position#{counter}")
+    @num_results.times do 
+      @link_array << @page.css("#position#{counter}")
       counter += 1
-     end
-    @link_array
+    end
+    @link_array.flatten!
   end
 
 
@@ -53,6 +55,10 @@ class Scraper
 
 
 end
+
+s = Scraper.new("ruby", "Boston")
+s.get_page('http://www.dice.com')
+
 
 # s = Mechanize.new
 # page = s.get("http://www.dice.com")
