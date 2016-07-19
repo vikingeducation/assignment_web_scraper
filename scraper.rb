@@ -34,23 +34,32 @@ a = Mechanize.new { |agent|
 #  # pp search_result.dlinks.map(&:text).map(&:strip)
 # end
 
-  # search_result = page.form_with(:id => "search-field-keyword") do |search|
-  #   search.q = 'rails developer'
-  # end.submit
+  #search_result = page.form_with(:id => "search-field-keyword") do |search|
+     #search.q = 'rails developer'
+  #end.submit
 
 
 a.get('https://www.dice.com/jobs?q=&l=') do |page|
-  search_result = page.form_with(:id => "searchJob") do |form|
-    form.q = "rails developer"
-    form.l = "Orange County, CA"
-    # form.radius = '40'
-  end.submit
+   search_result = page.form_with(:id => "searchJob") do |form|
+     form.q = "rails developer"
+     form.l = "Orange County, CA"
+     #form.radius = '40'
+   end.submit
 
   # pp search_result.links_with(:class => 'dice-btn-link')#to_css('a.dice-btn-link')
 
-  # pp search_result.search('#serp h3 a').text.split(/\n\t/).map(&:strip).select{|item| !item.empty?} # gives us job Title
+  job_titles = search_result.search('#serp h3 a').text.split(/\n\t/).map(&:strip).select{|item| !item.empty?}[0..29] # gives us job Title
+  
+  #pp job_titles
+  company_names = []
+  search_result.search('#serp ul li span.hidden-xs a').each do |obj| #.each do |noko_obj|
+    company_names << obj.text.strip 
+  end
+  company_names = company_names[0..29]
+    #noko_obj.parse(:title =>)
+  #end
 
-  pp search_result.links_with(:id => /\d+/)
+  #pp a.find_all { |list| list.attributes.parent.name == 'h3' }
 
   
 
