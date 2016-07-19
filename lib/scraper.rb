@@ -77,9 +77,25 @@ module WebScraperProject
 
         def format_date(date)
           date_arr = date.split(" ")
-          num = date_arr[0]
+          num = date_arr[0].to_i
           time = date_arr[1]
-          Time.new()
+          converted = convert_date(num,time)
+          (Time.new - converted).strftime("%x")
+        end
+
+        def convert_date(num,time)
+          case time
+          when "ago"
+            0
+          when "hours"
+            num * 60*60
+          when "days"
+            num * 60*60*24
+          when "weeks"
+            num * 60*60*24*7
+          when "months"
+            num * 60*60*24*31
+          end
         end
 
     end
