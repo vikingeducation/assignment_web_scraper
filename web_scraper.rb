@@ -4,9 +4,9 @@ require 'mechanize'
 require 'csv'
 
 
-class DiceScraper 
+class DiceScraper
 
-  def initialize 
+  def initialize
     @scraper = Mechanize.new
     @scraper.history_added = Proc.new { sleep 0.5 }
   end
@@ -33,58 +33,72 @@ class DiceScraper
   end
 
 
-  def scrape(url)  
+  def scrape(url = 'https://www.dice.com/jobs/advancedResult.html?for_one=Ruby&for_all=&for_exact=&for_none=&for_jt=&for_com=&for_loc=New+York%2C+NY&sort=relevance&limit=50&radius=0')
 
-    page = @scraper.get('https://www.dice.com/jobs/advancedResult.html?for_one=Ruby&for_all=&for_exact=&for_none=&for_jt=&for_com=&for_loc=New+York%2C+NY&sort=relevance&limit=50&radius=0')
+    page = @scraper.get(url)
 
     search_results = page.search('.serp-result-content')
 
     i=0
-    until (i == search_results.size/2)
+    CSV.open("listings.csv", "a") do |csv|
+      until (i == search_results.size/2)
 
-      pp title(search_results[i])
-      pp company_name(search_results[i])
-      p link(search_results[i])
-      pp location(search_results[i])
-      pp date(search_results[i])
 
-      posting_page = @scraper.get(search_results[i].css('a[id*="position"]').map { |link| link['href'] }[0])
-      pp job_id(posting_page)
-      pp company_id(posting_page)
-      puts
-      i+=1
+        csv << [title(search_results[i])]
+        csv << [company_name(search_results[i])]
+        csv << [link(search_results[i])]
+        csv << [location(search_results[i])]
+        csv << [date(search_results[i])]
+
+        posting_page = @scraper.get(search_results[i].css('a[id*="position"]').map { |link| link['href'] }[0])
+        csv << [job_id(posting_page)]
+        csv << [company_id(posting_page)]
+        csv << [nil]
+        print "listing added\n"
+
+        i+=1
+
+      end
     end
 
   end
 
   def title(listing)
-    listing.css('h3').text.strip
+    safe_guard { listing.css('h3').text.strip }
   end
 
   def company_name(listing)
-    listing.css("[id*='company']")[1].text
+    safe_guard { listing.css("[id*='company']")[1].text }
   end
 
   def link(listing)
-    link = listing.css('a[id*="position"]').map { |link| link['href'] }[0]
+    safe_guard { listing.css('a[id*="position"]').map { |link| link['href'] }[0] }
   end
 
   def date(listing)
-    date_parser(listing.css("li.posted").text)
+    safe_guard { date_parser(listing.css("li.posted").text) }
   end
 
   def location(listing)
-    listing.css("li.location").text
+    safe_guard { listing.css("li.location").text }
   end
 
   def job_id(posting_page)
-    position_id = posting_page.search('.company-header-info').css('[text()*="Position Id"]').text.strip
+    safe_guard { posting_page.search('.company-header-info').css('[text()*="Position Id"]').text.strip }
   end
 
   def company_id(posting_page)
-    dice_id = posting_page.search('.company-header-info').css('[text()*="Dice Id"]').text.strip
+    safe_guard { posting_page.search('.company-header-info').css('[text()*="Dice Id"]').text.strip }
+  end
+
+  def safe_guard
+    begin
+      yield
+    rescue
+      "n/a"
+    end
   end
 end
 
 scraper = DiceScraper.new
-scraper.scrape('www.google.com')
+scraper.scrape#('www.google.com')
