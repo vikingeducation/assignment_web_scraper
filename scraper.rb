@@ -59,7 +59,7 @@ a.get('https://www.dice.com/jobs?q=&l=') do |page|
 
   job_ids = []
   company_ids = []
-  jobs_links[0..2].each do |link|
+  jobs_links.each do |link|
     job_posting = link.click
     job_posting.search('div.company-header-info div.row').each do |noko_obj|
       # search(".details").at("span:contains('title 3')").parent.text
@@ -107,4 +107,18 @@ a.get('https://www.dice.com/jobs?q=&l=') do |page|
 
 
 
+
+  CSV.open("file.csv", "w+") do |csv|
+    csv << ['Job Title ', 'Company Name ', 'Link to Dice Posting ', 'Location ', 
+      'Posting Date ', 'Company Id ', 'Job Id ']
+    csv << ['________________________________________________________________________________________']
+    (0..29).each do |i|
+      csv << [job_titles[i], company_names[i], job_links[i], locations[i], posting_dates[i].strftime("%B %-d, %Y"), company_ids[i], job_ids[i]]
+    end
+
+  end
+
 end
+
+
+
