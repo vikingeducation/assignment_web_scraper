@@ -2,9 +2,13 @@ require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
 
-JobListing = Struct.new(:title, :company, :link, :location, :date, :company_id, :job_id)
+JobListing = Struct.new(:title, :company, :link, :location, :date, :dice_id, :position_id)
 
 class JobSearcher
+
+  CONVERSION = {
+    
+  }
 
   attr_reader :job_page
 
@@ -49,9 +53,18 @@ class JobSearcher
         # company = current_page.search("li.employer a").text
         #link = current_page.uri.to_s
         #location = current_page.search("li.location").text
+        #dice_id = current_page.search("div.company-header-info div").text.match(/Dice Id : (.*?)\n/)[1]
+        #company_id = current_page.search("div.company-header-info div").text.match(/Position Id : (.*?)\n/)[1]
+        #posted = current_page.search("li.posted").text
     # end
     links = get_all_links
-    links[0].click.search("div.company-header-info div").text.map
+    links[0].click.search("li.posted").text
+    
+
+  end
+
+  def datestamp(posted_string)
+    posted_array = posted.split(" ")
   end
 
 end
