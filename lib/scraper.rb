@@ -33,17 +33,22 @@ module WebScraperProject
           page.css('div#search-results-control').css('div.serp-result-content')
         end
 
-        def build_results(results)
-          results.map do |outter_div|
-            title = get_title(outter_div)
-            details = get_details(outter_div)
-            date = get_date(outter_div)
-            summary = get_desc(outter_div)
-            url = get_url(outter_div)
-            [title,url,date,summary] + details
+        def build_results(results, reference = nil)
+          ans = []
+          results.each do |outer_div|
+            given_date = get_date(outer_div)
+            # binding.pry
+            if reference.nil? || (reference > given_date)
+              title = get_title(outer_div)
+              details = get_details(outer_div)
+              date = string_date(given_date)
+              summary = get_desc(outer_div)
+              url = get_url(outer_div)
+              ans << ([title,url,date,summary] + details)
+            end
           end
+          ans
         end
-
 
         def get_details(result)
           job_page = result.at('h3').at('a')
@@ -62,10 +67,6 @@ module WebScraperProject
           result.css('div.shortdesc').text.strip
         end
 
-        def get_company_id(result)
-          # get_url(result).
-        end
-
         def get_url(result)
           result.css('h3').css('a').attribute('href').text.strip
         end
@@ -80,7 +81,11 @@ module WebScraperProject
           num = date_arr[0].to_i
           time = date_arr[1]
           converted = convert_date(num,time)
-          (Time.new - converted).strftime("%x")
+          (Time.new - converted)
+        end
+
+        def string_date(date)
+          date.strftime("%x")
         end
 
         def convert_date(num,time)
@@ -95,6 +100,8 @@ module WebScraperProject
             num * 60*60*24*7
           when "months"
             num * 60*60*24*31
+          else
+            0
           end
         end
 
