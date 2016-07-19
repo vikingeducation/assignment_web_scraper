@@ -4,8 +4,10 @@ require 'rubygems'
 require 'mechanize'
 
 class WebScraper
+  attr_reader :mech
 
   def initialize
+    @mech = Mechanize.new
   end
 
   def get_job
@@ -24,23 +26,42 @@ class WebScraper
   end
 
   def search_query
+    jobs = ["Javascript", "Ruby", "Bartender"]
+    cities = ["New+York%2C+NY", "San+Francisco%2C+CA", "Miami%2C+FL"]
+    job_types = ["Full+Time", "Part+Time", "Contracts"]
     search_string = ""
-    search_string << "jobs?"
-    search_string << "q=" + get_job
-    search_string << "&l=" + get_location
-    search_string << "&=djtype" + get_job_type
+    search_string << "/jobs?"
+    search_string << "q=" + jobs[0]
+    search_string << "&l=" + cities[0]
+    search_string << "&=djtype" + job_types[0]
     search_string
+  end
+
+  def get_results
+    @mech.get("https://www.dice.com#{search_query}")
   end
 
 
 end
 
-agent = Mechanize.new
-agent.history_added = Proc.new { sleep 3.0 }
-agent.user_agent_alias = 'Mac Safari'
+web_scraper = WebScraper.new
+p web_scraper.get_results
 
-page = agent.get("https://www.dice.com#{search_query}")
-puts page
+
+
+
+
+
+
+
+
+
+
+#agent.history_added = Proc.new { sleep 3.0 }
+#agent.user_agent_alias = 'Mac Safari'
+
+#page = agent.get("https://www.dice.com#{search_query}")
+#puts page
 # search_form = page.form_with :name => "f"
 # search_form.field_with(:name => "q").value = "Hello"
 
