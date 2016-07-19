@@ -21,7 +21,8 @@ job_form.l =  "Hanover, NH"
 
 page = d.agent.submit(job_form, job_form.buttons.first)
 
-pp page
+pp page.forms
+
 
 parsed_page = d.agent.page.parser
 all_the_divs = parsed_page.css('div')
