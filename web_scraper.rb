@@ -13,13 +13,20 @@ scraper.history_added = Proc.new { sleep 0.5 }
 page = scraper.get('https://www.dice.com/jobs/advancedResult.html?for_one=Ruby&for_all=&for_exact=&for_none=&for_jt=&for_com=&for_loc=New+York%2C+NY&sort=relevance&limit=50&radius=0')
 
 
-
 search_results = page.search('.serp-result-content')
 p search_results.count
 
 pp search_results[1].css('h3').text.strip
 pp search_results[1].css("[id*='company']")[1].text
 p search_results[1].css('a[id*="position"]').map { |link| link['href'] }[0]
+pp search_results[1].css("li.location").text
+
+def date_parser(date)
+  # match for minutes, hours, days, or weeks
+  # match for the number
+  # format properly to be subtracted from Time.now
+  units = date.match(/(moments|minutes|hours|days|weeks|months)/)[0]
+end
 
 
 # Grab the form of class="f" from the page
