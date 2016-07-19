@@ -18,7 +18,6 @@ class JobSearcher
     form.q = @position
     form.l = @location
     job_page = @agent.submit(form)
-    pp job_page
   end
 
 end
@@ -32,24 +31,25 @@ class JobParser
   attr_reader :page
 
   def initialize(job_page)
+    @agent = Mechanize.new
     @page = job_page
+  end
+
+  def get_url(page_number)
+    url = @page.uri.to_s + "&startPage=#{page_number}"
   end
 
   def get_all_jobs
     current_page = @page
-    link_number = 1
     jobs = []
-    loop do
-      break unless current_page.link_with(:text=> link_number.to_s)
+    page_number = 1
+    until current_page.body.include?("404 - The page you're looking for couldn't be found or it may have expired.")
+
       jobs += current_page.links_with(:href => /jobs\/detail/)
-      current_page = current_page.link_with(:text=> link_number.to_s).click
-      link_number += 1
+      page_number += 1
+      current_page = @agent.get(get_url(page_number))
     end
-    # loop do
-    #   jobs += current_page.links_with(:href => /jobs\/detail/)
-    #   current_page.link_with(:dom_title => "Go to next page" ).click
-    # end
-    jobs
+    jobs[0...jobs.length/2].length
   end
 
   def job_count
@@ -59,8 +59,13 @@ class JobParser
 end
 
 
-j = JobSearcher.new("Software Engineer", "San Francisco, CA")
-# p = JobParser.new(j.get_jobs_page)
-j.get_jobs_page
+
+j = JobSearcher.new("Software Engineer", "Boise, ID")
+ p = JobParser.new(j.get_jobs_page)
+#p j.get_jobs_page.uri.to_s
 # p p.get_all_jobs
 
+p p.get_all_jobs
+"https://www.dice.com/jobs/detail/Java-Software-Engineer-CyberCoders-Boise-ID-83701/cybercod/RC3-128271325?icid=sr1-1p&q=Software Engineer&l=Boise, ID"
+
+"https://www.dice.com/jobs/detail/Java-Software-Engineer-CyberCoders-Boise-ID-83701/cybercod/RC3-128271325?icid=sr1-1p&q=Software Engineer&l=Boise, ID"
