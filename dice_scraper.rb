@@ -18,7 +18,7 @@ class JobSearcher
     form.q = @position
     form.l = @location
     job_page = @agent.submit(form)
-    # pp job_page
+    pp job_page
   end
 
 end
@@ -37,11 +37,18 @@ class JobParser
 
   def get_all_jobs
     current_page = @page
+    link_number = 1
     jobs = []
     loop do
-      jobs + current_page.links_with(:href => /jobs\/detail/)
-      current_page.link_with(:title => "Go to next page" ).click
+      break unless current_page.link_with(:text=> link_number.to_s)
+      jobs += current_page.links_with(:href => /jobs\/detail/)
+      current_page = current_page.link_with(:text=> link_number.to_s).click
+      link_number += 1
     end
+    # loop do
+    #   jobs += current_page.links_with(:href => /jobs\/detail/)
+    #   current_page.link_with(:dom_title => "Go to next page" ).click
+    # end
     jobs
   end
 
@@ -53,7 +60,7 @@ end
 
 
 j = JobSearcher.new("Software Engineer", "San Francisco, CA")
-p = JobParser.new(j.get_jobs_page)
-
-p p.get_all_jobs
+# p = JobParser.new(j.get_jobs_page)
+j.get_jobs_page
+# p p.get_all_jobs
 
