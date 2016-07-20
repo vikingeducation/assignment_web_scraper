@@ -3,16 +3,18 @@ require 'csv'
 
 class CSVMaker
 
+attr_reader :name
 def initialize(scraper)
   @scraper = scraper
   @jobs = scraper.jobs
   @keys = @jobs[0].keys
+  @name = ""
 end
 
 def random_name
-  name = ""
-  8.times {name << (65+rand(25)).chr}
-  name << ".csv"
+  8.times {@name << (65+rand(25)).chr}
+  @name << ".csv"
+  @name
 end
 
 def create_csv

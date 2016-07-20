@@ -14,6 +14,21 @@ class DiceScraper
     @jobs =[]
     build
   end
+
+  def filter_date(date)
+    input_month = date.match(/([0-9]{0,2})\//).captures[0]
+    input_day = date.match(/([0-9]{0,2})\//).captures[1]
+    user_value = month*30 + day 
+    @jobs.each_with_index do |hash, idx|
+      month = hash[:date].match(/([0-9]{0,2})\//).captures[0]
+      day = hash[:date].match(/([0-9]{0,2})\//).captures[1]
+      date_value = month*30 + day
+      
+      if date_value < user_value
+        @jobs.delete_at(idx)
+      end
+    end
+  end
   
   def build
     form = set_up_page(@page)
@@ -104,12 +119,3 @@ class DiceScraper
   end
 
 end
-
-d = DiceScraper.new("Web Developer","Hanover, NH")
-
-arr = d.find_elements_and_return_links("div#search-results-experiment h3 .dice-btn-link")
-
-d.get_all_company_info(arr)
-
-maker = CSVMaker.new(d)
-maker.create_csv
