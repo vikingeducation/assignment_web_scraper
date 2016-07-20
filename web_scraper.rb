@@ -3,7 +3,8 @@
 require 'rubygems'
 require 'mechanize'
 
-class WebScraper
+class WebScraper < Mechanize
+
   attr_reader :mech
 
   def initialize
@@ -46,19 +47,33 @@ class WebScraper
       /https:\/\/www.dice.com\/jobs\/detail/.match(link.href)
     end
   end
+
+  def details_of_job
+      job_title = @mech.get(job_links.first.href).search(".jobTitle").text
+      job_id = @mech.get(job_links.first.href).at('meta[name="jobId"]')[:content]
+      company_id = @mech.get(job_links.first.href).at('meta[name="groupId"]')[:content]
+      url = @mech.get(job_links.first.href).at('meta[property="og:url"]')[:content]
+      location = @mech.get(job_links.first.href).search(".location").text
+      employer_name = @mech.get(job_links.first.href).search(".employer").text.strip
+      time_ago = @mech.get(job_links.first.href).search(".posted").text
+    end
 end
 
+web_scraper = WebScraper.new
+p web_scraper.details_of_job
 # web_scraper = WebScraper.new
 # results =  web_scraper.get_results.links_with(:href => %r{/jobs/})
 
 
-web_scraper = WebScraper.new
-jobs = web_scraper.get_results.links.select do |link|
-  /https:\/\/www.dice.com\/jobs\/detail/.match(link.href)
-end
 
-jobs_links = jobs.map { |job| job.href }
-p jobs_links
+#jobs = web_scraper.get_results.links.select do |link|
+#  /https:\/\/www.dice.com\/jobs\/detail/.match(link.href)
+#end
+
+
+
+#jobs_links = jobs.map { |job| job.href }
+#p jobs_links.length
 
   # results.each do |result|
   #   puts result.strip
