@@ -17,14 +17,15 @@ class DiceScraper
 
   def filter_date(date)
     input_month = date.match(/([0-9]{0,2})\//).captures[0]
-    input_day = date.match(/([0-9]{0,2})\//).captures[1]
-    user_value = month*30 + day 
+    input_day = date.match(/\/([0-9]{0,2})\//).captures[0]
+    user_value = input_month.to_i*30 + input_day.to_i 
     @jobs.each_with_index do |hash, idx|
-      month = hash[:date].match(/([0-9]{0,2})\//).captures[0]
-      day = hash[:date].match(/([0-9]{0,2})\//).captures[1]
-      date_value = month*30 + day
-      
-      if date_value < user_value
+      month = hash[:date].match(/([0-9]{0,2})-/).captures[0]
+      day = hash[:date].match(/-([0-9]{0,2})-/).captures[0]
+      date_value = month *30 + day
+      date_value = date_value.to_i if date_value.class != Fixnum
+      user_value = user_value.to_i if user_value.class != Fixnum
+      if date_value > user_value
         @jobs.delete_at(idx)
       end
     end
