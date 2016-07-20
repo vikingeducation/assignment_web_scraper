@@ -1,4 +1,4 @@
-# Dice.com Web Scraper with Nokogiri and Mechanize
+# :memo: Job Site Web Scraper with Nokogiri and Mechanize
 
 With this application, you can scrape job listings on https://www.dice.com. You can pass a query and a location and get back a csv with the job listing title, company, link to posting, location, date of posting, Dice ID, and posting ID.
 
