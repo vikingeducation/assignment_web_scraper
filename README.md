@@ -13,7 +13,7 @@ First fork this repo and copy the link to your fork of the repo. Then enter the 
 
 ```
 git clone "your-link-to-your-fork-of-repo"
-cd assignment_web_scraper
+cd job-site-scraper
 irb
 load 'dice_scraper.rb'
 d = DiceScraper.new("software engineer", "fresno, ca")
