@@ -40,8 +40,8 @@ a = Mechanize.new { |agent|
 
 
 a.get('https://www.dice.com/jobs?q=&l=') do |page|
-   jobs_links = page.links.find_all { |l| l.attributes.parent.name == 'h3' }
-   jobs_links = jobs_links[0..29]
+   job_pages = page.links.find_all { |l| l.attributes.parent.name == 'h3' }
+   job_pages = job_pages[0..29]
    search_result = page.form_with(:id => "searchJob") do |form|
      form.q = "rails developer"
      form.l = "Orange County, CA"
@@ -59,7 +59,7 @@ a.get('https://www.dice.com/jobs?q=&l=') do |page|
 
   job_ids = []
   company_ids = []
-  jobs_links.each do |link|
+  job_pages.each do |link|
     job_posting = link.click
     job_posting.search('div.company-header-info div.row').each do |noko_obj|
       # search(".details").at("span:contains('title 3')").parent.text
@@ -109,9 +109,8 @@ a.get('https://www.dice.com/jobs?q=&l=') do |page|
 
 
   CSV.open("file.csv", "w+") do |csv|
-    csv << ['Job Title ', 'Company Name ', 'Link to Dice Posting ', 'Location ', 
+    csv << ['Job Title ', 'Company Name ', 'Link to Dice Posting ', 'Location ',
       'Posting Date ', 'Company Id ', 'Job Id ']
-    csv << ['________________________________________________________________________________________']
     (0..29).each do |i|
       csv << [job_titles[i], company_names[i], job_links[i], locations[i], posting_dates[i].strftime("%B %-d, %Y"), company_ids[i], job_ids[i]]
     end
@@ -119,6 +118,3 @@ a.get('https://www.dice.com/jobs?q=&l=') do |page|
   end
 
 end
-
-
-
