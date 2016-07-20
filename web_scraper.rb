@@ -22,8 +22,8 @@ class Scraper
       attribute_array << job_page.search('[class="employer"]').text.strip
       attribute_array << job_page.search('[class="location"]').text
       attribute_array << job_page.search('[class="posted hidden-xs"]').text
-      attribute_array << job_page.css('[text()*="Dice Id"]')[-1].children[0].to_s
-      attribute_array << job_page.css('[text()*="Position Id"]')[-1].children[0].to_s
+      attribute_array << job_page.search('meta[name="GroupId"]').text
+      attribute_array << job_page.search('meta[name="jobId"]').text
       @attributes_array << attribute_array
     end
     
