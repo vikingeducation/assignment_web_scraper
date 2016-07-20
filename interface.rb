@@ -13,9 +13,9 @@ class Interface
   scraper = DiceScraper.new(query,location)
   arr = scraper.find_elements_and_return_links("div#search-results-experiment h3 .dice-btn-link")
   scraper.get_all_company_info(arr)
-  puts "What starting date? (mm/dd/yyyy)"
-  date = gets.chomp
-  scraper.filter_date(date)
+  #puts "What starting date? (mm/dd/yyyy)"
+  #date = gets.chomp
+  #scraper.filter_date(date)
 
   maker = CSVMaker.new(scraper)
   maker.create_csv
