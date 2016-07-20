@@ -1,3 +1,5 @@
+Luke S and Johnny S
+
 # assignment_web_scraper
 Bottom feeding your way across the web
 
