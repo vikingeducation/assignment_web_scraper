@@ -41,19 +41,20 @@ class Scraper
 
   def add_jobtitle(hash)
     if node = @page.parser.css("h1.jobTitle")
-      hash[:jobtitle] = node.children.first.text
+      hash[:jobtitle] = node.text
     end
   end
 
   def add_employer(hash)
     if node = @page.parser.css("li.employer a")
-      hash[:employer] = node.children.first.text
+      hash[:employer] = node.text
     end
   end
 
   def add_postdate(hash)
-    if node = @page.parser.css('ul.details').at('li:contains("Posted")')
-      hash[:postdate] = convert_time(node.children.first.text)
+    # .css('ul.details').at('li:contains("Posted")')
+    if node = @page.parser.css('[text()*="Posted"]')
+      hash[:postdate] = convert_time(node.text)
     end
   end
 
@@ -63,19 +64,20 @@ class Scraper
 
   def add_location(hash)
     if node = @page.parser.css("li.location")
-      hash[:location] = node.children.first.text
+      hash[:location] = node.text
     end
   end
 
   def add_companyid(hash)
-    if node = @page.parser.css("div.col-md-12").at('div:contains("Dice")')
-      hash[:companyid] = node.children.first.text
+    # ("div.col-md-12").at('div:contains("Dice")')
+    if node = @page.parser.css('[text()*="Dice Id"]')
+      hash[:companyid] = node.text
     end
   end
 
   def add_jobid(hash)
-    if node = @page.parser.css('div.col-md-12').at('div:contains("Position Id")')
-      hash[:jobid] = node.children.first.text
+    if node = @page.parser.css('[text()*="Position Id"]')
+      hash[:jobid] = node.text
     end
   end
 
@@ -103,15 +105,6 @@ class Scraper
   end
 
 end
-# {
-#   jobtitle: @page.parser.css("h1.jobTitle").children.first.text,
-#   employer: @page.parser.css("li.employer a").children.first.text,
-#   postdate: convert_time(@page.parser.css('ul.details').at('li:contains("Posted")').children.first.text),
-#   url: url,
-#   location: @page.parser.css("li.location").children.first.text,
-#   companyid: @page.parser.css("div.col-md-12").at('div:contains("Dice")').children.first.text,
-#   jobid: @page.parser.css('div.col-md-12').at('div:contains("Position Id")').children.first.text
-# }
 searcher = Scraper.new("developer", "raleigh, nc")
 searcher.submit_form
 searcher.write_to_csv(searcher.build_job_hash)
