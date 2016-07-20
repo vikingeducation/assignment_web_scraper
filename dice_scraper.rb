@@ -19,8 +19,20 @@ class DiceScraper
     @query = query
     @location = location
     @agent = Mechanize.new
+    #@agent.history_added = Proc.new {sleep 0.5}
     @job_page = @agent.get("https://www.dice.com/jobs?q=#{query_to_url}&l=#{location_to_url}")
   end
+
+  def create_csv(file_name)
+    puts "Please wait while scraping...."
+    CSV.open(file_name, 'w') do |csv|
+      csv << ["Title", "Company", "Link", "Location", "Date", "Dice ID", "Position ID"]
+      create_listings_array.each  {|listing| csv << listing}
+    end
+    puts "Your csv has been saved to #{file_name}."
+  end
+
+  private
 
   def query_to_url
     @query.gsub(" ", "+")
@@ -48,7 +60,8 @@ class DiceScraper
 
   def create_listings_array
     listings_array = []
-    get_all_links.each do |link|
+    get_all_links.each_with_index do |link, i|
+      puts "Scraped #{i + 1} link(s)"
       current_page = link.click
       listings_array << [ title(current_page),
                           company(current_page),
@@ -82,9 +95,10 @@ class DiceScraper
   end
 
   def id(page, type)
-    return "" unless page.search("div.company-header-info div")
-    return "" unless page.search("div.company-header-info div").text
-    return "" unless page.search("div.company-header-info div").text.match(/#{type} Id : (.*?)\n/)
+    id_div = page.search("div.company-header-info div")
+    return "" unless id_div
+    return "" unless id_div.text
+    return "" unless id_div.text.match(/#{type} Id : (.*?)\n/)
     page.search("div.company-header-info div").text.match(/#{type} Id : (.*?)\n/)[1]
   end
 
@@ -102,18 +116,5 @@ class DiceScraper
     posted_date = Time.now - seconds_ago
   end
 
-  def create_csv(file_name)
-    CSV.open(file_name, 'w') do |csv|
-      csv << ["Title", "Company", "Link", "Location", "Date", "Dice ID", "Position ID"]
-      create_listings_array.each  {|listing| csv << listing}
-    end
-    puts "Your csv has been saved to #{file_name}."
-  end
-
 end
 
-j = DiceScraper.new("Software Engineering", "Fresno, CA")
-#p j.get_jobs_page.uri.to_s
-# p p.get_all_jobs
-
-j.create_csv("listings.csv")

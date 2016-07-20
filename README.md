@@ -1,6 +1,38 @@
-# assignment_web_scraper
-Bottom feeding your way across the web
+# Dice.com Web Scraper with Nokogiri and Mechanize
 
-[A Ruby-based web scraping and parsing project which uses NokoGiri, Mechanize, Open-uri.  From the Viking Code School.](http://www.vikingcodeschool.com)
+With this application, you can scrape job listings on https://www.dice.com. You can pass a query and a location and get back a csv with the job listing title, company, link to posting, location, date of posting, Dice ID, and posting ID of each posting.
 
-Hannah and Mike
+## Getting Started
+
+First fork this repo and copy the link to your fork of the repo. Then enter the following lines into your command line.
+
+```
+git clone "your-link-to-your-fork-of-repo"
+cd assignment_web_scraper
+irb
+load 'dice_scraper.rb'
+d = DiceScraper.new("software_engineer", "fresno, ca")
+d.create_csv("path/to/file.csv")
+
+```
+
+Navigate to the path you specified in your csv and take a look at your results in your favorite CSV viewer.
+
+### Prerequisities
+
+You will need to have Ruby and IRB (the ruby REPL) installed on your computer to run this program.
+See [this post](https://www.ruby-lang.org/en/downloads/) to download ruby.
+
+
+## Built With
+
+* Sublime
+* Nokogiri
+* Mechanize
+
+## Acknowledgments
+Thanks to [Mike Lee](https://github.com/asackofwheat) for collaborating with me on this one.
+Thanks to [Viking Code School](https://github.com/vikingeducation) for creating this assignment.
+
+If you are having any troubles just let me know!
+
