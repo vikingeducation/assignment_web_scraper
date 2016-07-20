@@ -3,7 +3,7 @@ require 'mechanize'
 
 class Scraper
 
-  attr_reader  :attribute_array, :scraper, :page, :job_search, :keyword, :location, :links, :link_array
+  attr_reader  :attributes_array, :scraper, :page, :job_search, :keyword, :location, :links, :link_array
 
   def initialize(keyword, location)
     @scraper = Mechanize.new
@@ -14,10 +14,19 @@ class Scraper
 
 
   def link_through
-    @attribute_array = []
-    # @link_array.each do |link|
-      job_page = @scraper.click(@link_array[0]) 
-      @attribute_array <<  job_page.css("#jt")[-1].children[0]
+    @attributes_array = []
+    @link_array.each do |link|
+      attribute_array = []
+      job_page = @scraper.click(link) 
+      attribute_array << job_page.search("#jt").text
+      attribute_array << job_page.search('[class="employer"]').text.strip
+      attribute_array << job_page.search('[class="location"]').text
+      attribute_array << job_page.search('[class="posted hidden-xs"]').text
+      attribute_array << job_page.css('[text()*="Dice Id"]')[-1].children[0].to_s
+      attribute_array << job_page.css('[text()*="Position Id"]')[-1].children[0].to_s
+      @attributes_array << attribute_array
+    end
+    
   end
   
 
