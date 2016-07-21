@@ -20,6 +20,21 @@ class MechScraper
     @posting_dates = get_gregor_date(parse_results(POSTING))
     @locations = parse_results(LOCATION)
     @company_names = parse_results(COMPANY)
+    @output_data = {}
+  end
+
+  def package
+    @output_data = (0..29).map do |index|
+        @output_data["job#{index}"] = {
+          job_title: "#{@job_titles[index]}",
+          job_id: "#{@job_ids[index]}",
+          company_name: "#{@company_names[index]}",
+          company_id: "#{@company_ids[index]}",
+          job_link: "#{@job_links[index]}",
+          location: "#{@locations[index]}",
+          posting_date: "#{@posting_dates[index]}"
+        }
+    end
   end
 
   def search_jobs(mech_instance, job_keywords, location)
@@ -82,11 +97,11 @@ class MechScraper
       if rel_time.include?("hour")
         Time.new(current_time.year, current_time.month, current_time.day, [current_time.hour - num, 0].max)
       elsif rel_time.include?("day")
-        Time.new(current_time.year, current_time.month, current_time.day - [0, num].max)
+        Time.new(current_time.year, current_time.month, [0, current_time.day -  num].max)
       elsif rel_time.include?("week")
-        Time.new(current_time.year, current_time.month, current_time.day - (7 * [0, num].max))
+        Time.new(current_time.year, current_time.month, [0, current_time.day -  (7 *  num)].max)
       elsif rel_time.include?("month")
-        Time.new(current_time.year, current_time.month - [num, 0].max, current_time.day )
+        Time.new(current_time.year, [current_time.month - num, 0].max, current_time.day )
       else
         Time.now
       end
@@ -104,5 +119,5 @@ class MechScraper
   end
 end
 
-# scrape_job = MechScraper.new('rails developer', 'Orange County, CA')
+scrape_job = MechScraper.new('rails developer', 'Orange County, CA')
 # scrape_job.create_csv_file('refactored_search.csv')
