@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
+require 'pry-byebug'
 require 'mechanize'
+require 'date'
 require 'csv'
 
 class MechScraper
@@ -72,14 +74,21 @@ class MechScraper
 
   def get_gregor_date(array)
     current_time = Time.now
-    array.map! do |rel_time|
-      num = rel_time.match(/\d+/)[0].to_i
+    array.map do |rel_time|
+
+      # binding.pry
+      next unless match = rel_time.match(/\d+/)
+      num = match[0].to_i
       if rel_time.include?("hour")
-        Time.new(current_time.year, current_time.month, current_time.day, current_time.hour - num)
+        Time.new(current_time.year, current_time.month, current_time.day, [current_time.hour - num, 0].max)
       elsif rel_time.include?("day")
-        Time.new(current_time.year, current_time.month, current_time.day - num)
+        Time.new(current_time.year, current_time.month, current_time.day - [0, num].max)
       elsif rel_time.include?("week")
-        Time.new(current_time.year, current_time.month, current_time.day - (7 * num))
+        Time.new(current_time.year, current_time.month, current_time.day - (7 * [0, num].max))
+      elsif rel_time.include?("month")
+        Time.new(current_time.year, current_time.month - [num, 0].max, current_time.day )
+      else
+        Time.now
       end
     end
   end
@@ -93,8 +102,7 @@ class MechScraper
       end
     end
   end
-
 end
 
-scrape_job = MechScraper.new('rails developer', 'Orange County, CA')
-scrape_job.create_csv_file('refactored_search.csv')
+# scrape_job = MechScraper.new('rails developer', 'Orange County, CA')
+# scrape_job.create_csv_file('refactored_search.csv')
