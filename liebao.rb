@@ -1,4 +1,5 @@
 require 'mechanize'
+require 'csv'
 
 Job = Struct.new :title, :company, :salary, :place, :description
 
@@ -13,7 +14,7 @@ found = []
 
 agent.get(search_page) do |page|
   results = page.form do |search|
-    search.key = 'english'
+    search.key = '前端' # Key words
     search.dqs = '010' # City Beijing
   end.submit
   link_number = 2
@@ -52,8 +53,10 @@ agent.get(search_page) do |page|
     results = lien.click
   end
 
-
-
 end
 
-found
+CSV.open("results_qianduan.csv", "w+") do |csv_file|
+  found.each do |row|
+    csv_file << row
+  end
+end
