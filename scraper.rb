@@ -18,19 +18,29 @@ require 'nokogiri'
 		# Recruiter : zip-dcs-Recruiter-radius...
 		# Direct Hire : dcs-DirectHire-radius...
 
-agent = Mechanize.new { |agent|
+a = Mechanize.new { |agent|
     agent.user_agent_alias = 'Mac Safari'
 }
 # this gives your Mechanize object
 # an 0.5 second wait time after every HTML request
 # Don't forget it!!!
-agent.history_added = Proc.new { sleep 0.5 }
+a.history_added = Proc.new { sleep 0.5 }
 
 # with the new Mech object we get the job search page
 
-page = agent.get( 'https://www.dice.com/jobs' )
+page = a.get( 'https://www.dice.com/jobs' )
 
+form = page.forms.first
+
+form.q = 'Ruby'
+form.l = 'Chicago, IL'
+
+results = form.submit
+
+pp results
 # with this page we need to fill in the job search and location
+
+=begin
 form = page.forms
 
 form.first do | f |
@@ -41,7 +51,7 @@ form.first do | f |
 	location.value = 'Chicago, IL'
 
 end.submit
-
+=end
 
 
 
@@ -55,7 +65,7 @@ end.submit
 
 # {buttons [button:0x3ffaa96f51d8 type: button name:  value: Find Tech Jobs]}>
 
-pp form
+
 
 # once those are filled we submit the form
 
