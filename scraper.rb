@@ -30,61 +30,27 @@ a.history_added = Proc.new { sleep 0.5 }
 
 page = a.get( 'https://www.dice.com/jobs' )
 
+
+
 form = page.forms.first
 
-form.q = 'Ruby'
-form.l = 'Chicago, IL'
+form.q = 'Javascript'
+form.l = 'Peoria, IL'
 
+
+
+# results stored here upon submission
 results = form.submit
+
+
 
 pp results
 # with this page we need to fill in the job search and location
-
-=begin
-form = page.forms
-
-form.first do | f |
-
-	job_type = f.field_with( :id => 'job' )
-	job_type.value = 'Ruby'
-	location = f.field_with( :id => 'location' )
-	location.value = 'Chicago, IL'
-
-end.submit
-=end
-
-
-
-#job_type = form( 'q' )
-#location = form( 'l' )
-# form.fields.each { | f | puts f.name }
-#job_type.q = 'Ruby'
-#location.l = 'Chicago, IL'
 
 
 
 # {buttons [button:0x3ffaa96f51d8 type: button name:  value: Find Tech Jobs]}>
 
-
-
-# once those are filled we submit the form
-
-# the returned form should have the first page of results which we then sift through
-
-
-
-# prints out the links on the page
-#page.links.each do | link |
-
-#	puts link
-
-#end
-
-#pp page
-
-
-# find a form and print out it's fields
-# on Dice, this is the job search fields and button
 
 
 
