@@ -41,9 +41,9 @@ page = a.get( 'https://www.dice.com/jobs' )
 
 job_search_form = page.forms.first
 
-job_search_form.q = 'Javascript'
-job_search_form.l = 'Peoria, IL'
 
+
+#results = job_search_form.submit
 #Full-Time - check box link
 page.link_with( :text => 'Full-Time' ).click
 #Part-Time
@@ -52,13 +52,14 @@ page.link_with( :text => 'Full-Time' ).click
 # page.link_with( :text => 'Contracts' ).click
 #Third Party
 # page.link_with( :text => 'Third-Party' ).click
+job_search_form.q = 'Javascript'
+job_search_form.l = 'Peoria, IL'
 
-
-
+results = job_search_form.submit
 
 #pp page
 # results stored here upon submission
-results = job_search_form.submit
+
 
 
 
