@@ -4,73 +4,62 @@ require 'mechanize'
 require 'open-uri'
 require 'nokogiri'
 
-# search form is q
-# location is l ( city, state, zip )
-# check boxes
-	# Full-Time : jtype=Full+Time
-	# Part-Time : jtype=Part+Time
-	# Contracts : jtype=Contracts
-	# Third Party : jtype=Third+Party
-	# Telecommute : dtco-true
-	# Radius : limit-##
-		# zip-radius-##-jobs
-	# Company Segment ( either or )
-		# Recruiter : zip-dcs-Recruiter-radius...
-		# Direct Hire : dcs-DirectHire-radius...
 
-a = Mechanize.new { |agent|
-    agent.user_agent_alias = 'Mac Safari'
-}
-# this gives your Mechanize object
-# an 0.5 second wait time after every HTML request
-# Don't forget it!!!
-a.history_added = Proc.new { sleep 0.5 }
+class Dice
 
-# with the new Mech object we get the job search page
+	def initialize
 
-page = a.get( 'https://www.dice.com/jobs' )
+		@results = nil
+
+		a = Mechanize.new { |agent|
+		    agent.user_agent_alias = 'Mac Safari'
+		}
+
+		a.history_added = Proc.new { sleep 0.5 }
+
+		url = 'https://www.dice.com/jobs'
+
+		@page = a.get( url )
+
+	end
 
 
-# find all links and print out their text
-#page.links.each do | link |
+	def search( job, location )
 
-#	puts link.text
+		search = @page.forms.first
 
-#end
+		search.q = job
+		search.l = location
+
+		@results = search.submit
+
+	end
 
 
-job_search_form = page.forms.first
+	def render
+
+		pp @results
+
+	end
 
 
+end
+
+dice = Dice.new
+
+dice.search( 'Ruby', 'Chicago, IL')
+
+dice.render
 
 #results = job_search_form.submit
 #Full-Time - check box link
-page.link_with( :text => 'Full-Time' ).click
+#page.link_with( :text => 'Full-Time' ).click
 #Part-Time
 # page.link_with( :text => 'Part-Time' ).click
 #Contracts
 # page.link_with( :text => 'Contracts' ).click
 #Third Party
 # page.link_with( :text => 'Third-Party' ).click
-job_search_form.q = 'Javascript'
-job_search_form.l = 'Peoria, IL'
-
-results = job_search_form.submit
-
-#pp page
-# results stored here upon submission
-
-
-
-
-pp results
-# with this page we need to fill in the job search and location
-
-
-
-# {buttons [button:0x3ffaa96f51d8 type: button name:  value: Find Tech Jobs]}>
-
-
 
 
 =begin
