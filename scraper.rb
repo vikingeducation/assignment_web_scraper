@@ -131,8 +131,10 @@ class Dice
 
 
 	def add_to_csv( job_list )
-binding.pry
-		CSV.open('dice_job.csv', 'a') do | csv |
+
+		column_header = [ "Title", "Company", "Link", "Location", "Post Date", "Company ID", "Position ID"]
+
+		CSV.open('dice_job.csv', 'a', :write_headers => true, :headers => column_header ) do | csv |
 
 			job_list.each do | job |
 
@@ -155,7 +157,7 @@ dice.search( 'Java', 'Chicago, IL')
 
 #dice.render_links
 
-dice.render_page
+#dice.render_page
 
 dice.pull_job_list
 
