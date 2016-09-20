@@ -31,16 +31,34 @@ a.history_added = Proc.new { sleep 0.5 }
 page = a.get( 'https://www.dice.com/jobs' )
 
 
+# find all links and print out their text
+#page.links.each do | link |
 
-form = page.forms.first
+#	puts link.text
 
-form.q = 'Javascript'
-form.l = 'Peoria, IL'
-
+#end
 
 
+job_search_form = page.forms.first
+
+job_search_form.q = 'Javascript'
+job_search_form.l = 'Peoria, IL'
+
+#Full-Time - check box link
+page.link_with( :text => 'Full-Time' ).click
+#Part-Time
+# page.link_with( :text => 'Part-Time' ).click
+#Contracts
+# page.link_with( :text => 'Contracts' ).click
+#Third Party
+# page.link_with( :text => 'Third-Party' ).click
+
+
+
+
+#pp page
 # results stored here upon submission
-results = form.submit
+results = job_search_form.submit
 
 
 
