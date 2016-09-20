@@ -59,11 +59,18 @@ class Dice
 			# <h3> <a title="job title"
 			title, link = node[ 'title' ], node['href']
 			company = job.css('ul a').children[0].text
+			location = job.css('li')[ 1 ].text
 
+			# grab the company id
+			company_id = job.css('li a')[ 0 ][ 'href' ].match(/company\/(.*?)$/)[1]
+
+			position_id = link.match(/#{company_id}\/(.*?)\?/)[ 1 ]
 
 binding.pry
 		end
 
+#company id 10111030
+#position id 70902
 
 	end
 	# Xpath //*[@id="company0"]
@@ -98,7 +105,7 @@ end
 
 dice = Dice.new
 
-dice.search( 'Ruby', 'Chicago, IL')
+dice.search( 'Java', 'Chicago, IL')
 
 #dice.render_results
 
