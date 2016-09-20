@@ -36,12 +36,46 @@ class Dice
 	end
 
 
-	def render
+	def pull_job_list
+
+		# pulls all results
+		jobs = @results.search("div.serp-result-content")
+		# split the jobs up taking only the first 30
+		# only if more than 30
+
+		binding.pry
+
+	end
+	# each job search is in a div class="complete-serp-result-div" and the entire job search is in class="serp-result-content"
+
+	# pagination is in the div id="dice_paging_btm"
+	# or div class="dice_paging_top" with li and title="Go to page #" text is a number
+	# class = "pagination"
+
+
+	def render_results
 
 		pp @results
 
 	end
 
+
+	def render_links
+
+		@page.links.each do | link |
+
+			puts link.text
+
+		end
+
+	end
+
+
+	def render_page
+
+		pp @page
+
+	end
 
 end
 
@@ -49,7 +83,23 @@ dice = Dice.new
 
 dice.search( 'Ruby', 'Chicago, IL')
 
-dice.render
+#dice.render_results
+
+#dice.render_links
+
+dice.render_page
+
+dice.pull_job_list
+
+
+
+
+
+
+
+
+
+
 
 #results = job_search_form.submit
 #Full-Time - check box link
