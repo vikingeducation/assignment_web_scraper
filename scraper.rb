@@ -45,8 +45,6 @@ class Dice
 		# pulls all results
 		@job_list = @results.search("div.serp-result-content")
 
-		binding.pry
-
 	end
 
 	def parse
@@ -71,9 +69,11 @@ class Dice
 
 
 			jobs << Job.new( title, company, link, location, post_date, company_id, job_id )
-binding.pry
+
 
 		end
+
+		add_to_csv( jobs )
 
 	end
 
@@ -84,7 +84,6 @@ binding.pry
 
 		time_to_subtract = text.scan(/\d/).join.to_i
 
-binding.pry
 		if text.include?('hour')
 
 			return ( current_time - ( 360 *time_to_subtract ) ).asctime
@@ -129,6 +128,22 @@ binding.pry
 		pp @page
 
 	end
+
+
+	def add_to_csv( job_list )
+
+		CSV.open('dice_job.csv', 'a') do | csv |
+
+			job_list.each do | job |
+
+				csv << job
+
+			end
+
+		end
+
+	end
+
 
 end
 
