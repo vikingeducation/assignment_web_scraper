@@ -6,7 +6,7 @@ require 'nokogiri'
 require 'csv'
 
 
-Job = Struct.new( :title, :company, :link, :location, :company_id, :job_id )
+Job = Struct.new( :title, :company, :link, :location, :post_date, :company_id, :job_id )
 
 class Dice
 
@@ -67,17 +67,43 @@ class Dice
 			# check the link var for the position id using the company id as reference
 			job_id = link.match(/#{company_id}\/(.*?)\?/)[ 1 ]
 
-			jobs << Job.new( title, company, link, location, company_id, job_id )
+			post_date = calc_post_date( job.css( 'ul li' )[2].text )
 
+
+			jobs << Job.new( title, company, link, location, post_date, company_id, job_id )
+binding.pry
 
 		end
-binding.pry
-#company id 10111030
-#position id 70902
 
 	end
-	# Xpath //*[@id="company0"]
 
+
+	def calc_post_date( text )
+
+		current_time = Time.now
+
+		time_to_subtract = text.scan(/\d/).join.to_i
+
+binding.pry
+		if text.include?('hour')
+
+			return ( current_time - ( 60 * 60 *time_to_subtract ) ).asctime
+
+		elsif text.include?('week')
+
+			 return ( current_time - ( 60 * 60 * 24 * 7 * time_to_subtract ) ).asctime
+
+		elsif text.include?('month')
+			# what would be the way to get the right days in the month
+			 return ( current_time - ( 60 * 30 * 24 * 60 * time_to_subtract ) ).asctime
+
+		elsif text.include?('year')
+
+			 return ( current_time - ( 60 * 60 * 24 * 365 * time_to_subtract ) ).asctime
+
+		end
+
+	end
 
 
 	def render_results
