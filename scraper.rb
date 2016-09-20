@@ -3,6 +3,7 @@ require 'rubygems'
 require 'mechanize'
 require 'open-uri'
 require 'nokogiri'
+require 'csv'
 
 
 Job = Struct.new( :title, :company, :link, :location, :post_date, :company_id, :job_id )
@@ -12,6 +13,7 @@ class Dice
 	def initialize
 
 		@results = nil
+		@job_list = nil
 
 		a = Mechanize.new { |agent|
 		    agent.user_agent_alias = 'Mac Safari'
@@ -41,21 +43,31 @@ class Dice
 	def pull_job_list
 
 		# pulls all results
-		jobs = @results.search("div.serp-result-content")
-		# split the jobs up taking only the first 30
-		# only if more than 30
+		@job_list = @results.search("div.serp-result-content")
 
 		binding.pry
 
 	end
 
+	def parse
 
+		jobs = []
+
+		@job_list.each do | job |
+
+			node = job.css("h3 a")[ 0 ]
+			# <h3> <a title="job title"
+			title, link = node[ 'title' ], node['href']
+			company = job.css('ul a').children[0].text
+
+
+binding.pry
+		end
+
+
+	end
 	# Xpath //*[@id="company0"]
-	# each job search is in a div class="complete-serp-result-div" and the entire job search is in class="serp-result-content"
 
-	# pagination is in the div id="dice_paging_btm"
-	# or div class="dice_paging_top" with li and title="Go to page #" text is a number
-	# class = "pagination"
 
 
 	def render_results
@@ -95,6 +107,8 @@ dice.search( 'Ruby', 'Chicago, IL')
 dice.render_page
 
 dice.pull_job_list
+
+dice.parse
 
 
 
