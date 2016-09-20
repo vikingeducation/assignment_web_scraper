@@ -6,7 +6,7 @@ require 'nokogiri'
 require 'csv'
 
 
-Job = Struct.new( :title, :company, :link, :location, :post_date, :company_id, :job_id )
+Job = Struct.new( :title, :company, :link, :location, :company_id, :job_id )
 
 class Dice
 
@@ -64,11 +64,14 @@ class Dice
 			# grab the company id
 			company_id = job.css('li a')[ 0 ][ 'href' ].match(/company\/(.*?)$/)[1]
 
-			position_id = link.match(/#{company_id}\/(.*?)\?/)[ 1 ]
+			# check the link var for the position id using the company id as reference
+			job_id = link.match(/#{company_id}\/(.*?)\?/)[ 1 ]
 
-binding.pry
+			jobs << Job.new( title, company, link, location, company_id, job_id )
+
+
 		end
-
+binding.pry
 #company id 10111030
 #position id 70902
 
