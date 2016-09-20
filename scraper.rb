@@ -87,19 +87,19 @@ binding.pry
 binding.pry
 		if text.include?('hour')
 
-			return ( current_time - ( 60 * 60 *time_to_subtract ) ).asctime
+			return ( current_time - ( 360 *time_to_subtract ) ).asctime
 
 		elsif text.include?('week')
 
-			 return ( current_time - ( 60 * 60 * 24 * 7 * time_to_subtract ) ).asctime
+			 return ( current_time - ( 360 * 24 * 7 * time_to_subtract ) ).asctime
 
 		elsif text.include?('month')
 			# what would be the way to get the right days in the month
-			 return ( current_time - ( 60 * 30 * 24 * 60 * time_to_subtract ) ).asctime
+			 return ( current_time - ( 360 * 30 * 24 * time_to_subtract ) ).asctime
 
 		elsif text.include?('year')
 
-			 return ( current_time - ( 60 * 60 * 24 * 365 * time_to_subtract ) ).asctime
+			 return ( current_time - ( 360 * 24 * 365 * time_to_subtract ) ).asctime
 
 		end
 
