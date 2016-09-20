@@ -5,6 +5,8 @@ require 'open-uri'
 require 'nokogiri'
 
 
+Job = Struct.new( :title, :company, :link, :location, :post_date, :company_id, :job_id )
+
 class Dice
 
 	def initialize
@@ -46,6 +48,9 @@ class Dice
 		binding.pry
 
 	end
+
+
+	# Xpath //*[@id="company0"]
 	# each job search is in a div class="complete-serp-result-div" and the entire job search is in class="serp-result-content"
 
 	# pagination is in the div id="dice_paging_btm"
