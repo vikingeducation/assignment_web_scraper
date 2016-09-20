@@ -131,7 +131,7 @@ class Dice
 
 
 	def add_to_csv( job_list )
-
+binding.pry
 		CSV.open('dice_job.csv', 'a') do | csv |
 
 			job_list.each do | job |
