@@ -1,7 +1,4 @@
-require 'pry'
-#require 'rubygems'
 require 'mechanize'
-#require 'open-uri'
 require 'nokogiri'
 require 'csv'
 
@@ -17,8 +14,7 @@ class Dice
 		@jobs_array = []
 
 		a = Mechanize.new { |agent|
-		    agent.user_agent_alias = 'Mac Safari'
-		}
+		    agent.user_agent_alias = 'Mac Safari' }
 
 		a.history_added = Proc.new { sleep 0.5 }
 
@@ -57,19 +53,18 @@ class Dice
 
 			node = job.css("h3 a")[ 0 ]
 
-			title, link = node[ 'title' ], node['href']
+			title, link = title_link( node )
 
-			company = job.css('ul a').children[0].text
+			company = company( job )
 
-			location = job.css('li')[ 1 ].text
+			location = location( job )
 
-			company_id = job.css('li a')[ 0 ][ 'href' ].match(/company\/(.*?)$/)[1]
+			company_id = company_id( job )
 
 			# check the link var for the position id using the company id as reference
-			job_id = link.match(/#{company_id}\/(.*?)\?/)[ 1 ]
+			job_id = job_id( link, company_id )
 
 			post_date = calc_post_date( job.css( 'ul li' )[ 2 ].text )
-
 
 			@jobs_array << Job.new( title, company, link, location, post_date, company_id, job_id )
 
@@ -80,10 +75,44 @@ class Dice
 	end
 
 
+	def title_link( node )
+
+		return node[ 'title' ], node[ 'href' ]
+
+	end
+
+
+	def company( node )
+
+		return node.css('ul a').children[0].text
+
+	end
+
+	def company_id( node )
+
+		return node.css('li a')[ 0 ][ 'href' ].match(/company\/(.*?)$/)[1]
+
+	end
+
+
+	def job_id( link, co_id )
+
+		return link.match(/#{co_id}\/(.*?)\?/)[ 1 ]
+
+	end
+
+
+	def location( node )
+
+		return node.css('li')[ 1 ].text
+
+	end
+
+
 	def calc_post_date( text )
 
 		current_time = Time.now
-
+		# takes string '4 hours ago' and pulls the number
 		time_to_subtract = text.scan(/\d/).join.to_i
 
 		if text.include?('hour')
@@ -95,7 +124,7 @@ class Dice
 			 return ( current_time - ( 360 * 24 * 7 * time_to_subtract ) ).asctime
 
 		elsif text.include?('month')
-			# what would be the way to get the right days in the month?
+			 # what would be the way to get the right days in the month?
 			 return ( current_time - ( 360 * 30 * 24 * time_to_subtract ) ).asctime
 
 		elsif text.include?('year')
@@ -103,20 +132,6 @@ class Dice
 			 return ( current_time - ( 360 * 24 * 365 * time_to_subtract ) ).asctime
 
 		end
-
-	end
-
-
-	def render_results
-
-		pp @results
-
-	end
-
-
-	def render_page
-
-		pp @page
 
 	end
 
@@ -138,11 +153,27 @@ class Dice
 	end
 
 
+
+	def render_results
+
+		pp @results
+
+	end
+
+
+	def render_page
+
+		pp @page
+
+	end
+
+
+
 end
 
 dice = Dice.new
 
-dice.search( 'Java', 'Chicago, IL')
+dice.search( 'Ruby', 'Chicago, IL')
 
 #dice.render_results
 
