@@ -42,7 +42,7 @@ class Dice
 
 	def pull_job_list
 
-		# pulls all results
+		# pulls all results from page
 		@job_list = @results.search("div.serp-result-content")
 
 	end
@@ -54,18 +54,20 @@ class Dice
 		@job_list.each do | job |
 
 			node = job.css("h3 a")[ 0 ]
-			# <h3> <a title="job title"
+
 			title, link = node[ 'title' ], node['href']
+
 			company = job.css('ul a').children[0].text
+
 			location = job.css('li')[ 1 ].text
 
-			# grab the company id
+
 			company_id = job.css('li a')[ 0 ][ 'href' ].match(/company\/(.*?)$/)[1]
 
 			# check the link var for the position id using the company id as reference
 			job_id = link.match(/#{company_id}\/(.*?)\?/)[ 1 ]
 
-			post_date = calc_post_date( job.css( 'ul li' )[2].text )
+			post_date = calc_post_date( job.css( 'ul li' )[ 2 ].text )
 
 
 			jobs << Job.new( title, company, link, location, post_date, company_id, job_id )
@@ -93,7 +95,7 @@ class Dice
 			 return ( current_time - ( 360 * 24 * 7 * time_to_subtract ) ).asctime
 
 		elsif text.include?('month')
-			# what would be the way to get the right days in the month
+			# what would be the way to get the right days in the month?
 			 return ( current_time - ( 360 * 30 * 24 * time_to_subtract ) ).asctime
 
 		elsif text.include?('year')
@@ -166,47 +168,3 @@ dice.parse
 
 
 
-
-
-
-
-
-
-
-#results = job_search_form.submit
-#Full-Time - check box link
-#page.link_with( :text => 'Full-Time' ).click
-#Part-Time
-# page.link_with( :text => 'Part-Time' ).click
-#Contracts
-# page.link_with( :text => 'Contracts' ).click
-#Third Party
-# page.link_with( :text => 'Third-Party' ).click
-
-
-=begin
-
-User-agent: *
-Allow: /jobs
-Allow: /dashboard
-Allow: /register
-Allow: /mobile
-Allow: /company
-
-Disallow: /admin
-Disallow: /jobman
-Disallow: /reports
-Disallow: /talentmatch
-Disallow: /profman
-Disallow: /regman
-Disallow: /ows
-Disallow: /config
-Disallow: /m2
-
-Disallow: /jobsearch/
-Disallow: /job
-
-User-agent: Googlebot-News
-Disallow: /
-
-=end
