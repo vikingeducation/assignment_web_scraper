@@ -1,7 +1,7 @@
 require 'pry'
-require 'rubygems'
+#require 'rubygems'
 require 'mechanize'
-require 'open-uri'
+#require 'open-uri'
 require 'nokogiri'
 require 'csv'
 
@@ -13,7 +13,8 @@ class Dice
 	def initialize
 
 		@results = nil
-		@job_list = nil
+
+		@jobs_array = []
 
 		a = Mechanize.new { |agent|
 		    agent.user_agent_alias = 'Mac Safari'
@@ -43,15 +44,16 @@ class Dice
 	def pull_job_list
 
 		# pulls all results from page
-		@job_list = @results.search("div.serp-result-content")
+		job_list = @results.search("div.serp-result-content")
+
+		parse( job_list )
 
 	end
 
-	def parse
 
-		jobs = []
+	def parse( list )
 
-		@job_list.each do | job |
+		list.each do | job |
 
 			node = job.css("h3 a")[ 0 ]
 
@@ -61,7 +63,6 @@ class Dice
 
 			location = job.css('li')[ 1 ].text
 
-
 			company_id = job.css('li a')[ 0 ][ 'href' ].match(/company\/(.*?)$/)[1]
 
 			# check the link var for the position id using the company id as reference
@@ -70,12 +71,11 @@ class Dice
 			post_date = calc_post_date( job.css( 'ul li' )[ 2 ].text )
 
 
-			jobs << Job.new( title, company, link, location, post_date, company_id, job_id )
+			@jobs_array << Job.new( title, company, link, location, post_date, company_id, job_id )
 
 
 		end
 
-		add_to_csv( jobs )
 
 	end
 
@@ -114,17 +114,6 @@ class Dice
 	end
 
 
-	def render_links
-
-		@page.links.each do | link |
-
-			puts link.text
-
-		end
-
-	end
-
-
 	def render_page
 
 		pp @page
@@ -132,13 +121,13 @@ class Dice
 	end
 
 
-	def add_to_csv( job_list )
+	def create_csv
 
 		column_header = [ "Title", "Company", "Link", "Location", "Post Date", "Company ID", "Position ID"]
 
 		CSV.open('dice_job.csv', 'a', :write_headers => true, :headers => column_header ) do | csv |
 
-			job_list.each do | job |
+			@jobs_array.each do | job |
 
 				csv << job
 
@@ -157,13 +146,11 @@ dice.search( 'Java', 'Chicago, IL')
 
 #dice.render_results
 
-#dice.render_links
-
 #dice.render_page
 
 dice.pull_job_list
 
-dice.parse
+dice.create_csv
 
 
 
