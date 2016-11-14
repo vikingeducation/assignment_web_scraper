@@ -7,7 +7,7 @@ class DiceAgent < Mechanize
     url = "https://www.dice.com/jobs?q="
     query = term.gsub(" ", "+")
     page = get(url + query)
- #   page.search("container")
+    page.search(".serp-result-content h3 a")
   end
 end
 
@@ -15,6 +15,11 @@ d = DiceAgent.new do |agent|
     agent.user_agent_alias = 'Windows Chrome'
 end
 
-page = d.search("rails")
+jobs = d.search("rails")
 
-puts page.class
+
+p jobs.length
+
+jobs.each do |job|
+  puts job.attr("title")
+end
