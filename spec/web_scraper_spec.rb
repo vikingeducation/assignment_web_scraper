@@ -19,6 +19,10 @@ describe WebScraper do
       expect(scraper.search('developer').length).to be > 0
     end
 
+    it 'allows a search location to be specified' do
+      expect(scraper.search('developer', 84321).length).to be > 0
+    end
+
   end
 
   # describe '#organize_results' do

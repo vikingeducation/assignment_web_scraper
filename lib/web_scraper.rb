@@ -12,12 +12,14 @@ class WebScraper
   end
 
 
-  def search(term)
+  def search(term, location = nil)
     sleep(1)
     form = page.form_with(:action => '/jobs')
     form.q = term
+    form.l = location if location
     results = agent.submit(form)
-    organize(results.search('.serp-result-content'))
+    results = organize(results.search('.serp-result-content'))
+    to_csv(results)
   end
 
   private
@@ -34,6 +36,15 @@ class WebScraper
       jobs
     end
 
+    def to_csv(results)
+      time = Time.now.strftime("%Y_%m_%d")
+      CSV::open("jobs_#{time}.csv", "w+") do |csv|
+        csv << ["Title", "Link", "Description"]
+        results.each do |result|
+          csv << [result[:title], result[:link], result[:desc]]
+        end
+      end
+    end
 
 end
 
