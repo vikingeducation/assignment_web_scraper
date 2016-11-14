@@ -10,47 +10,66 @@ class Scraper
 
   end
 
-  # scraper.get_dice_results(terms: 'software dev ruby', location: 'city state')
-  def get_dice_results(opts = {})
-    #https://www.dice.com/jobs?q=Software+Developer&l=Denver%2C+CO
-    # Software+Developer
+  def get_dice_results_page(opts = {})
     search_term = opts[:terms].gsub(/ /, '+')
-    # Denver%2C+CO
     location = opts[:loc].gsub(/ /, '%2C+')
     agent.get("https://www.dice.com/jobs?q=#{ search_term }&l=#{ location }")
   end
 
+  def get_dice_details(page)
+
+    get_dice_job_links(page).each do |link|
+    end
+  end
+
   private
+    attr_reader :agent
 
     def default_agent
       Mechanize.new{ |agent| agent.user_agent_alias = 'Mac Safari' }
     end
 
-    attr_reader :agent
+    def get_dice_title(page)
+      page.title
+    end
+
+    def get_dice_uri(page)
+      page.uri
+    end
+
+    def get_dice_job_links(page)
+      page.links_with(id: /position\d*/)
+    end
 end
 
-page = Scraper.new.get_dice_results(terms: 'ruby', loc: 'denver co')
+#page = Scraper.new.get_dice_results(terms: 'ruby', loc: 'denver co')
 
 # how to get nokogiri methods?
 # page.links_with { css: "."}
 
-links = page.links.map do |link|
-          link.text
-        end
+#job_links = page.links_with(id: /position\d*/) # call link.click
 
-job_links = page.links_with(id: /position\d*/) # call link.click
 
-uri = page.links.map do |link|
-          link.uri
-        end
+#p job_links[0].click.uri.path#methods.sort!
+#p job_links[0].click.uri.to_s
+#p job_links[0].click.title
+## pp page.body.gsub(/\t/, " ")
+#pp job_links[0].click.uri
+#pp job_links[0].click.title
+#puts "-------------------------------"
+#pp job_links[1].click.uri
+#pp job_links[1].click.title
+#puts "-------------------------------"
+#pp job_links[5].click.uri
+#pp job_links[5].click.title
+#puts "-------------------------------"
+#pp job_links[9].click.uri
+#pp job_links[9].click.title
 
-# pp page.body.gsub(/\t/, " ")
-pp job_links[0].click.body.gsub(/\s/, "")
-
-# return job title
-# link to posting
-# company name
-# location
-# posting date
-# company id
-# job id
+# job title         - <page object>.title
+# company name      - <page object>.title # negative index split on ' - '
+# link to posting   - <page object>.uri.to_s
+# location          - <page object>.title # negative index split on ' - '
+# posting date      - <page object>.title # negative index split on ' - '
+# company id        - <page object>.uri.path # capture last 2 '/'
+# job id            - <page object>.uri.path # capture last 2 '/'
