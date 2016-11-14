@@ -6,7 +6,8 @@ require 'mechanize'
 class Scraper
 
   def initialize(args = {})
-    @agent = Mechanize.new
+    @agent =  default_agent
+
   end
 
   # scraper.get_dice_results(terms: 'software dev ruby', location: 'city state')
@@ -20,9 +21,25 @@ class Scraper
   end
 
   private
+
+    def default_agent
+      Mechanize.new{ |agent| agent.user_agent_alias = 'Mac Safari' }
+    end
+
     attr_reader :agent
 end
 
 page = Scraper.new.get_dice_results(terms: 'ruby', loc: 'denver co')
 
-p page
+# how to get nokogiri methods?
+page.links_with { css: "."}
+
+links = page.links.map do |link|
+          link.text
+        end
+
+uri = page.links.map do |link|
+          link.uri
+        end
+
+p uri
