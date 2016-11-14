@@ -22,17 +22,18 @@ class Dice < Mechanize
 
   def get_page(terms, location)
     results = nil
-    @agent.get("https://www.dice.com/jobs?q=#{terms}&l=#{location}") do |page|
-      results = page.links_with(id: /position/)
+    page_one = @agent.get("https://www.dice.com/jobs?q=#{terms}&l=#{location}") do |page|
+      results = page.links_with(id: /position/) 
     end
+
     results
   end
 
   def render(results)
     results.each do |result|
-      p result
+      p result.text.strip
+      p result.href
     end
-    # p results
   end
 end
 
