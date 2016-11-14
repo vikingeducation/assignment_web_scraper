@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
+require 'csv'
 
 # scraper = Mechanize.new
 # scraper.history_added = Proc.new { sleep 1.0 }
@@ -20,13 +21,13 @@ class Dice < Mechanize
   def run(terms, location)
     @agent.history_added = Proc.new { sleep 1.0 }
     results = get_page(terms, location)
-    render(results)
+    csv_writer(results)
   end
 
   def get_page(terms, location)
     results = nil
     done = false
-    array_of_jobs = []
+    jobs = []
     page_one = @agent.get("https://www.dice.com/jobs?q=#{terms}&l=#{location}&limit=5") do |page|
       page.links_with(:id => /position/).each do |link|
         unless done
@@ -37,19 +38,43 @@ class Dice < Mechanize
           current_job.company = job_page.search('li.employer>a').children[0].text
           current_job.location = job_page.search('li.location').children[0].text
           current_job.date = job_page.search('title').children[0].text.split(" ")[-3]
+          current_job.company_id = link.href.split("/")[6]
+          current_job.post_id = link.href.split("/")[7].split("?")[0]
+
+          jobs << current_job
           done = true
         else
           done = false
-        end
+        end # unless
+      end # links_with
+    end # agent
+    jobs
+  end # get_page method
+
+  def csv_writer(results)
+    input = convert_struct(results)
+
+    CSV.open('jobs.csv', 'a', :write_headers => true,
+      :headers => ["Job Title", "Company", "Location", "Date Posted", "Company ID", "Post ID", "URL"]) do |csv|
+      input.each do |row|
+        csv << row
       end
     end
   end
 
-  def render(results)
-    results.each do |result|
-      # p result.text.strip
-      # p result.href
+  def convert_struct(results)
+    results_array = []
+
+    results.each_with_index do |struct|
+      results_row = []
+      struct.each do |item|
+        results_row << item
+      end
+      results_array << results_row
+      # results_array << [struct.title, struct.company, struct.location. struct.date, struct.company_id, struct.post_id, struct.url]
     end
+
+    results_array
   end
 end
 
