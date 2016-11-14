@@ -16,9 +16,17 @@ describe WebScraper do
   describe '#search' do
 
     it 'searches main page form for specific job' do
-      expect(scraper.search('developer').length).to_be > 0
+      expect(scraper.search('developer').length).to be > 0
     end
-  
+
   end
+
+  # describe '#organize_results' do
+
+  #   it 'returns a hash from the search results' do
+  #     expect(scraper.search).
+  #   end
+
+  # end
 
 end
