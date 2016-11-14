@@ -7,7 +7,6 @@ class Scraper
 
   def initialize(args = {})
     @agent = default_agent
-
   end
 
   def get_dice_results_page(opts = {})
@@ -16,9 +15,11 @@ class Scraper
     agent.get("https://www.dice.com/jobs?q=#{ search_term }&l=#{ location }")
   end
 
-  def get_dice_details(page)
-
-    get_dice_job_links(page).each do |link|
+  # Take search result page, follow job links, and return array of Job
+  # detail pages
+  def get_job_pages(page)
+    get_dice_job_links(page).map do |link|
+      link.click
     end
   end
 
@@ -27,14 +28,6 @@ class Scraper
 
     def default_agent
       Mechanize.new{ |agent| agent.user_agent_alias = 'Mac Safari' }
-    end
-
-    def get_dice_title(page)
-      page.title
-    end
-
-    def get_dice_uri(page)
-      page.uri
     end
 
     def get_dice_job_links(page)
