@@ -6,7 +6,7 @@ require 'mechanize'
 class Scraper
 
   def initialize(args = {})
-    @agent =  default_agent
+    @agent = default_agent
 
   end
 
@@ -32,14 +32,25 @@ end
 page = Scraper.new.get_dice_results(terms: 'ruby', loc: 'denver co')
 
 # how to get nokogiri methods?
-page.links_with { css: "."}
+# page.links_with { css: "."}
 
 links = page.links.map do |link|
           link.text
         end
 
+job_links = page.links_with(id: /position\d*/) # call link.click
+
 uri = page.links.map do |link|
           link.uri
         end
 
-p uri
+# pp page.body.gsub(/\t/, " ")
+pp job_links[0].click.body.gsub(/\s/, "")
+
+# return job title
+# link to posting
+# company name
+# location
+# posting date
+# company id
+# job id
