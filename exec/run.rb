@@ -1,6 +1,7 @@
-require 'scraper'
-require 'dice_scraper_controller'
+require_relative '../lib/scraper'
+require_relative '../lib/dice_scraper_controller'
+require_relative '../lib/dice_jobs_page_parser'
 
-# controller = DiceScraperController.new
+controller = DiceScraperController.new
 #
-# controller.run
+controller.search('ruby', 'denver co')

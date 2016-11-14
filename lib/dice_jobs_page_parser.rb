@@ -1,5 +1,3 @@
-Job
-
 class DiceJobsPageParser
   def initialize
     @job_factory =  Struct.new( :title,
@@ -21,27 +19,46 @@ class DiceJobsPageParser
 
   def parse_job_page(page)
     job = job_factory.new
-    title = get_dice_title(page)
+    title = get_title(page)
     uri = page.uri.to_s
+    # "Full Stack Developer (Ruby on Rails) - CyberCoders - Denver, CO - 11-13-2016 | Dice.com"
+    # https://www.dice.com/jobs/detail/Full-Stack-Developer-%28Ruby-on-Rails%29-CyberCoders-Denver-CO-80201/cybercod/GG2-132800612?icid=sr2-1p&q=ruby&l=denver,%20co
 
     job.title = get_title(page)
-    job.company =
-    job.link =
-    job.location =
-    job.post_date =
-    job.comp_id =
-    job.job_id =
+    job.company = get_job_company(title)
+    job.link = uri
+    job.location = get_job_location(title)
+    job.post_date = get_post_date(title)
+    job.comp_id = get_comp_id(uri)
+    job.job_id = get_job_id(uri)
     job
-  end
-
-  def get_dice_title(page)
-    page.title.split(" - ")
-  end
-
-  def get_dice_uri(page)
-    page.uri
   end
 
   private
   attr_reader :job_factory
+
+  def get_title(page)
+    title = page.title[0..-12]
+    title.split(" - ")
+  end
+
+  def get_job_company(title)
+    title[-3]
+  end
+
+  def get_job_location(title)
+    title[-2]
+  end
+
+  def get_job_post_date(title)
+    title[-1]
+  end
+
+  def get_comp_id(uri)
+
+  end
+
+  def get_job_id(uri)
+
+  end
 end

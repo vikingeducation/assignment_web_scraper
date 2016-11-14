@@ -2,11 +2,14 @@ class DiceScraperController
 
   def initialize
     @scraper = Scraper.new
-
   end
   
-  page = scraper.get_dice_results(terms: 'ruby', loc: 'denver co')
-  job_pages = page.get_job_pages(page)
+  def search(terms, location)
+    page = scraper.get_dice_results(terms: terms, loc: location)
+    job_pages = scraper.get_job_pages(page)
+    p job_pages[1].title
+    p job_pages[1].uri
+  end
 
   private
   attr_reader :scraper
