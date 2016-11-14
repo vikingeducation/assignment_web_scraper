@@ -6,8 +6,8 @@ class DiceAgent < Mechanize
   def search(term)
     url = "https://www.dice.com/jobs?q="
     query = term.gsub(" ", "+")
-    page = self.get(url + query)
-    page.search("container")
+    page = get(url + query)
+ #   page.search("container")
   end
 end
 
