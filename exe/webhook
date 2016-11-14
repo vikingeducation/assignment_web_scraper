@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+require 'sinatra'
+require 'json'
+
+set :port, 5000
+
+post '/event' do
+  status 204 #successful request with no body content
+
+  request.body.rewind
+  p request_payload = JSON.parse(request.body.read)
+
+  #append the payload to a file
+  File.open("spec/#{request_payload["filename"]}", "w") do |f|
+    f.puts(request_payload["data"])
+  end
+end
+
