@@ -18,23 +18,31 @@ class Dice < Mechanize
   end
 
   def run(terms, location)
+    @agent.history_added = Proc.new { sleep 1.0 }
     results = get_page(terms, location)
     render(results)
   end
 
   def get_page(terms, location)
     results = nil
-    page_one = @agent.get("https://www.dice.com/jobs?q=#{terms}&l=#{location}") do |page|
-      results = page.links_with(id: /position/).each do |link|
-        current_job = Job.new
-
-        current_job.title = link.text.strip
-
-        p current_job.title
+    done = false
+    array_of_jobs = []
+    page_one = @agent.get("https://www.dice.com/jobs?q=#{terms}&l=#{location}&limit=5") do |page|
+      page.links_with(:id => /position/).each do |link|
+        unless done
+          current_job = Job.new
+          current_job.url = link.href
+          current_job.title = link.text.strip
+          job_page = link.click
+          current_job.company = job_page.search('li.employer>a').children[0].text
+          current_job.location = job_page.search('li.location').children[0].text
+          current_job.date = job_page.search('title').children[0].text.split(" ")[-3]
+          done = true
+        else
+          done = false
+        end
       end
     end
-
-    results
   end
 
   def render(results)
@@ -46,3 +54,15 @@ class Dice < Mechanize
 end
 
 Dice.new("ruby developer")
+
+
+
+# # date posted
+# title
+# # look for year 2016, capture 6 digits before it
+# # 11-11-2016
+# # company id
+# array = href.split("/")
+# array[6]
+# # post id
+# array[7].split("?")[0]
