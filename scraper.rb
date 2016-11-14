@@ -7,10 +7,16 @@ require 'mechanize'
 scraper = Mechanize.new
 
 page = scraper.get('https://www.dice.com')
-pp page
-# form = page.form_with(:id => 'search-field-keyword')
-# google_form.q = 'javascript'
+form = page.form_with(:id => 'search-form')
+form.q = 'javascript'
+form.l = 'philadelphia' 
+page = scraper.submit(form)
 
+array = page.links.select do |link|
+  link.text =~ /Developer/
+end
+
+p array
 
 scraper.history_added = Proc.new { sleep 0.5 }
 
