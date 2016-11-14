@@ -1,4 +1,5 @@
 require_relative 'web_scraper'
+require 'active_support/core_ext/numeric/time'
 
 class ParseDice < WebScraper
 
@@ -20,14 +21,37 @@ class ParseDice < WebScraper
       title = h3.text.strip
       link = h3.search("a")[0]["href"]
       short_desc = result.search("div.shortdesc")[0].text.strip
-      jobs << {title: title, link: link, desc: short_desc}
+      company = result.search("li.employer .hidden-xs a")[0]
+      company_name = company.text.strip
+      company_url = company["href"]
+      location = result.search("li.location")[0].text.strip
+      posting_date = result.search("li.posted")[0].text.strip
+      posting_date = calculate_date(posting_date).strftime("%Y_%m_%d %H:%M:%S")
+      #job_id = result.search("input")[0]
+      jobs << {title: title, link: link, desc: short_desc, company: company_name, company_url: company_url, location: location, date: posting_date}
     end
+
     jobs
+  end
+
+  def calculate_date(date_string)
+    arr = date_string.split(" ")
+    arr[0] = arr[0].to_i
+    case arr[1]
+    when /minute/
+      arr[0].minutes.ago
+    when 'hours' || 'hour'
+      arr[0].hours.ago
+    when 'days' || 'day'
+      arr[0].days.ago
+    when 'weeks' || 'week'
+      arr[0].weeks.ago
+    else
+      arr[0].month.ago
+    end
   end
 
 
 
 end
 
-dice = ParseDice.new( 'Developer', '33613' )
-puts dice.search

@@ -26,19 +26,6 @@ class WebScraper
   end
 
 
-  private
-
-
-  def to_csv(results)
-    time = Time.now.strftime("%Y_%m_%d")
-    CSV::open("jobs_#{time}.csv", "w+") do |csv|
-      csv << ["Title", "Link", "Description"]
-      results.each do |result|
-        csv << [result[:title], result[:link], result[:desc]]
-      end
-    end
-  end
-
 end
 
 
