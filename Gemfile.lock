@@ -17,11 +17,11 @@ GEM
       webrobots (>= 0.0.9, < 0.2)
     method_source (0.8.2)
     mime-types (1.25.1)
-    mini_portile2 (2.1.0)
+    mini_portile2 (2.0.0)
     net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
-    nokogiri (1.6.8.1)
-      mini_portile2 (~> 2.1.0)
+    nokogiri (1.6.7.2)
+      mini_portile2 (~> 2.0.0.rc2)
     ntlm-http (0.1.1)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -38,6 +38,7 @@ PLATFORMS
 
 DEPENDENCIES
   mechanize (~> 2.7.2, < 2.7.3)
+  nokogiri (~> 1.6.7.2)
   pry
 
 BUNDLED WITH

@@ -13,8 +13,16 @@ class Scraper
     raise ArgumentError unless job.is_a?(String) && location.is_a?(String)
     scraper = Mechanize.new
     url = build_url(job, location).new_url
-    page = scraper.get(url) 
-    pp page
+    page = scraper.get(url)
+
+    [page.links_with(:class => 'dice-btn-link')[0]].each do |link|
+
+      # click on the link
+      post_page = link.click
+      puts post_page.search('h1.jobTitle')
+
+    end
+
     scraper.history_added = Proc.new { sleep 0.5 }
 
   end
@@ -41,7 +49,7 @@ class URLBuilder
 
     string = url 
     parameters.each do |key, value|
-      key = key.gsub(/\s/, "+")
+      key = key.to_s.gsub(/\s/, "+")
       value = value.gsub(/\s/, "+")
       string += key.to_s + "=" + value + "&"
     end
