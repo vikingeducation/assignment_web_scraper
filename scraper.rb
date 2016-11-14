@@ -9,6 +9,8 @@ require 'mechanize'
 
 # https://www.dice.com/jobs/q-ruby-limit-99-startPage-2-limit-99-jobs?searchid=9637969994242
 
+Job = Struct.new(:title, :company, :location, :date, :company_id, :post_id, :url)
+
 class Dice < Mechanize
   def initialize(terms, location="")
     @agent = Mechanize.new
@@ -23,7 +25,13 @@ class Dice < Mechanize
   def get_page(terms, location)
     results = nil
     page_one = @agent.get("https://www.dice.com/jobs?q=#{terms}&l=#{location}") do |page|
-      results = page.links_with(id: /position/) 
+      results = page.links_with(id: /position/).each do |link|
+        current_job = Job.new
+
+        current_job.title = link.text.strip
+
+        p current_job.title
+      end
     end
 
     results
@@ -31,8 +39,8 @@ class Dice < Mechanize
 
   def render(results)
     results.each do |result|
-      p result.text.strip
-      p result.href
+      # p result.text.strip
+      # p result.href
     end
   end
 end
