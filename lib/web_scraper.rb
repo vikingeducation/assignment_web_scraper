@@ -18,10 +18,11 @@ class WebScraper
     raise NotImplementedError("Methods Need to be defined by subclass")
   end
 
-  def search
+  def search(page = 1)
     sleep(1)
-    puts build_url
-    organize(agent.get(build_url))
+    puts build_url(page)
+    results = organize(agent.get(build_url(page)))
+    results << search(page + 1) if results.length > 0
   end
 
 

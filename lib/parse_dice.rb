@@ -1,4 +1,3 @@
-require 'mechanize'
 require_relative 'web_scraper'
 
 class ParseDice < WebScraper
@@ -6,11 +5,11 @@ class ParseDice < WebScraper
   def initialize(term, location = nil)
     @agent = Mechanize.new
     @term = term
-    @location = "-#{location}-30" if location
+    @location = "-l-#{location}-radius-30" if location
   end
 
-  def build_url
-    "https://www.dice.com/jobs/q-#{@term}-jtype-Full\%20Time-limit-30#{@location}-jobs.html"
+  def build_url(page)
+    "https://www.dice.com/jobs/jtype-Full\%20Time-q-#{@term}#{@location}-startPage-#{page}-limit-120-jobs.html"
   end
 
   def organize(results)
