@@ -10,10 +10,30 @@ require 'mechanize'
 # https://www.dice.com/jobs/q-ruby-limit-99-startPage-2-limit-99-jobs?searchid=9637969994242
 
 class Dice < Mechanize
-  def initialize
-    agent = Mechanize.new
-    agent.get("https://www.dice.com/jobs?q=&l=")
+  def initialize(terms, location="")
+    @agent = Mechanize.new
+    run(terms, location)
+  end
+
+  def run(terms, location)
+    results = get_page(terms, location)
+    render(results)
+  end
+
+  def get_page(terms, location)
+    results = nil
+    @agent.get("https://www.dice.com/jobs?q=#{terms}&l=#{location}") do |page|
+      results = page.links_with(id: /position/)
+    end
+    results
+  end
+
+  def render(results)
+    results.each do |result|
+      p result
+    end
+    # p results
   end
 end
 
-Dice.new
+Dice.new("ruby developer")
