@@ -1,11 +1,10 @@
-
 class JobSaver
 
   def save(path, jobs)
     file = CSV.open(path, 'a+')
     add_header(file) if File.zero?(file)
     jobs.each do |job|
-      add_job(file, job)
+      add_job(file, job, path)
     end
   end
 
@@ -13,7 +12,19 @@ class JobSaver
     file << ["Title", "Job Link", "Employer", "Location", "Company ID", "Job ID", "Posted at"]
   end
 
-  def add_job(file, job)
-    file << [job.title, job.job_link, job.employer, job.location, job.company_id, job.job_id, job.posted]
+  def add_job(file, job, path)
+    unless contains?(path, job)
+      file << [job.title, job.job_link, job.employer, job.location, job.company_id, job.job_id, job.posted]
+    end
+  end
+
+  def contains?(path,job)
+    contains = false
+    CSV.foreach(path) do |row|
+      if row[5] == job.job_id
+        contains = true 
+      end
+    end
+    contains
   end
 end
