@@ -1,12 +1,14 @@
+Job =  Struct.new( :title, :company, :link, :location,
+                   :post_date, :comp_id, :job_id ) do
+                      def to_a
+                        [ title, company, link, location,
+                          post_date, comp_id, job_id ]
+                      end
+                    end
+
 class DiceJobsPageParser
   def initialize
-    @job_factory =  Struct.new( :title,
-                                :company,
-                                :link,
-                                :location,
-                                :post_date,
-                                :comp_id,
-                                :job_id )
+    @job_factory = Job
   end
 
   # input: array of job page objects
@@ -25,9 +27,9 @@ class DiceJobsPageParser
     uri = get_uri(page)
     job.title = get_job_title(title)
     job.company = get_job_company(title)
-    job.link = uri
+    job.link = page.uri.to_s
     job.location = get_job_location(title)
-    job.post_date = get_post_date(title)
+    job.post_date = get_job_post_date(title)
     job.comp_id = get_comp_id(uri)
     job.job_id = get_job_id(uri)
     job
@@ -43,8 +45,8 @@ class DiceJobsPageParser
 
   def get_uri(page)
     uri = page.uri.to_s
-    uri.index('?')
-    uri = uri[0..index]
+    index = uri.index('?')
+    uri = uri[0...index]
     uri.split('/')[-2..-1]
   end
 
@@ -65,10 +67,10 @@ class DiceJobsPageParser
   end
 
   def get_comp_id(uri)
-
+    uri[0]
   end
 
   def get_job_id(uri)
-
+    uri[1]
   end
 end
