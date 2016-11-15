@@ -25,10 +25,10 @@ class IndeedBuilder < JobBuilder
   def build(job_div)
     title = job_div.search("a").first.attr("title")
     job_link = job_div.search("a").first.attr("href")
-    employer = job_div.search(".company").text
-    location = job_div.search(".location").text
+    employer = job_div.search(".company").text.strip
+    location = job_div.search(".location").text.strip
     job_id = job_div.attr("id")
-    posted_string = job_div.search(".date").text
+    posted_string = job_div.search(".date").text.strip
     if posted_string == "30+ days ago"
       posted = "Before #{Date.today - 30}"
     else 

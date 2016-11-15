@@ -1,8 +1,12 @@
 class JobSaver
 
   def save(path, jobs)
-    file = CSV.open(path, 'a+')
-    add_header(file) if File.zero?(file)
+    if File.file?(path)
+      file = CSV.open(path, 'a+')
+      add_header(file)
+    else
+      file = CSV.open(path, 'a+')
+    end
     jobs.each do |job|
       add_job(file, job, path)
     end
