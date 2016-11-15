@@ -25,6 +25,11 @@ class Scraper
     seo_tags = job_listing.scan(SEO)
     seo_tags = seo_tags.split(" - ")
     # [Job Title, Company, City and State, Date]
+    current_job.job_title =    seo_tags[0]
+    current_job.company_name = seo_tags[1]
+    current_job.location =     seo_tags[2]
+    current_job.date =         seo_tags[3]
+
 
 
   end
