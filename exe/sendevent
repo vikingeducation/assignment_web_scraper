@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+require "net/http"
+require "uri"
+require "json"
+
+url = "#{ARGV[0]}/event"
+file_to_serialize = ARGV[1]
+file = File.open(file_to_serialize, "r")
+contents = file.read
+file.close
+
+
+
+new_json = {
+  filename: file_to_serialize.split('/')[-1],
+  data: "#{contents}"
+}
+
+req_body = JSON.generate(new_json, quirks_mode: true)
+uri = URI.parse(url)
+http = Net::HTTP.new(uri.host, uri.port)
+request = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
+request.body = req_body
+resp = http.request(request)
