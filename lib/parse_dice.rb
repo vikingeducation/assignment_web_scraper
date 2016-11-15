@@ -1,5 +1,4 @@
 require_relative 'web_scraper'
-require 'active_support/core_ext/numeric/time'
 
 class ParseDice < WebScraper
 
@@ -26,7 +25,7 @@ class ParseDice < WebScraper
       company_url = company["href"]
       location = result.search("li.location")[0].text.strip
       posting_date = result.search("li.posted")[0].text.strip
-      posting_date = calculate_date(posting_date).strftime("%Y_%m_%d %H:%M:%S")
+      posting_date = calculate_date(posting_date).strftime("%Y_%m_%d %l %p") if posting_date
       #job_id = result.search("input")[0]
       jobs << {title: title, link: link, desc: short_desc, company: company_name, company_url: company_url, location: location, date: posting_date}
     end
@@ -40,14 +39,14 @@ class ParseDice < WebScraper
     case arr[1]
     when /minute/
       arr[0].minutes.ago
-    when 'hours' || 'hour'
+    when /hour/
       arr[0].hours.ago
-    when 'days' || 'day'
+    when /day/
       arr[0].days.ago
-    when 'weeks' || 'week'
+    when /week/
       arr[0].weeks.ago
-    else
-      arr[0].month.ago
+    when /month/
+      arr[0].months.ago
     end
   end
 
