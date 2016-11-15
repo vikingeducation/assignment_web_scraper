@@ -27,8 +27,6 @@ class ParseIndeed < WebScraper
   def parse_results(results)
     jobs = []
     results.each do |result|
-      sponsored = result.search("span.sdn")[0]
-      next if sponsored
       h2 = result.search("h2.jobtitle")[0]
       if h2
         title = h2.text.strip

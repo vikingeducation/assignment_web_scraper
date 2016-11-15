@@ -33,24 +33,6 @@ class ParseDice < WebScraper
     jobs
   end
 
-  def calculate_date(date_string)
-    arr = date_string.split(" ")
-    arr[0] = arr[0].to_i
-    case arr[1]
-    when /minute/
-      arr[0].minutes.ago
-    when /hour/
-      arr[0].hours.ago
-    when /day/
-      arr[0].days.ago
-    when /week/
-      arr[0].weeks.ago
-    when /month/
-      arr[0].months.ago
-    end
-  end
-
-
 
 end
 
