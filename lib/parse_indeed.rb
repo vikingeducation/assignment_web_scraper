@@ -21,11 +21,10 @@ class ParseIndeed < WebScraper
         return [] unless next_page
       end
     end
-    parse_result(results.search("div.result"))
-
+    parse_results(results.search("div.result"))
   end
 
-  def parse_result(results)
+  def parse_results(results)
     jobs = []
     results.each do |result|
       sponsored = result.search("span.sdn")[0]

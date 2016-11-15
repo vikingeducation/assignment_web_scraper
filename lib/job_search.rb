@@ -5,8 +5,7 @@ require 'csv'
 class JobSearch
 
   def initialize(term, location = nil)
-    # scrapers = [ParseDice.new(term, location)]
-    scrapers = [ParseIndeed.new(term, location)]
+    scrapers = [ParseDice.new(term, location),ParseIndeed.new(term, location)]
     to_csv(run_scrapers(scrapers))
   end
 
