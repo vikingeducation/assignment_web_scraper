@@ -27,7 +27,9 @@ class Scraper
     attr_reader :agent
 
     def default_agent
-      Mechanize.new{ |agent| agent.user_agent_alias = 'Mac Safari' }
+      scraper = Mechanize.new { |agent| agent.user_agent_alias = 'Mac Safari' }
+      scraper.history_added = Proc.new { sleep 0.75  }
+      scraper
     end
 
     def get_dice_job_links(page)

@@ -17,14 +17,13 @@ class DiceJobsPageParser
     end
   end
 
+    # "Full Stack Developer (Ruby on Rails) - CyberCoders - Denver, CO - 11-13-2016 | Dice.com"
+    # https://www.dice.com/jobs/detail/Full-Stack-Developer-%28Ruby-on-Rails%29-CyberCoders-Denver-CO-80201/cybercod/GG2-132800612?icid=sr2-1p&q=ruby&l=denver,%20co
   def parse_job_page(page)
     job = job_factory.new
     title = get_title(page)
-    uri = page.uri.to_s
-    # "Full Stack Developer (Ruby on Rails) - CyberCoders - Denver, CO - 11-13-2016 | Dice.com"
-    # https://www.dice.com/jobs/detail/Full-Stack-Developer-%28Ruby-on-Rails%29-CyberCoders-Denver-CO-80201/cybercod/GG2-132800612?icid=sr2-1p&q=ruby&l=denver,%20co
-
-    job.title = get_title(page)
+    uri = get_uri(page)
+    job.title = get_job_title(title)
     job.company = get_job_company(title)
     job.link = uri
     job.location = get_job_location(title)
@@ -40,6 +39,17 @@ class DiceJobsPageParser
   def get_title(page)
     title = page.title[0..-12]
     title.split(" - ")
+  end
+
+  def get_uri(page)
+    uri = page.uri.to_s
+    uri.index('?')
+    uri = uri[0..index]
+    uri.split('/')[-2..-1]
+  end
+
+  def get_job_title(title)
+    title[0..-4].join(" ")
   end
 
   def get_job_company(title)
