@@ -2,13 +2,18 @@ require_relative '../lib/scraper'
 require_relative '../lib/dice_scraper_controller'
 require_relative '../lib/dice_jobs_page_parser'
 require_relative '../lib/job_writer'
+require_relative '../lib/dice_jobs_ui'
+
+ui = DiceJobsUI.new
+
+ui.run
 
 
-controller = DiceScraperController.new
+# controller = DiceScraperController.new
 
-jobs = controller.search('ruby', 'denver co')
+# jobs = controller.search(ARGV[0], ARGV[1])
 
-JobWriter.new.save_results('test.csv', jobs)
+# JobWriter.new.save_results('test.csv', jobs)
 
 #
 # scraper = Scraper.new
