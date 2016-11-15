@@ -4,16 +4,17 @@ require_relative '../lib/dice_jobs_page_parser'
 require_relative '../lib/job_writer'
 require_relative '../lib/dice_jobs_ui'
 
-ui = DiceJobsUI.new
+# ui = DiceJobsUI.new
 
-ui.run
+# ui.run
 
 
-# controller = DiceScraperController.new
+### These three lines work
+controller = DiceScraperController.new
 
-# jobs = controller.search(ARGV[0], ARGV[1])
+jobs = controller.search(ARGV[0], ARGV[1])
 
-# JobWriter.new.save_results('test.csv', jobs)
+JobWriter.new.save_results('test2.csv', jobs)
 
 #
 # scraper = Scraper.new
