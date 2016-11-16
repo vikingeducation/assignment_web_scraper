@@ -9,9 +9,10 @@ class Dice < Mechanize
 
   include FileTest
   
-  def initialize(terms, location="")
+  def initialize(terms, location="", number = 10)
     @agent = Mechanize.new
     run(terms, location)
+    @number = number
   end
 
   def run(terms, location)
@@ -22,7 +23,7 @@ class Dice < Mechanize
 
   def get_jerbs(terms, location)
     jobs = []
-    @agent.get("https://www.dice.com/jobs?q=#{terms}&l=#{location}&limit=5") do |page|
+    @agent.get("https://www.dice.com/jobs?q=#{terms}&l=#{location}&limit=#{@number}") do |page|
       page.links_with(:id => /position/).each do |link|
         node = make_job(link)
         jobs << node
@@ -101,5 +102,3 @@ class Dice < Mechanize
     results_array
   end
 end
-
-Dice.new("ruby developer")
