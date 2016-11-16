@@ -18,15 +18,14 @@ class Scraper
     @keyword = keyword
     @location = location
     @jobs = []
-    run
   end
 
   def run 
     scraper = Mechanize.new
-    url = build_url.new_url
+    url = build_url
     page = scraper.get(url)
 
-    page.links_with.(:class => 'dice-btn-link').each do |link|
+    page.links_with(:class => 'complete-serp-result-div').each do |link|
       post_page = link.click # click on the link
       @jobs << get_job(post_page, link)
     end
