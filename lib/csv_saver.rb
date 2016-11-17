@@ -4,7 +4,6 @@ class CSVSaver
 
   def initialize(jobs) # array of Job structs
     @jobs = jobs
-    save_csv
   end
 
   def save_csv
@@ -15,8 +14,12 @@ class CSVSaver
     end
   end
 
+  def clear_csv
+    CSV.open('csv_file.csv', 'w') { }
+  end
+
   def entry(job)
-    [job.title, job.company_name, job.link, job.location, job.post_date, job.company_id, job.id]
+    [job.title, job.company_name, job.link, job.location, job.post_date]
   end
 
 end
