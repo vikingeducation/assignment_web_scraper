@@ -5,8 +5,8 @@ class Job
                 :location,
                 :date
 
-  def initialize(page_link)
-    @page_link = page_link
+  def initialize
+    
   end
 
 end
