@@ -16,7 +16,7 @@ class Scraper
   end
 
   #maybe edit this later to perform customized search query
-  def get_results #pass url in argument
+  def get_results(url) #pass url in as argument
     scraper = make_scraper
     url="https://www.dice.com/jobs?q=rails&l=Washington%2C+DC&searchid=7137101740189"
     page = scraper.get(url)
