@@ -10,8 +10,11 @@ require_relative 'search_criteria'
 
 class DiceWebScraper
 
-	def start_scraping_dice
+	def initialize
+		@all_jobs = []
+	end
 
+	def scrape
 		#dice_search_page = "https://www.dice.com/"
 
 		#page = PageFormatter.get_page_from(dice_search_page)
@@ -31,24 +34,30 @@ class DiceWebScraper
 
 		#jobs = Nokogiri::HTML(search_result.body).css('.complete-serp-result-div')
 		all_jobs = []
-		i = 0
 		jobs.each do |job|
 			title = ScrapeDice.extract_title job
 			company_name = ScrapeDice.extract_company_name job
 			location = ScrapeDice.extract_location job
 			posting_date = ScrapeDice.extract_posting_date job
 			link_on_dice = ScrapeDice.extract_link job
-			job_detail_page = PageFormatter.get_page_from(ScrapeDice.extract_link(job))
-			company_id = ScrapeDice.extract_cid job_detail_page
-			job_id = ScrapeDice.extract_jid job_detail_page
-			all_jobs << Job.new(title, company_name, link_on_dice, location, posting_date, company_id, job_id)
-			puts "job #{i} created!"
-			i += 1
+			full_company_link = job.css('ul').children[1].children[2].children[0].attribute('href').value
+			company_id = full_company_link[29..full_company_link.length-1]
+			regex = /#{company_id}\/(.*)\?/
+			full_job_link = job.css('ul').first.parent.children[5].children[1].attributes["href"].value
+			job_id = full_job_link.match(regex)[1]
+			@all_jobs << Job.new(title, company_name, link_on_dice, location, posting_date, company_id, job_id)
 		end
+	end
 
-		ResultSaver.save(all_jobs)
+	def render
+		ResultSaver.render(@all_jobs)
+	end
+
+	def save
+		ResultSaver.save(@all_jobs)
 	end
 end
 
 scraper = DiceWebScraper.new
-scraper.start_scraping_dice
+scraper.scrape
+scraper.render

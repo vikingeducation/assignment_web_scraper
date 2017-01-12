@@ -36,8 +36,13 @@ class ScrapeDice
 
 	def self.extract_posting_date(job)
 		cur_time = Time.now
-		unit = job.css('ul').children[5].text.split[1]
-		how_many = job.css('ul').children[5].text.split[0].to_i
+		if job.css('ul').children[5].text.split[0] == 'moments'
+			unit = "second"
+			how_many = 0
+		else
+			unit = job.css('ul').children[5].text.split[1]
+			how_many = job.css('ul').children[5].text.split[0].to_i
+		end
 		unit_wo_s = unit
 		unit_wo_s = unit.chop unless how_many == 1
 		case unit_wo_s
