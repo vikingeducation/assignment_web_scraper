@@ -5,6 +5,10 @@ class ScrapeDice
 	end
 
 	def self.extract_company_name(job)
+		job.css('ul').children[1].children.each do |child|
+			p child
+			puts "\n\n"
+		end
 		job.css('ul').children[1].children[2].attribute('title').value
 	end
 

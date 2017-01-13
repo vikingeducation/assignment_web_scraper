@@ -15,24 +15,13 @@ class DiceWebScraper
 	end
 
 	def scrape
-		#dice_search_page = "https://www.dice.com/"
-
-		#page = PageFormatter.get_page_from(dice_search_page)
-
+		
 		#criteria = SearchCriteria.new("Web Developer", "Los Angeles, CA", 30, nil, nil, nil, 1, nil)
-
-		# search_result = page.form_with(:id => 'search-form') do |search| 
-		# 	keyword  = search.fields[0]
-		# 	location = search.fields[1]
-		# 	keyword.value  = criteria.content
-		# 	location.value = criteria.location
-		# end.submit
 
 		dice_search_page = "https://www.dice.com/jobs/q-Web_Developer-limit-30-l-Los_Angeles%2C_CA-radius-5-jobs.html?"
 		search_result = PageFormatter.get_page_from(dice_search_page)
 		jobs = Nokogiri::HTML(search_result.body).css('.complete-serp-result-div')
 
-		#jobs = Nokogiri::HTML(search_result.body).css('.complete-serp-result-div')
 		all_jobs = []
 		jobs.each do |job|
 			title = ScrapeDice.extract_title job
