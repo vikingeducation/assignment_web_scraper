@@ -5,15 +5,11 @@ class ScrapeDice
 	end
 
 	def self.extract_company_name(job)
-		job.css('ul').children[1].children.each do |child|
-			p child
-			puts "\n\n"
-		end
-		job.css('ul').children[1].children[2].attribute('title').value
+		job.css('ul')[1].children[1].children[2].attributes['title'].value
 	end
 
 	def self.extract_location(job)
-		job.css('ul').children[3].attributes['title'].value
+		job.css('ul')[1].children[3].attributes['title'].value
 	end
 
 	def self.extract_link(job)
@@ -40,12 +36,12 @@ class ScrapeDice
 
 	def self.extract_posting_date(job)
 		cur_time = Time.now
-		if job.css('ul').children[5].text.split[0] == 'moments'
+		if job.css('ul')[1].children[5].text.split[0] == 'moments'
 			unit = "second"
 			how_many = 0
 		else
-			unit = job.css('ul').children[5].text.split[1]
-			how_many = job.css('ul').children[5].text.split[0].to_i
+			unit = job.css('ul')[1].children[5].text.split[1]
+			how_many = job.css('ul')[1].children[5].text.split[0].to_i
 		end
 		unit_wo_s = unit
 		unit_wo_s = unit.chop unless how_many == 1
