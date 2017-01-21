@@ -1,0 +1,11 @@
+universe_of_stocks {"cap": "microover", "sh_avgvol": "o100", "sh_price": "o2"}
+today_up_4_pct {"cap": "microover", "sh_avgvol": "o100", "sh_price": "o2", "ta_change": "u4"}
+today_down_4_pct {"cap": "microover", "sh_avgvol": "o100", "sh_price": "o2", "ta_change": "d4"}
+qtr_up_20_pct {"cap": "microover", "sh_avgvol": "o100", "sh_price": "o2", "ta_perf": "13w20o"}
+qtr_down_20_pct {"cap": "microover", "sh_avgvol": "o100", "sh_price": "o2", "ta_perf": "13w20u"}
+month_up_10_pct {"cap": "microover", "sh_avgvol": "o100", "sh_price": "o2", "ta_perf": "4w10o"}
+month_down_10_pct {"cap": "microover", "sh_avgvol": "o100", "sh_price": "o2", "ta_perf": "4w10u"}
+month_up_20_pct {"cap": "microover", "sh_avgvol": "o100", "sh_price": "o2", "ta_perf": "4w20o"}
+month_down_20_pct {"cap": "microover", "sh_avgvol": "o100", "sh_price": "o2", "ta_perf": "4w20u"}
+month_up_50_pct {"cap": "microover", "sh_avgvol": "o100", "sh_price": "o2", "ta_perf": "4w50o"}
+month_down_50_pct {"cap": "microover", "sh_avgvol": "o100", "sh_price": "o2", "ta_perf": "4w50u"}
