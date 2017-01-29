@@ -1,9 +1,3 @@
-require 'rubygems'
-require 'bundler/setup'
-require 'nokogiri'
-require 'open-uri'
-require 'mechanize'
-
 require_relative 'searcher'
 require_relative 'saver'
 

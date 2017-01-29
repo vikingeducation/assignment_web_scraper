@@ -1,8 +1,6 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'mechanize'
-require 'nokogiri'
-require 'open-uri'
 require_relative 'result'
 
 class Searcher
