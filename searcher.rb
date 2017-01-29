@@ -30,19 +30,20 @@ class Searcher
     sort = opts[:sort] ? opts[:sort] : 'relevance'
     telecommute = opts[:telecommute] ? opts[:telecommute] : ''
     limit = opts[:limit] ? opts[:limit] : '3'
-    @page = Nokogiri::HTML(open("https://www.dice.com/jobs/advancedResult.html?for_one=#{for_one}&for_all#{for_all}=&for_exact=#{for_exact}&for_none=#{for_none}&for_jt=#{for_jt}&for_com=#{for_com}&for_loc=#{for_loc}&jtype=#{jtype}&limit=#{limit}&radius=#{radius}&postedDate=#{posteddate}"))
+    m = Mechanize.new
+    @page = m.get("https://www.dice.com/jobs/advancedResult.html?for_one=#{for_one}&for_all#{for_all}=&for_exact=#{for_exact}&for_none=#{for_none}&for_jt=#{for_jt}&for_com=#{for_com}&for_loc=#{for_loc}&jtype=#{jtype}&limit=#{limit}&radius=#{radius}&postedDate=#{posteddate}")
   end
 
   def parse_results
-    results = @page.css('div.complete-serp-result-div')
+    results = @page.search('div.complete-serp-result-div')
     results.each_with_index do |result, i|
-      @results << Result.new(result.css("ul.list-inline li h3 a")[0][:title],
-                             result.css("ul.details li.employer a")[0].text,
-                             result.css("ul.list-inline li h3 a")[0][:href],
-                             result.css("ul.details li.location")[0][:title],
-                             convert_date(result.css('ul.details li.posted')[0].text).strftime("%d/%m/%Y, %H:%M"),
-                             results.css('ul.list-inline li h3 a')[i][:href].match(/dice.com\/jobs\/detail\/.*\/(.*)\//)[1],
-                             results.css('ul.list-inline li h3 a')[i][:href].match(/dice.com\/jobs\/detail\/.*\/.*\/(.*)?\?/)[1]
+      @results << Result.new(result.search("ul.list-inline li h3 a")[0][:title],
+                             result.search("ul.details li.employer a")[0].text,
+                             result.search("ul.list-inline li h3 a")[0][:href],
+                             result.search("ul.details li.location")[0][:title],
+                             convert_date(result.search('ul.details li.posted')[0].text).strftime("%d/%m/%Y, %H:%M"),
+                             results.search('ul.list-inline li h3 a')[i][:href].match(/dice.com\/jobs\/detail\/.*\/(.*)\//)[1],
+                             results.search('ul.list-inline li h3 a')[i][:href].match(/dice.com\/jobs\/detail\/.*\/.*\/(.*)?\?/)[1]
                              )
     end
   end
