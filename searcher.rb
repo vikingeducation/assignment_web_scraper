@@ -35,14 +35,14 @@ class Searcher
 
   def parse_results
     results = @page.css('div.complete-serp-result-div')
-    results.each do |result|
+    results.each_with_index do |result, i|
       @results << Result.new(result.css("ul.list-inline li h3 a")[0][:title],
                              result.css("ul.details li.employer a")[0].text,
                              result.css("ul.list-inline li h3 a")[0][:href],
                              result.css("ul.details li.location")[0][:title],
-                             convert_date(result.css('ul.details li.posted')[0].text),
-                             results.css('ul.details li.employer a')[0][:href].match(/dice.com\/company\//).post_match,
-                             results.css('ul.list-inline li h3 a')[0][:href].match(/dice.com\/jobs\/detail\/.*\/(.*)\?/)[1]
+                             convert_date(result.css('ul.details li.posted')[0].text).strftime("%d/%m/%Y, %H:%M"),
+                             results.css('ul.list-inline li h3 a')[i][:href].match(/dice.com\/jobs\/detail\/.*\/(.*)\//)[1],
+                             results.css('ul.list-inline li h3 a')[i][:href].match(/dice.com\/jobs\/detail\/.*\/.*\/(.*)?\?/)[1]
                              )
     end
   end
@@ -54,6 +54,9 @@ class Searcher
       # xx days ago
     elsif d = date.match(/(.*?)day(s?) ago/)
       return Time.new - ( d[1].to_i * 60 * 60 * 24 )
+
+    elsif d = date.match(/(.*?)week(s?) ago/)
+      return Time.new - ( d[1].to_i * 60 * 60 * 24 * 7)
     end
   end
 
