@@ -9,7 +9,7 @@ require 'pry-nav'
 # this is all it takes. CSV is standard.
 require 'csv'
 
-binding.pry
+# binding.pry
 
 agent = Mechanize.new
 
@@ -36,7 +36,7 @@ puts "\n"
 
 
 
-results.each do |item|
+results.each do |item|# 
   puts item
   print "press return"
   gets.chomp
