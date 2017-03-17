@@ -58,7 +58,11 @@ end
 if __FILE__ == $0
   s = Scraper.new
   puts "Scraping..."
-  s.scrape("https://www.dice.com/jobs/q-programmer-l-San_Francisco_Bay_Area%2C_CA-radius-30-startPage-1-jobs")
+  query = "programmer"
+  location = "l-San_Francisco_Bay_Area%2C_CA"
+  radius = "30"
+  startpage = "1"
+  s.scrape("https://www.dice.com/jobs/q-#{query}-l-#{location}-radius-#{radius}-startPage-#{startPage}-jobs")
   puts "#{s.listings.count} entries found"
   puts "Saving..."
   s.to_csv("listings.csv")
