@@ -16,10 +16,10 @@ class JobScraper
     @scraper.history_added = Proc.new { sleep 0.5 }
   end
 
-  def create_file(file_name)
+  def download_jobs(file_name)
     CSV.open(file_name, "a") do |csv|
       csv << ["Job Title", "Company Name", "Link to Posting", "Location", "Posting Date", "Company Id", "Job Id"]
-      job_details.each { |row| csv << row }
+      job_details.each { |job| csv << job }
     end
   end
 
@@ -39,13 +39,15 @@ class JobScraper
     get_pages.each do |page|
       job_postings = job_posts(page)
       job_count = job_posts(page).count
-      job_count.times { |i| details << [job_title(job_postings, i), 
-                                        company_name(job_postings, i), 
-                                        job_link(job_postings, i), 
-                                        job_location(job_postings, i), 
-                                        post_date(job_postings, i),
-                                        company_id(job_postings, i),
-                                        job_id(job_postings, i)]}
+      job_count.times do |i| 
+        details << [job_title(job_postings, i), 
+                    company_name(job_postings, i), 
+                    job_link(job_postings, i), 
+                    job_location(job_postings, i), 
+                    post_date(job_postings, i),
+                    company_id(job_postings, i),
+                    job_id(job_postings, i)
+                    ]
     end
     details
   end
