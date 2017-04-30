@@ -8,7 +8,9 @@ class JobSiteScraper
   attr_reader :agent
 
   def initialize
-    @agent = Mechanize.new
+    @agent = Mechanize.new do |agent|
+      agent.user_agent_alias = 'Windows Chrome'
+    end
 
     # rate limit Mechanize instance
     self.agent.history_added = Proc.new { sleep 0.5 }
