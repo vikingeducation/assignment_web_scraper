@@ -25,6 +25,11 @@ class JobSiteScraper
   def scrape_job_titles(listing)
     listing.css(".jobtitle").text
   end
+
+  # parses a job listing for the hiring company
+  def scrape_company_name(listing)
+    listing.css(".company").text.strip
+  end
 end
 
 if $0 == __FILE__
@@ -35,5 +40,10 @@ if $0 == __FILE__
   page = scraper.agent.get('https://www.indeed.com.sg/jobs?q=ruby&l=Singapore')
 
   job_listings = scraper.scrape_job_listings(page)
-  pp scraper.scrape_job_titles(job_listings.first)
+
+  # pp scraper.scrape_job_titles(job_listings.first)
+  job_listings.each do |listing|
+    pp scraper.scrape_job_titles(listing)
+    pp scraper.scrape_company_name(listing)
+  end
 end
