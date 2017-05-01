@@ -39,6 +39,13 @@ class JobSiteScraper
   def scrape_job_link(listing)
     "#{BASE_URL}#{listing.css(".turnstileLink").css("a").attribute("href").value.strip}"
   end
+
+  # parses a job listing for the location.
+  # only interested in jobs in SG for now, so may be superfluous,
+  # but could prove useful in future.
+  def scrape_job_location(listing)
+    listing.css(".location").text.strip
+  end
 end
 
 if $0 == __FILE__
@@ -54,6 +61,7 @@ if $0 == __FILE__
     pp scraper.scrape_job_title(listing)
     pp scraper.scrape_company_name(listing)
     pp scraper.scrape_job_link(listing)
+    pp scraper.scrape_job_location(listing)
     puts
   end
 end
