@@ -21,24 +21,19 @@ class JobSiteScraper
     job_listings = page.css("div.row.result")
   end
 
-  def scrape_job_titles(page)
-    job_titles =  page.css("h2.jobtitle a")
-    job_titles.each do |job_title|
-      pp job_title.children.first.text
-    end
+  # parses a job listing for the job title
+  def scrape_job_titles(listing)
+    listing.css(".jobtitle").text
   end
 end
 
 if $0 == __FILE__
-  job_site_scraper = JobSiteScraper.new
-  pp job_site_scraper.agent
+  scraper = JobSiteScraper.new
+  pp scraper.agent
 
   # open page we want
-  page = job_site_scraper.agent.get('https://www.indeed.com.sg/jobs?q=ruby&l=Singapore')
+  page = scraper.agent.get('https://www.indeed.com.sg/jobs?q=ruby&l=Singapore')
 
-  # job_site_scraper.scrape_job_titles(page)
-  # pp page
-
-  job_listings = job_site_scraper.scrape_job_listings(page)
-  pp job_listings.first.css(".jobtitle").text
+  job_listings = scraper.scrape_job_listings(page)
+  pp scraper.scrape_job_titles(job_listings.first)
 end
