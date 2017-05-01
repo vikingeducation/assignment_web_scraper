@@ -12,8 +12,6 @@ class JobsCSVWriter
     filename = './temp.csv' if filename.nil?
 
     CSV.open(filename, 'a') do |csv|
-      # :title, :company, :location, :link, :post_date, :job_id
-
       # write CSV headers
       csv << ["title", "company", "location", "link", "post_date", "job_id"]
 
