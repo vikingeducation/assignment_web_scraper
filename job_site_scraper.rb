@@ -24,7 +24,7 @@ class JobSiteScraper
   end
 
   # parses a job listing for the job title
-  def scrape_job_titles(listing)
+  def scrape_job_title(listing)
     listing.css(".jobtitle").text.strip
   end
 
@@ -52,7 +52,7 @@ if $0 == __FILE__
 
   # pp scraper.scrape_job_titles(job_listings.first)
   job_listings.each do |listing|
-    pp scraper.scrape_job_titles(listing)
+    pp scraper.scrape_job_title(listing)
     pp scraper.scrape_company_name(listing)
     pp scraper.scrape_job_link(listing)
     puts
