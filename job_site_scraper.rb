@@ -21,6 +21,42 @@ class JobSiteScraper
     self.agent.history_added = Proc.new { sleep 0.5 }
   end
 
+  # returns an array of JobPosting structs, to prepare for outputting to a file
+  def scrape_job_postings
+    job_postings = []
+
+    # get the first page of search results.
+    page = self.agent.get(JobSiteScraper::FIRST_RESULTS_PAGE)
+    while page
+      # scrape all job listings
+      job_listings = scrape_job_sections(page)
+
+      # grab relevant info from job listings
+      job_listings.each do |listing|
+        job_posting = JobPosting.new
+        job_posting.title = parse_job_title(listing)
+        job_posting.company = parse_company_name(listing)
+        job_posting.location = parse_job_location(listing)
+        job_posting.link = parse_job_link(listing)
+        job_posting.post_date = parse_job_post_date(listing)
+        job_posting.job_id = parse_job_id(listing)
+
+        job_postings << job_posting
+      end
+
+      # now find the "Next" link and click on it
+      if page.link_with(:text => /Next/)
+        page = page.link_with(:text => /Next/).click
+      else
+        break
+      end
+    end
+
+    job_postings
+  end
+
+  private
+
   # scrapes the page for each div section that contains a job listing.
   def scrape_job_sections(page)
     page.css("div.row.result")
@@ -76,40 +112,6 @@ class JobSiteScraper
   # parses the job listing for its id. Not sure what value there is in this..
   def parse_job_id(listing)
     listing.attribute("id").value.strip
-  end
-
-  # returns an array of JobPosting structs, to prepare for outputting to a file
-  def scrape_job_postings
-    job_postings = []
-
-    # get the first page of search results.
-    page = self.agent.get(JobSiteScraper::FIRST_RESULTS_PAGE)
-    while page
-      # scrape all job listings
-      job_listings = scrape_job_sections(page)
-
-      # grab relevant info from job listings
-      job_listings.each do |listing|
-        job_posting = JobPosting.new
-        job_posting.title = parse_job_title(listing)
-        job_posting.company = parse_company_name(listing)
-        job_posting.location = parse_job_location(listing)
-        job_posting.link = parse_job_link(listing)
-        job_posting.post_date = parse_job_post_date(listing)
-        job_posting.job_id = parse_job_id(listing)
-
-        job_postings << job_posting
-      end
-
-      # now find the "Next" link and click on it
-      if page.link_with(:text => /Next/)
-        page = page.link_with(:text => /Next/).click
-      else
-        break
-      end
-    end
-
-    job_postings
   end
 end
 
