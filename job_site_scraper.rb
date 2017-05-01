@@ -62,9 +62,9 @@ class JobSiteScraper
     time_unit = parsed_raw_date[1]
     job_posted = nil
 
-    if time_unit == "days"
+    if time_unit =~ /day(s)?/
       job_posted = (Time.now - (time_value.to_i * 24 * 60 * 60))
-    elsif time_unit == "hours"
+    elsif time_unit =~ /hour(s)?/
       job_posted = (Time.now - (time_value.to_i * 60 * 60))
     end
 
@@ -82,7 +82,7 @@ if $0 == __FILE__
   pp scraper.agent
 
   # open page we want.
-  page = scraper.agent.get(JobSiteScraper:: FIRST_RESULTS_PAGE)
+  page = scraper.agent.get(JobSiteScraper::FIRST_RESULTS_PAGE)
 
   job_listings = scraper.scrape_job_listings(page)
 
