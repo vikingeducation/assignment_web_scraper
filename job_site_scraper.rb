@@ -21,8 +21,8 @@ class JobSiteScraper
     self.agent.history_added = Proc.new { sleep 0.5 }
   end
 
-  # scrapes the page for each div that contains a job listing.
-  def scrape_job_listings(page)
+  # scrapes the page for each div section that contains a job listing.
+  def scrape_job_sections(page)
     page.css("div.row.result")
   end
 
@@ -86,7 +86,7 @@ class JobSiteScraper
     page = self.agent.get(JobSiteScraper::FIRST_RESULTS_PAGE)
     while page
       # scrape all job listings
-      job_listings = scrape_job_listings(page)
+      job_listings = scrape_job_sections(page)
 
       # grab relevant info from job listings
       job_listings.each do |listing|
