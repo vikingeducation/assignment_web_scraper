@@ -27,33 +27,33 @@ class JobSiteScraper
   end
 
   # parses a job listing for the job title.
-  def scrape_job_title(listing)
+  def parse_job_title(listing)
     listing.css(".jobtitle").text.strip
   end
 
   # parses a job listing for the hiring company.
-  def scrape_company_name(listing)
+  def parse_company_name(listing)
     listing.css(".company").text.strip
   end
 
   # parses a job listing for the link to the job.
   # the links are all local to the site, so we have
   # to append the site's URL to the front of each link.
-  def scrape_job_link(listing)
+  def parse_job_link(listing)
     "#{BASE_URL}#{listing.css(".turnstileLink").css("a").attribute("href").value.strip}"
   end
 
   # parses a job listing for the location.
   # only interested in jobs in SG for now, so may be superfluous,
   # but could prove useful in future.
-  def scrape_job_location(listing)
+  def parse_job_location(listing)
     listing.css(".location").text.strip
   end
 
   # parses a job listing for the date it was posted.
   # job sites typically just state "X days ago", or "X hours ago",
   # so some processing will be required.
-  def scrape_job_posting_date(listing)
+  def parse_job_post_date(listing)
     # we remove any "+" characters from the raw date text
     raw_date = listing.css(".date").text.strip.gsub("+", "")
 
@@ -74,7 +74,7 @@ class JobSiteScraper
   end
 
   # parses the job listing for its id. Not sure what value there is in this..
-  def scrape_job_id(listing)
+  def parse_job_id(listing)
     listing.attribute("id").value.strip
   end
 end
@@ -89,12 +89,12 @@ if $0 == __FILE__
   job_listings = scraper.scrape_job_listings(page)
 
   job_listings.each do |listing|
-    pp scraper.scrape_job_title(listing)
-    pp scraper.scrape_company_name(listing)
-    pp scraper.scrape_job_link(listing)
-    pp scraper.scrape_job_location(listing)
-    pp scraper.scrape_job_posting_date(listing)
-    pp scraper.scrape_job_id(listing)
+    pp scraper.parse_job_title(listing)
+    pp scraper.parse_company_name(listing)
+    pp scraper.parse_job_link(listing)
+    pp scraper.parse_job_location(listing)
+    pp scraper.parse_job_post_date(listing)
+    pp scraper.parse_job_id(listing)
     puts
   end
 end
