@@ -79,7 +79,7 @@ class JobSiteScraper
   end
 
   # returns an array of JobPosting structs, to prepare for outputting to a file
-  def create_job_postings
+  def scrape_job_postings
     job_postings = []
 
     # get the first page of search results.
@@ -115,5 +115,5 @@ end
 
 if $0 == __FILE__
   scraper = JobSiteScraper.new
-  pp scraper.create_job_postings
+  pp scraper.scrape_job_postings
 end
