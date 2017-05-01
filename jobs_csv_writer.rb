@@ -24,7 +24,6 @@ class JobsCSVWriter
       end
     end
   end
-
 end
 
 if $0 == __FILE__
