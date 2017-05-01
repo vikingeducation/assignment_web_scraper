@@ -69,6 +69,11 @@ class JobSiteScraper
 
     "#{job_posted.year}-#{job_posted.month}-#{job_posted.day}"
   end
+
+  # parses the job listing for its id. Not sure what value there is in this..
+  def scrape_job_id(listing)
+    listing.attribute("id").value.strip
+  end
 end
 
 if $0 == __FILE__
@@ -86,6 +91,7 @@ if $0 == __FILE__
     pp scraper.scrape_job_link(listing)
     pp scraper.scrape_job_location(listing)
     pp scraper.scrape_job_posting_date(listing)
+    pp scraper.scrape_job_id(listing)
     puts
   end
 end
