@@ -6,6 +6,7 @@ require 'mechanize'
 # I'm scraping indeed.com as Dice doesn't have jobs in SG.
 class JobSiteScraper
   BASE_URL = 'https://www.indeed.com.sg'
+  FIRST_RESULTS_PAGE = "#{BASE_URL}/jobs?q=ruby&l=Singapore"
 
   attr_reader :agent
 
@@ -81,7 +82,7 @@ if $0 == __FILE__
   pp scraper.agent
 
   # open page we want.
-  page = scraper.agent.get('https://www.indeed.com.sg/jobs?q=ruby&l=Singapore')
+  page = scraper.agent.get(JobSiteScraper:: FIRST_RESULTS_PAGE)
 
   job_listings = scraper.scrape_job_listings(page)
 
