@@ -77,24 +77,43 @@ class JobSiteScraper
   def parse_job_id(listing)
     listing.attribute("id").value.strip
   end
+
+  # returns an array of JobPosting structs, to prepare for outputting to a file
+  def create_job_postings
+    job_postings = []
+
+    # get the first page of search results.
+    page = self.agent.get(JobSiteScraper::FIRST_RESULTS_PAGE)
+    while page
+      # scrape all job listings
+      job_listings = scrape_job_listings(page)
+
+      # grab relevant info from job listings
+      job_listings.each do |listing|
+        job_posting = JobPosting.new
+        job_posting.title = parse_job_title(listing)
+        job_posting.company = parse_company_name(listing)
+        job_posting.location = parse_job_location(listing)
+        job_posting.link = parse_job_link(listing)
+        job_posting.post_date = parse_job_post_date(listing)
+        job_posting.job_id = parse_job_id(listing)
+
+        job_postings << job_posting
+      end
+
+      # now find the "Next" link and click on it
+      if page.link_with(:text => /Next/)
+        page = page.link_with(:text => /Next/).click
+      else
+        break
+      end
+    end
+
+    job_postings
+  end
 end
 
 if $0 == __FILE__
   scraper = JobSiteScraper.new
-  pp scraper.agent
-
-  # open page we want.
-  page = scraper.agent.get(JobSiteScraper::FIRST_RESULTS_PAGE)
-
-  job_listings = scraper.scrape_job_listings(page)
-
-  job_listings.each do |listing|
-    pp scraper.parse_job_title(listing)
-    pp scraper.parse_company_name(listing)
-    pp scraper.parse_job_link(listing)
-    pp scraper.parse_job_location(listing)
-    pp scraper.parse_job_post_date(listing)
-    pp scraper.parse_job_id(listing)
-    puts
-  end
+  pp scraper.create_job_postings
 end
