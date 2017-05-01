@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'mechanize'
 
+JobPosting = Struct.new(:title, :company, :location, :link, :post_date, :job_id )
+
 # A simple job site web scraper, using Mechanize and Nokogiri.
 # Instead of scraping dice.com as specified in the assignment,
 # I'm scraping indeed.com as Dice doesn't have jobs in SG.
