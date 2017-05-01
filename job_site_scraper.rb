@@ -5,6 +5,8 @@ require 'mechanize'
 # Instead of scraping dice.com as specified in the assignment,
 # I'm scraping indeed.com as Dice doesn't have jobs in SG.
 class JobSiteScraper
+  BASE_URL = 'https://www.indeed.com.sg'
+
   attr_reader :agent
 
   def initialize
@@ -30,6 +32,13 @@ class JobSiteScraper
   def scrape_company_name(listing)
     listing.css(".company").text.strip
   end
+
+  # parses a job listing for the link to the job.
+  # the links are all local to the site, so we have
+  # to append the site's URL to the front of each link.
+  def scrape_job_link(listing)
+    "#{BASE_URL}#{listing.css(".turnstileLink").css("a").attribute("href").value.strip}"
+  end
 end
 
 if $0 == __FILE__
@@ -45,5 +54,7 @@ if $0 == __FILE__
   job_listings.each do |listing|
     pp scraper.scrape_job_titles(listing)
     pp scraper.scrape_company_name(listing)
+    pp scraper.scrape_job_link(listing)
+    puts
   end
 end
