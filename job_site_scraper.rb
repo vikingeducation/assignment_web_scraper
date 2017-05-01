@@ -23,7 +23,7 @@ class JobSiteScraper
 
   # parses a job listing for the job title
   def scrape_job_titles(listing)
-    listing.css(".jobtitle").text
+    listing.css(".jobtitle").text.strip
   end
 
   # parses a job listing for the hiring company
