@@ -16,6 +16,11 @@ class JobSiteScraper
     self.agent.history_added = Proc.new { sleep 0.5 }
   end
 
+  # scrapes the page for each div that contains a job listing
+  def scrape_job_listings(page)
+    job_listings = page.css("div.row.result")
+  end
+
   def scrape_job_titles(page)
     job_titles =  page.css("h2.jobtitle a")
     job_titles.each do |job_title|
@@ -31,5 +36,9 @@ if $0 == __FILE__
   # open page we want
   page = job_site_scraper.agent.get('https://www.indeed.com.sg/jobs?q=ruby&l=Singapore')
 
-  job_site_scraper.scrape_job_titles(page)
+  # job_site_scraper.scrape_job_titles(page)
+  # pp page
+
+  job_listings = job_site_scraper.scrape_job_listings(page)
+  pp job_listings.first.css(".jobtitle").text
 end
