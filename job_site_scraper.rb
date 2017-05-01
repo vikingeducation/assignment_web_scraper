@@ -23,7 +23,7 @@ class JobSiteScraper
 
   # scrapes the page for each div that contains a job listing.
   def scrape_job_listings(page)
-    job_listings = page.css("div.row.result")
+    page.css("div.row.result")
   end
 
   # parses a job listing for the job title.
