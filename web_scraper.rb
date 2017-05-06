@@ -2,13 +2,14 @@ require 'rubygems'
 require 'mechanize'
 require 'bundler/setup'
 require 'pry'
+require 'csv'
 #sets up empty job data structure
 Job = Struct.new(:title, :location, :description)
 #initializes new Mechanize instance
 agent = Mechanize.new
 #set delay
 agent.history_added = Proc.new { sleep 0.5 }
-
+job_array = []
 URL = "https://www.dice.com"
 
 agent.get(URL) do |search_page|
@@ -34,13 +35,21 @@ agent.get(URL) do |search_page|
 		#puts job title into node
 		job_node = Job.new(title, location, description)
 		#iterates through node and prints data
-		job_node.each do
-			puts
-			puts "title: #{job_node.title},\n :location: #{job_node.location},\n description: #{job_node.description}\n"
+		job_node.each do |node|
+			job_array << node
+			#puts
+			#puts "title: #{job_node.title},\n :location: #{job_node.location},\n description: #{job_node.description}\n"
 			
 		end
 	end
-
+	CSV.open("jobs.csv", "w") do |csv|
+		job_array.each do |job|
+			csv << [job]
+		end
+  end
 end
+
+
+pp job_array
 
 
