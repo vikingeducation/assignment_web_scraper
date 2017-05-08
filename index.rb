@@ -16,12 +16,14 @@ def posted_on(date_text)
     dif = word_arr[0].to_i * 3600
   when "day", "days"
     dif = word_arr[0].to_i * 86400
+  else
+    dif = 0
   end
   return Time.now - dif
 end
 
 CSV.open('job_file.csv', 'a') do |csv|
   page.parser.css(".complete-serp-result-div").each do |ad|
-    csv << [(ad.at_css(".serp-result-content h3 a")['title']), ( ad.at_css(".employer span[2]")['title']), ((".serp-result-content h3 a")['href']), (posted_on(ad.at_css(".posted").text)), (ad.at_css(".serp-result-content input")['id']), (ad.at_css(".serp-result-content h3 a")['value']), (ad.at_css(".location")['title'])]
+    csv << [(ad.at_css(".serp-result-content h3 a")['title']), ( ad.at_css(".employer span[2]")['title']), (ad.at_css(".serp-result-content h3 a")['href']), (posted_on(ad.at_css(".posted").text)), (ad.at_css(".serp-result-content input")['id']), (ad.at_css(".serp-result-content h3 a")['value']), (ad.at_css(".location")['title'])]
   end
 end
