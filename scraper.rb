@@ -10,15 +10,6 @@ Job = Struct.new(:title, :comp, :link, :loc, :date, :comp_id, :job_id)
 agent = Mechanize.new
 agent.history_added = Proc.new {sleep 0.5}
 
-# def get_job_info(link, job, agent)
-#   job.link = link.href
-#   testy = agent.get(link)
-#   capt_group = testy.at('title').text.match(%r{(.*)\s-\s(\w+)\s-\s(.+\,\s[A-Z]{2})\s-\s(\d{2}-\d{2}-\d{4})})
-#   job.title = capt_group[1]
-#   job.comp = capt_group[2]
-#   job.loc = capt_group[3]
-#   job.date = capt_group[4]
-# end
 # global variables
 job_site = "http://www.dice.com"
 output = []
@@ -51,14 +42,7 @@ job_links.links_with(:href => %r{/jobs/detail/}).each do |link|
   end
 end
 
-# puts output
-
-# current_job = Job.new
-# current_job.loc = "tasty"
-# current_job.link = "link"
-# current_job.title = "title"
-# current_job.date = "date"
-
+# write to .csv file
 CSV.open("results.csv", "a") do |csv|
   csv << ["Title", "Company", "Link", "Location", "Date", "Company ID", "Job ID"]
   output.each do |job|
