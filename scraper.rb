@@ -1,6 +1,7 @@
 # /scraper.rb
 require 'rubygems'
 require 'mechanize'
+require 'csv'
 
 # Job Struct
 Job = Struct.new(:title, :comp, :link, :loc, :date, :comp_id, :job_id)
@@ -21,7 +22,6 @@ agent.history_added = Proc.new {sleep 0.5}
 # global variables
 job_site = "http://www.dice.com"
 output = []
-fail_count = 0
 
 # Submit the search criteria
 agent.get(job_site)
@@ -32,9 +32,12 @@ form.l = 'Washington, DC'
 job_links = agent.submit(form, form.buttons.first)
 job_links.links_with(:href => %r{/jobs/detail/}).each do |link|
   current_job = Job.new
+  current_job.link = link.href
+  id_matches = link.href.match(%r{\d{5}\/(.+)\/(.+)\?})
+  if id_matches
+    current_job.comp_id, current_job.job_id = id_matches.captures
+  end
   job_page = link.click
-  # get_job_info(job_page, current_job, agent)
-
   capt_group = job_page.at('title').text.match(%r{(.+) - (.+) - (.+) - (\d{2}-\d{2}-\d{4})})
   if capt_group
     current_job.title = capt_group[1]
@@ -48,30 +51,17 @@ job_links.links_with(:href => %r{/jobs/detail/}).each do |link|
   end
 end
 
-puts output
-puts fail_count
+# puts output
 
+# current_job = Job.new
+# current_job.loc = "tasty"
+# current_job.link = "link"
+# current_job.title = "title"
+# current_job.date = "date"
 
-test_link = agent.get("https://www.dice.com/jobs/detail/Ruby-on-Rails-Developer-%281099-Remote%29-ByteCubed-Crystal-City-VA-22202/90744032/008112?icid=sr1-1p&q=ruby&l=Washington,%20DC")
-test_job = Job.new
-
-
-# get_job_info(test_link, test_job)
-# puts test_job
-# puts "what"
-
-
-
-# def extract_data(string)
-#
-#
-# end
-
-
-# puts results
-
-# Scrape the results page(s)
-
-# Add the results as struts?
-
-# append results.csv document
+CSV.open("results.csv", "a") do |csv|
+  csv << ["Title", "Company", "Link", "Location", "Date", "Company ID", "Job ID"]
+  output.each do |job|
+    csv << [job.title, job.comp, job.link, job.loc, job.date, job.comp_id, job.job_id]
+  end
+end
