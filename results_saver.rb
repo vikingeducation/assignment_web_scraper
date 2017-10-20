@@ -5,8 +5,10 @@ require_relative 'web_scrapper'
 
 class ResultsSaver
 
-  def initialize(scrapper = WebScrapper.new.parse_all_job_adverts)
-    @scrapper = scrapper
+  def initialize(city, role)
+    @city = city
+    @role = role
+    @scrapper = WebScrapper.new.parse_all_job_adverts(@city, @role)
   end
 
   def save_in_file
@@ -18,4 +20,5 @@ class ResultsSaver
 
 end
 
-ResultsSaver.new.save_in_file
+results = ResultsSaver.new('Dublin', 'ruby')
+results.save_in_file

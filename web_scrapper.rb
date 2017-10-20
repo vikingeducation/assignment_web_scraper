@@ -1,16 +1,20 @@
 
 require 'rubygems'
 require 'mechanize'
+require 'pry'
 
 class WebScrapper
 
   def initialize
     @job_posts = []
+    @agent = Mechanize.new { |agt| agt.user_agent_alias = 'Mac Firefox' }
+    @agent.history_added = Proc.new { sleep 0.5 }
   end
 
-  def parse_all_job_adverts
-    1.upto(number_of_jobs_found/10) do |i|
-      current_page = page_with_search_results("Dublin", "ruby", i)
+  def parse_all_job_adverts(city = "Dublin", role = "ruby")
+    # binding.pry
+    1.upto(number_of_jobs_found(city, role)/10) do |i|
+      current_page = page_with_search_results(city, role, i)
       parse_short_job_advert(current_page)
     end
     @job_posts
@@ -18,26 +22,21 @@ class WebScrapper
 
   private
 
-  def page_with_search_results(city = "Dublin", role = "ruby", page_no = 1)
-    agent = Mechanize.new { |agt| agt.user_agent_alias = 'Mac Firefox' }
-    agent.history_added = Proc.new { sleep 0.5 }
+  def page_with_search_results(city, role, page_no = 1)
     indeed_page = "https:\/\/ie.indeed.com\/jobs\?q=#{role}&l=#{city}&start=#{(page_no-1)*10}"
-    page = agent.get(indeed_page)
+    page = @agent.get(indeed_page)
     page
   end
 
-  def number_of_jobs_found
-    results = page_with_search_results
+  def number_of_jobs_found(city, role)
+    results = page_with_search_results(city, role)
     results = results.search('div#searchCount').children.text
     results.match(/\d{1,3}$/)[0].to_i
   end
 
   def parse_short_job_advert(page)
     page.search('div.row.result').each do |advert|
-      # puts "DBG: advert = #{advert.inspect}"
-      array = scrapping_data_from(advert)
-      # puts "DBG: array = #{array.inspect}"
-      @job_posts << array
+      @job_posts << scrapping_data_from(advert)
     end
   end
 
@@ -56,7 +55,8 @@ class WebScrapper
   end
 
   def get_job_company_name(node)
-    node.css('span.company').first.text.strip
+    puts "#{node.css('span.company').first}"
+    node.css('span.company').first.text.strip if node.css('span.company').first
   end
 
   def get_posting_link(node)
@@ -69,7 +69,6 @@ class WebScrapper
 
   def posting_date(node)
     if node.css('span.date').any?
-      # puts "DBG: node.css('span.date') = #{node.css('span.date').inspect}"
       date = node.css('span.date').first.text
       date = date.match(/\d/)[0].to_i
       t = Time.now - date*24*60*60
